@@ -406,18 +406,6 @@ li {
   100% { transform: rotate(0deg); }
 }
 
-.envelope {
-  flex: 0 0 26%; /*grow | shrink | basis */
-  height: 100px;
-  display: flex;
-  font-size: 41px;
-  background: #00000021;
-  background: #ff4f4f;
-  border: 1px solid #cd6a6a;
-  border: 1px solid #ff9e9e;
-  border-radius: 5px;
-}
-
 .dice {
   width: 100px;
   fill: #750017;
