@@ -350,6 +350,7 @@ li {
 }
 
 .random-msg {
+  position: relative;
   margin-top: 10px;
   padding: 20px;
   /*
@@ -364,11 +365,24 @@ li {
   font-weight: 500;
 }
 
+.random-msg:hover::after, .random-msg:focus::after, .random-msg:active ::after{
+  content: '\2713';
+  position: absolute;
+  bottom: -44px;
+  left: -10px;
+  background: #0000003b;
+  padding: 15px 22px;
+  border-radius: 50%;
+  font-size: 52px;
+  font-weight: 600;
+  color: #4ac552;
+}
+
 .envelope {
-  flex: 0 0 26%; /*grow | shrink | basis */
-  height: 75px;
+  flex: 0 0 28%; /*grow | shrink | basis */
+  height: 65px;
   display: flex;
-  font-size: 41px;
+  font-size: 42px;
   background: #00000021;
   background: #ff4f4f;
   border: 1px solid #cd6a6a;
@@ -410,7 +424,7 @@ li {
   fill: #dcd73f;
 }
 
-.dice:hover, .dice:focus, .dice:active{
+.dice:hover, .dice:focus, .dice:active {
   /* Start the shake animation and make the animation last for 0.5 seconds */
   animation: shake2 0.5s;
 
