@@ -269,6 +269,8 @@ li {
 
 .weclome-screen-img img {
   width: 90%;
+  box-shadow: 1px 1px 6px 0px #f50000;
+  border-radius: 10px;
 }
 
 .weclome-screen-desc {
@@ -279,30 +281,32 @@ li {
   text-align: center;
   margin-top: 20px;
   margin-bottom: 20px;
-  min-height: 235px;
+  min-height: 155px;
 }
 
-.welcome-screen .weclome-screen-desc h2 {
+.welcome-screen .weclome-screen-desc h1 {
   color: var(--white);
   font-weight: 600;
 }
 
 .welcome-screen .weclome-screen-desc p {
-  margin: 10px auto;
   width: 88%;
+  margin: 10px auto;
+  font-size: 24px;
 }
 
 .welcome-screen .welcome-next-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--white);
-  background-color: #ffc600;
-  color: #fff;
-  border-radius: 50px;
   height: 50px;
-  width: 95%;
-  box-shadow: var(--blue-shadow)
+  padding: 10px 70px;
+  background-color: #ffc600;
+  box-shadow: var(--blue-shadow);
+  border-radius: 50px;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--white);
 }
 
 .weclome-screen-footer {
@@ -329,7 +333,7 @@ li {
   font-size: 72px;
   font-weight: 600;
   color: #ffb9c673;
-  color: #d3ff00;
+  color: #f1ff00;
 }
 
 .app-title {
@@ -356,6 +360,8 @@ li {
   */
   border: 4px solid #c5c13f33;
   border-radius: 50px;
+  font-size: 22px;
+  font-weight: 500;
 }
 
 .envelope {
@@ -401,7 +407,7 @@ li {
 .dice {
   width: 100px;
   fill: #750017;
-  fill: #c5c13f;
+  fill: #dcd73f;
 }
 
 .dice:hover, .dice:focus, .dice:active{
