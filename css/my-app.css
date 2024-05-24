@@ -330,6 +330,7 @@ li {
   float: left;
   margin-left: 15px;
   transform: rotate(45deg);
+  line-height: 80px;
   font-size: 72px;
   font-weight: 600;
   color: #ffb9c673;
@@ -363,6 +364,7 @@ li {
   border-radius: 50px;
   font-size: 22px;
   font-weight: 500;
+  background: #007aff;
 }
 
 .random-msg:hover::after, .random-msg:focus::after, .random-msg:active ::after{
