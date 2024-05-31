@@ -329,7 +329,7 @@ li {
 .app-num {
   float: left;
   margin-left: 15px;
-  transform: rotate(45deg);
+  transform: rotate(25deg);
   line-height: 80px;
   font-size: 72px;
   font-weight: 600;
