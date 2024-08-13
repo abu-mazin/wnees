@@ -82,8 +82,8 @@ $$.doAJAX = function (path, data, type, hideIndicator, callback, errorCallback) 
   if (!hideIndicator)
     myApp.showIndicator();
   var headers = { 'accept': 'application/json' };
-  if (typeof user != "undefined" && typeof user.token != "undefined")
-    headers = { 'accept': 'application/json', 'Authorization': 'Bearer ' + user.token };
+  if (typeof userLogedin != "undefined" && typeof userGUID != "undefined")
+    headers = { 'accept': 'application/json', 'GUID': userGUID };
   $$.ajax({
     url: APIurl + path,
     data: data, // parameters
@@ -161,3 +161,16 @@ $$('.signInFormLink').on('click', function (e) {
   myApp.closeModal('.popup-login');
   myApp.closeModal('.login-screen');
 });
+
+if (userLogedin != true && typeof userGUID != "undefined") {
+  $$.doAJAX('users_info', {name: ''}, 'POST', true,
+  // Success (200)
+  function(r, textStatus, xhr){
+    if(typeof r != 'undefined' && r != null) {
+      console.log(r);
+    }
+  },
+  // Failed
+  function(xhr, textStatus){
+  });
+}

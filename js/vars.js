@@ -8,7 +8,7 @@ var curr = new Date();
 // API URLS
 // ======================================
 // images path
-var APIurl = 'https://wnees.com/apis/v1/';
+var APIurl = 'https://wnees.com/api/';
 var imagePath = 'https://wnees.com/storage/';
 
 // ======================================
@@ -28,9 +28,10 @@ var DB_data;
 var currentTab = 'main_tab';
 
 // ======================================
-// CLASS VARS
+// USER VARS
 // ======================================
-var user_logedin = false;
+var userLogedin = false;
+var userGUID
 
 // ======================================
 // LANGS VARS
