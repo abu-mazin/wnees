@@ -31,7 +31,8 @@ var currentTab = 'main_tab';
 // USER VARS
 // ======================================
 var userLogedin = false;
-var userGUID
+var userGUID ;
+var user;
 
 // ======================================
 // LANGS VARS

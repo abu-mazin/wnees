@@ -162,15 +162,114 @@ $$('.signInFormLink').on('click', function (e) {
   myApp.closeModal('.login-screen');
 });
 
-if (userLogedin != true && typeof userGUID != "undefined") {
-  $$.doAJAX('users_info', {name: ''}, 'POST', true,
-  // Success (200)
-  function(r, textStatus, xhr){
-    if(typeof r != 'undefined' && r != null) {
-      console.log(r);
-    }
-  },
-  // Failed
-  function(xhr, textStatus){
+
+$$('[data-elm="guest-name"]').on('input', function () {
+  var input = $$(this).val().replace(/\s/g, ''); // Remove spaces
+  if (input.length >= 3) {
+    $$('.modal-button').removeClass('disabled'); // Enable the OK button
+  } else {
+    $$('.modal-button').addClass('disabled'); // Disable the OK button
+  }
+});
+
+$$('[data-elm="close-welcome-screen"]').on('click', function () {
+
+})
+
+
+$$('.signUpForm-to-json').on('click', function (e) {
+  e.preventDefault();
+
+  // get form parameters
+  var SignUPForm_parms = myApp.formToJSON('#signUpForm');
+  delete SignUPForm_parms.terms;
+  $$.doAJAX('users/register', SignUPForm_parms, 'POST', false,
+    // Success (200)
+    function (r, textStatus, xhr) {
+      console.log(r)
+      initUserLoggedIn();
+
+    },
+    // Failed
+    function (xhr, textStatus) {
+      // Failed notification
+      if (textStatus == 401)
+        myApp.alert('البريد الإلكتروني غير صحيح.');
+      else
+        failedNotification4AjaxRequest(xhr, textStatus);
+    });
+
+  return false;
+});
+
+$$('.signInForm-to-json').on('click', function (e) {
+  e.preventDefault();
+
+  // get form parameters
+  var SignInForm_parms = myApp.formToJSON('#signInForm');
+  $$.doAJAX('users/login', SignInForm_parms, 'POST', false,
+    // Success (200)
+    function (r, textStatus, xhr) {
+      console.log(r)
+      setThis("logedinUser", 1);
+      setThis('userData', JSON.stringify(r));
+
+      initUserLoggedIn();
+
+    },
+    // Failed
+    function (xhr, textStatus) {
+      // Failed notification
+      if (textStatus == 401)
+        myApp.alert('البريد الإلكتروني غير صحيح.');
+      else
+        failedNotification4AjaxRequest(xhr, textStatus);
+    });
+
+  return false;
+});
+
+if (typeof getThis("logedinUser") !== "undefined" && getThis("logedinUser") == 1) { initUserLoggedIn(); }
+
+function initUserLoggedIn() {
+  userLogedin = true;
+  user = new User(JSON.parse(getThis("userData")));
+  $$('*[data-elm="user-name"]').text(user.name)
+}
+
+if (getThis('hideWelcomeScreen') == '1' && userLogedin != true) {
+  console.log("YE",getThis('hideWelcomeScreen') == '1',userLogedin != true)
+  myApp.modal({
+    text: `
+      <div class="guest-popup-inner">
+        <span>من فضلك أدخل اسمك</span>
+        <input type="text" data-elm="guest-name" placeholder="أدخل اسمك هنا" />
+      </div>`,
+    buttons: [
+      {
+        text: 'إرسـال',
+        close: false, // prevent closing until valid input
+        onClick: function () {
+          var userName = $$('[data-elm="guest-name"]').val().trim();
+          if (userName.length >= 3) {
+            // Your callback logic here
+            $$.doAJAX('users_info', { name: userName }, 'POST', true,
+              // Success (200)
+              function (r, textStatus, xhr) {
+                if (typeof r != 'undefined' && r != null) {
+                  userGUID = r.GUID;
+                  console.log(r);
+                }
+              },
+              // Failed
+              function (xhr, textStatus) {
+              });
+            myApp.closeModal(); // close the modal after valid input
+          }
+        },
+        disabled: true, // Initially disable the OK button
+      },
+    ],
   });
+
 }

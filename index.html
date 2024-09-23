@@ -105,7 +105,7 @@
                       <p data-i18n-key="">ببساطة ابقى على اتصال مع الآخرين وانت ونيس ومستانس</p>
                     </div>
                     <div class="weclome-screen-footer">
-                      <a href="#" class="welcome-next-btn close-popup" data-popup=".welcome-screen" data-i18n-key="Start_now">ابدأ الآن</a>
+                      <a href="#" class="welcome-next-btn close-popup" data-popup=".welcome-screen" data-i18n-key="Start_now" data-elm="close-welcome-screen">ابدأ الآن</a>
                     </div>
                   </div>
                 </div>
@@ -137,7 +137,7 @@
             <div class="navbar-user-container">
               <span class="navbar-icon">Wn</span>
               <div class="navbar-user-welcoming-container">
-                <span>مرحبا !</span>
+                <span>مرحبا <span data-elm="user-name"></span> !</span>
                 <a href="#" class="open-popup link icon-only navbar-user-name" data-popup=".login-screen" data-i18n-key="">سجل حسابك / دخولك</a>
               </div>
             </div>
@@ -280,27 +280,62 @@
             </div>
           </div>
           <div class="page-content login-screen-content">
-            <form name="signInForm" class="signInForm" action="#" method="post" accept-charset="UTF-8">
+            <form name="signInForm" class="signInForm" id="signInForm" action="#" method="post" accept-charset="UTF-8">
               <div class="content-block">
                 <div class="header">
                   <h1 data-i18n-key="signin">تسجيل الدخول</h1>
                 </div>
                 <form>
-                  <div class="input-group">
-                    <input type="email" name="email" data-elm="email" placeholder="البريد الإلكتروني *" required>
-                    <input type="password" name="password" data-elm="password" placeholder="كلمة المرور *" required>
+                  <div class="list-block inset">
+                    <div class="item-inner">
+                      <div class="item-input">
+                        <input spellcheck="false" autocorrect="off" autocapitalize="off" type="email" name="email"
+                          id="signup_email" placeholder="البريد الإلكتروني" size="150" required>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="list-block inset">
+                    <div class="item-inner">
+                      <div class="item-input">
+                        <input spellcheck="false" autocorrect="off" autocapitalize="off" type="password" name="password"
+                          id="signup_password" placeholder="كلمة المرور" size="25" required>
+                      </div>
+                    </div>
+                    <!-- <ul>
+                      <li>
+                        <label class="label-checkbox item-content" style="padding:0;">
+                          <input type="checkbox" name="terms" value="1" checked="checked" />
+                          <div class="item-media"><i class="icon icon-form-checkbox"></i></div>
+                          <div class="item-inner">
+                            <div class="item-title" style="color: #d3d3d3;">
+                              أوافق على <a href="#"
+                                onclick="cordova.InAppBrowser.open('https://saef.gov.sa/%D8%A7%D9%84%D8%B4%D8%B1%D9%88%D8%B7%20%D9%88%D8%A7%D9%84%D8%A3%D8%AD%D9%83%D8%A7%D9%85/', '_system');"
+                                style="color: #e1e050;">شروط الاستخدام</a>
+                            </div>
+                          </div>
+                        </label>
+                      </li>
+                    </ul> -->
                   </div>
                   <a href="#" data-popup=".popup-password" class="open-popup forget-password"
                     data-i18n-key="forget_password_?">هل نسيت كلمة المرور؟</a>
                 </form>
-                <div class="login-footer">
-                  <button type="button" class="signInFormLink" data-i18n-key="signin">تسجيل الدخول</button>
+                <div class="content-block">
+                  <a class="signInForm-to-json item-link button button-fill">تسجيل الدخول</a>
                   <p>
                     <span data-i18n-key="don't_have_account_?">ليس لدي حساب؟</span>
                     <a href="#" class="open-popup" data-popup=".popup-signup" data-i18n-key="create_a_new_account">إنشاء
                       حساب جديد</a>
                   </p>
                 </div>
+                <!-- <div class="login-footer">
+                  <button type="button" class="signInFormLink" data-i18n-key="signin">تسجيل الدخول</button>
+                  <p>
+                    <span data-i18n-key="don't_have_account_?">ليس لدي حساب؟</span>
+                    <a href="#" class="open-popup" data-popup=".popup-signup" data-i18n-key="create_a_new_account">إنشاء
+                      حساب جديد</a>
+                  </p>
+                </div> -->
               </div>
             </form>
           </div>
@@ -309,7 +344,7 @@
     </div>
   </div>
 
-  <!-- Login popup -->
+  <!-- SignUp popup -->
   <div class="popup popup-signup">
     <div class="navbar">
       <div class="navbar-inner">
@@ -323,6 +358,22 @@
     <div class="login-form-container">
       <form name="signUpForm" id="signUpForm" action="#" method="post" accept-charset="UTF-8">
         <div class="content-block">
+          <div class="list-block inset">
+            <div class="item-inner">
+              <div class="item-input">
+                <input spellcheck="false" autocorrect="off" autocapitalize="off" type="text" name="name"
+                  id="signup_name" placeholder="الاسم" size="150" required>
+              </div>
+            </div>
+          </div>
+          <div class="list-block inset">
+            <div class="item-inner">
+              <div class="item-input">
+                <input spellcheck="false" autocorrect="off" autocapitalize="off" type="text" name="username"
+                  id="signup_username" placeholder="اسم المستخدم" size="150" required>
+              </div>
+            </div>
+          </div>
           <div class="list-block inset">
             <div class="item-inner">
               <div class="item-input">
@@ -355,6 +406,7 @@
             </ul>
           </div>
         </div>
+        
         <div class="content-block">
           <a class="signUpForm-to-json item-link button button-fill">تسجيل</a>
         </div>
@@ -376,6 +428,8 @@
   <script type="text/javascript" src="lib/framework7/js/framework7.min.js"></script>
   <!-- Define Global Vars -->
   <script type="text/javascript" src="js/vars.js"></script>
+  <!-- Classes -->
+  <script type="text/javascript" src="js/users.js"></script>
   <!-- Framework7 app: Init views -->
   <script type="text/javascript" src="js/pre-init.js"></script>
   <script type="text/javascript" src="js/init.js"></script>
