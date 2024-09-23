@@ -5,7 +5,7 @@ class User {
   name;
   username;
   email;
-  userguid;
+  guid;
   profilePicture;
   settings;
 
@@ -14,9 +14,13 @@ class User {
   constructor(parms) {
     // user main attributes
     this.token = parms.access_token;
+
+    this.name = parms.user.user_info.name;
     this.username = parms.user.username;
     this.email = parms.user.email;
-    this.name = parms.user.user_info.name; // Correct variable name
+    this.guid = parms.user.user_info.GUID;
+    this.profilePicture = parms.user.user_info.profile_picture;
+    this.settings = parms.user.user_info.settings;
   }
 
 
@@ -48,10 +52,10 @@ class User {
   }
 
   static calculateAge(birthdate) {
-    if(birthdate != null) {
+    if (birthdate != null) {
       // Convert the birthdate string to a Date object
       let tokens = birthdate.split(/[-: ]/g)
-      const birthdateDate = new Date(tokens[0], parseInt(tokens[1]) -1, tokens[2]);
+      const birthdateDate = new Date(tokens[0], parseInt(tokens[1]) - 1, tokens[2]);
       //const birthdateDate = new Date(birthdate);
 
       // Get the current date
@@ -94,5 +98,5 @@ class User {
   }
 
 
-  
+
 }

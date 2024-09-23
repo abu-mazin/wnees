@@ -234,7 +234,9 @@ if (typeof getThis("logedinUser") !== "undefined" && getThis("logedinUser") == 1
 function initUserLoggedIn() {
   userLogedin = true;
   user = new User(JSON.parse(getThis("userData")));
+  userGUID = user.guid;
   $$('*[data-elm="user-name"]').text(user.name)
+  $$('.navbar-user-name').hide();
 }
 
 if (getThis('hideWelcomeScreen') == '1' && userLogedin != true) {
@@ -273,3 +275,17 @@ if (getThis('hideWelcomeScreen') == '1' && userLogedin != true) {
   });
 
 }
+
+$$('.dice').on('click',function(){
+  $$.doAJAX('available_messages/random/', {}, 'GET', true,
+    // Success (200)
+    function (r, textStatus, xhr) {
+      console.log(r)
+
+    },
+    // Failed
+    function (xhr, textStatus) {
+      // Failed notification
+        failedNotification4AjaxRequest(xhr, textStatus);
+    });
+})
