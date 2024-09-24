@@ -165,7 +165,6 @@ if (locale !== "") {
 
 // 
 myApp.onPageInit('*', function (page) {
-  toggleSwitch();
   if (locale !== "") {
     $$('i.fa.fa-chevron-right').removeClass('fa-chevron-right').addClass('fa-chevron-left');
     $$('.navbar .right').css('margin-right', '0');

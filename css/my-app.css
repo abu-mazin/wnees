@@ -176,7 +176,8 @@ li {
   flex-direction: column;
 }
 
-.navbar .navbar-user-container .navbar-user-name {
+.navbar .navbar-user-container .navbar-user-name,
+.logout {
   font-weight: 600;
   font-size: 18px;
   color: #00e1ff;
@@ -414,13 +415,11 @@ li {
   fill: #dcd73f;
 }
 
-.dice:hover, .dice:focus, .dice:active {
-  /* Start the shake animation and make the animation last for 0.5 seconds */
+.shake-animation {
   animation: shake2 0.5s;
-
-  /* When the animation is finished, start again */
   animation-iteration-count: infinite;
 }
+
 
 @keyframes shake2 {
   0% { transform: translate(1px, 1px) rotate(0deg); }
@@ -452,4 +451,64 @@ li {
 
 .modal-buttons .modal-button {
 
+}
+
+.send-message {
+  width: 100%;
+  height: 200px;
+  border-radius: 15px;
+  padding: 10px;
+  background-color: #e6f4f1;
+  border: 4px solid #538bde;
+}
+
+[data-page="send-message"] .content-block-title {
+  font-weight: 600;
+  font-size: 18px;
+  color: #fff76f;
+}
+
+.button.button-fill {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.edit-pic {
+  background-color: #007aff;
+  height: 45px;
+  width: 45px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  bottom: 10px;
+  right: calc(50% - 75px);
+}
+
+.edit-pic img {
+  width: 25px;
+  height: 25px;
+}
+
+.change-settings input[type=file] {
+  display: none;
+}
+
+.change-settings .item-pic {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.image-preview {
+  margin-top: 10px;
+  height: 150px;
+  width: 150px;
+  border-radius: 50%;
 }

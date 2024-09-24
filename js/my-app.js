@@ -84,6 +84,7 @@ $$.doAJAX = function (path, data, type, hideIndicator, callback, errorCallback) 
   var headers = { 'accept': 'application/json' };
   if (typeof userLogedin != "undefined" && typeof userGUID != "undefined")
     headers = { 'accept': 'application/json', 'GUID': userGUID };
+  console.log(userGUID)
   $$.ajax({
     url: APIurl + path,
     data: data, // parameters
@@ -235,12 +236,20 @@ function initUserLoggedIn() {
   userLogedin = true;
   user = new User(JSON.parse(getThis("userData")));
   userGUID = user.guid;
-  $$('*[data-elm="user-name"]').text(user.name)
+  $$('*[data-elm="user-name"]').text(user.name);
+  $$('*[data-elm="user-name"]').val(user.name);
   $$('.navbar-user-name').hide();
+  $$('.logout').show();
+
+  if(user.profilePicture) {
+    $$('.image-preview').attr('src', user.profilePicture);
+  } else {
+    $$('.image-preview').attr('src', 'img/user-pic.svg');
+
+  }
 }
 
 if (getThis('hideWelcomeScreen') == '1' && userLogedin != true) {
-  console.log("YE",getThis('hideWelcomeScreen') == '1',userLogedin != true)
   myApp.modal({
     text: `
       <div class="guest-popup-inner">
@@ -277,15 +286,94 @@ if (getThis('hideWelcomeScreen') == '1' && userLogedin != true) {
 }
 
 $$('.dice').on('click',function(){
-  $$.doAJAX('available_messages/random/', {}, 'GET', true,
+  $$(this).addClass('shake-animation');
+
+  $$.doAJAX('available-messages/random', {GUID: userGUID}, 'GET', true,
     // Success (200)
     function (r, textStatus, xhr) {
       console.log(r)
-
+      $$('.random-msg').text(r.message)
+      $$('.dice').removeClass('shake-animation');
     },
     // Failed
     function (xhr, textStatus) {
       // Failed notification
         failedNotification4AjaxRequest(xhr, textStatus);
+        $$('.dice').removeClass('shake-animation');
+
     });
+});
+
+$$('#profile_picture').on('change', function(event) {
+  var input = event.target;
+
+  if (input.files && input.files[0]) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      $$('.image-preview').attr('src', e.target.result).css('display', 'block');
+    };
+    reader.readAsDataURL(input.files[0]); // Convert the file to a base64 string for preview
+  }
+});
+
+$$('.changeSettingsForm').on('click', function(e) {
+  e.preventDefault();
+
+  // Get the form data using formToJSON
+  var changeSettings = myApp.formToJSON('#change-settings');
+  
+  // Get the file input element using $$ and access the first DOM element
+  var fileInput = $$('#profile_picture')[0];
+  
+  // Check if a file is selected
+  if (fileInput && fileInput.files.length > 0) {
+    var profilePicture = fileInput.files[0];
+    changeSettings.profile_picture = profilePicture; // Attach the selected file
+  } else {
+    changeSettings.profile_picture = null; // No file selected, set to null
+  }
+
+  changeSettings._method = 'put';
+  changeSettings.settings = null;
+
+  console.log(changeSettings);
+
+  // Send the form data via AJAX
+  $$.doAJAX(`users-info/${userGUID}`, {changeSettings}, 'POST', true,
+    // Success (200)
+    function (r, textStatus, xhr) {
+      console.log(r);
+    },
+    // Failed
+    function (xhr, textStatus) {
+      // Failed notification
+      failedNotification4AjaxRequest(xhr, textStatus);
+    }
+  );
+});
+
+
+// logout and clear all stored data
+function initUserLogedout() {
+  //clear all data
+  if (useDB) {
+    DB_data = [];
+    db.executeSql('UPDATE user_main_data SET json_result = ?', ['{}']);
+  } else {
+    localStorage.clear();
+  }
+  // document.getElementsByClassName("login-screen")[0].style.visibility = "initial";
+  // $$(".open-login-screen").click();
+  // if (!$$(".login-screen").hasClass('modal-in')) {
+  //   $$(".login-screen").show();
+  //   myApp.openModal('.login-screen');
+  // }
+
+  userLogedin = false;
+  user = undefined;
+  setThis("hideWelcomeScreen", 1);
+}
+
+$$('.logout').on('click',function(){
+  initUserLogedout();
 })
