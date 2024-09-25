@@ -462,7 +462,7 @@ li {
   border: 4px solid #538bde;
 }
 
-[data-page="send-message"] .content-block-title {
+[data-page="send_message"] .content-block-title {
   font-weight: 600;
   font-size: 18px;
   color: #fff76f;
@@ -511,4 +511,12 @@ li {
   height: 150px;
   width: 150px;
   border-radius: 50%;
+}
+
+.content-block.message-form {
+  margin-top: 0;
+}
+
+.submit-message {
+  margin-top: 10px;
 }

@@ -83,7 +83,10 @@ $$.doAJAX = function (path, data, type, hideIndicator, callback, errorCallback) 
     myApp.showIndicator();
   var headers = { 'accept': 'application/json' };
   if (typeof userLogedin != "undefined" && typeof userGUID != "undefined")
-    headers = { 'accept': 'application/json', 'GUID': userGUID };
+    if (path == "users/login")
+      headers = { 'accept': 'application/json' };
+    else
+      headers = { 'accept': 'application/json', 'GUID': userGUID };
   console.log(userGUID)
   $$.ajax({
     url: APIurl + path,
@@ -100,6 +103,79 @@ $$.doAJAX = function (path, data, type, hideIndicator, callback, errorCallback) 
 $$(document).on('ajaxComplete', function (e, xhr) {
   myApp.hideIndicator();
 });
+
+// handle failed ajax requests
+function failedNotification4AjaxRequest(xhr, textStatus) {
+  // HTTP error (can be checked by xhr.status and xhr.statusText)
+  if (typeof xhr != 'undefined') {
+    if (xhr.readyState == 4) {
+      var responseText = JSON.parse(xhr.responseText);
+      if (textStatus == 422) {
+        var responseText = JSON.parse(xhr.responseText);
+        if (typeof responseText != 'undefined' && responseText != null) {
+          if (typeof responseText.errors != 'undefined' && responseText.errors != null) {
+            for (var x in responseText.errors) {
+              myApp.alert(responseText.errors[x]);
+              break;
+            }
+          } else if (typeof responseText.message != 'undefined' && responseText.message != null) {
+            myApp.alert(responseText.message);
+          } else {
+            myApp.addNotification({ hold: 3000, title: 'تنبيه', message: 'طلب غير مكتمل، حاول مجدداً' });
+          }
+        } else {
+          myApp.addNotification({ hold: 3000, title: 'تنبيه', message: 'طلب غير مكتمل، حاول مجدداً' });
+        }
+      } else if (textStatus == 400) {
+        myApp.addNotification({ hold: 3000, title: 'تنبيه', message: 'طلب غير صحيح، حاول مجدداً' });
+      } else if (textStatus == 401) {
+        myApp.addNotification({ hold: 3000, title: 'تنبيه', message: 'غير مصرح بهذه العملية' });
+        initUserLogedout();
+      } else if (textStatus == 403) {
+        myApp.addNotification({ hold: 3000, title: 'تنبيه', message: 'لا تملك صلاحيات كافية لهذه العملية' });
+      } else if (textStatus == 404) {
+        myApp.addNotification({ hold: 3000, title: 'تنبيه', message: 'لم يتم العثور!' });
+      } else if (textStatus == 500 || textStatus == 502 || textStatus == 503) {
+        myApp.addNotification({ hold: 3000, title: 'تنبيه', message: 'فقد الاتصال! حاول مرة أخرة' });
+      } else {
+        try {
+          var responseText = JSON.parse(xhr.responseText);
+          if (typeof responseText != 'undefined' && responseText != null) {
+            if (typeof responseText.errors != 'undefined' && responseText.errors != null) {
+              for (var x in responseText.errors) {
+                myApp.alert(responseText.errors[x]);
+                break;
+              }
+            } else if (typeof responseText.message != 'undefined' && responseText.message != null) {
+              myApp.alert(responseText.message);
+            } else {
+              myApp.addNotification({ hold: 3000, title: 'خطأ', message: 'حدث خطأ! حاول مرة أخرى.' });
+            }
+          } else {
+            myApp.addNotification({ hold: 3000, title: 'خطأ', message: 'حدث خطأ! حاول مرة أخرى.' });
+          }
+        } catch (e) {
+          console.log('The response might be not JSON type!');
+          console.log('Check request response for mpre details!');
+          console.log('افحص استجابة الطلب القادمة من الباك اند لمحاولة كشف المزيد عن هذا الخطأ');
+          myApp.addNotification({ hold: 3000, title: 'خطأ', message: 'حدث خطأ! حاول مرة أخرى.' });
+        }
+      }
+    }
+    // Network error (i.e. connection refused, access denied due to CORS, etc.)
+    else if (xhr.readyState == 0) {
+      myApp.addNotification({ hold: 3000, title: 'خطأ', message: 'حدث خطأ! حاول مرة أخرى.' });
+    }
+    // something weird is happening
+    else {
+      myApp.addNotification({ hold: 3000, title: 'خطأ', message: 'حدث خطأ! حاول مرة أخرى.' });
+    }
+  } else {
+    console.log('لا يفترض ان يظهر هذا الخطأ! ارجو ابلاغي في خال ظهر لمتابعة ومعالحة المشكلة....');
+    myApp.addNotification({ hold: 3000, title: 'خطأ', message: 'حدث خطأ! حاول مرة أخرى.' });
+  }
+}
+
 
 
 // ======================================
@@ -214,6 +290,7 @@ $$('.signInForm-to-json').on('click', function (e) {
       console.log(r)
       setThis("logedinUser", 1);
       setThis('userData', JSON.stringify(r));
+      myApp.closeModal('.popup-login')
 
       initUserLoggedIn();
 
@@ -236,17 +313,44 @@ function initUserLoggedIn() {
   userLogedin = true;
   user = new User(JSON.parse(getThis("userData")));
   userGUID = user.guid;
+  getRandomMs();
   $$('*[data-elm="user-name"]').text(user.name);
   $$('*[data-elm="user-name"]').val(user.name);
   $$('.navbar-user-name').hide();
   $$('.logout').show();
 
-  if(user.profilePicture) {
+  if (user.profilePicture) {
     $$('.image-preview').attr('src', user.profilePicture);
   } else {
     $$('.image-preview').attr('src', 'img/user-pic.svg');
 
   }
+}
+
+// logout and clear all stored data
+function initUserLogedout() {
+  //clear all data
+  if (useDB) {
+    DB_data = [];
+    db.executeSql('UPDATE user_main_data SET json_result = ?', ['{}']);
+  } else {
+    localStorage.clear();
+  }
+  // document.getElementsByClassName("login-screen")[0].style.visibility = "initial";
+  // $$(".open-login-screen").click();
+  // if (!$$(".login-screen").hasClass('modal-in')) {
+  //   $$(".login-screen").show();
+  //   myApp.openModal('.login-screen');
+  // }
+
+  userLogedin = false;
+  user = undefined;
+  setThis("hideWelcomeScreen", 1);
+  $$('.image-preview').attr('src', 'img/user-pic.svg');
+  $$('*[data-elm="user-name"]').empty();
+  $$('.navbar-user-name').show();
+  $$('.logout').hide();
+
 }
 
 if (getThis('hideWelcomeScreen') == '1' && userLogedin != true) {
@@ -285,95 +389,175 @@ if (getThis('hideWelcomeScreen') == '1' && userLogedin != true) {
 
 }
 
-$$('.dice').on('click',function(){
+$$('.dice').on('click', function () {
   $$(this).addClass('shake-animation');
+  getRandomMs();
+});
 
-  $$.doAJAX('available-messages/random', {GUID: userGUID}, 'GET', true,
+function getRandomMs(){
+  $$.doAJAX('available-messages/random', { GUID: userGUID }, 'GET', true,
     // Success (200)
     function (r, textStatus, xhr) {
       console.log(r)
       $$('.random-msg').text(r.message)
+      $$('.random-msg').attr('key',r.id)
       $$('.dice').removeClass('shake-animation');
     },
     // Failed
     function (xhr, textStatus) {
       // Failed notification
-        failedNotification4AjaxRequest(xhr, textStatus);
-        $$('.dice').removeClass('shake-animation');
+      failedNotification4AjaxRequest(xhr, textStatus);
+      $$('.dice').removeClass('shake-animation');
 
     });
-});
+}
 
-$$('#profile_picture').on('change', function(event) {
+$$('.random-msg').on('click',function(){
+  let key=$$(this).attr('key');
+  console.log(key);
+  let message = {};
+  message.availabe_message_id = key;
+  message.is_random = 1;
+  message.message = $$(this).text()
+  console.log(message)
+  $$.doAJAX(`messages`, message, 'POST', true,
+    // Success (200)
+    function (r, textStatus, xhr) {
+      console.log(r)
+
+    },
+    // Failed
+    function (xhr, textStatus) {
+      // Failed notification
+        failedNotification4AjaxRequest(xhr, textStatus);
+    });
+})
+
+$$('#profile_picture').on('change', function (event) {
   var input = event.target;
 
   if (input.files && input.files[0]) {
     var reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = function (e) {
       $$('.image-preview').attr('src', e.target.result).css('display', 'block');
     };
     reader.readAsDataURL(input.files[0]); // Convert the file to a base64 string for preview
   }
 });
 
-$$('.changeSettingsForm').on('click', function(e) {
+$$('.changeSettingsForm').on('click', function (e) {
   e.preventDefault();
 
   // Get the form data using formToJSON
   var changeSettings = myApp.formToJSON('#change-settings');
-  
-  // Get the file input element using $$ and access the first DOM element
+
+  // Get the file input element
   var fileInput = $$('#profile_picture')[0];
-  
+
   // Check if a file is selected
   if (fileInput && fileInput.files.length > 0) {
     var profilePicture = fileInput.files[0];
-    changeSettings.profile_picture = profilePicture; // Attach the selected file
+
+    // Use FileReader to read the file as an ArrayBuffer
+    var reader = new FileReader();
+
+    // Once the file is fully read
+    reader.onloadend = function (e) {
+      // Create a Blob from the ArrayBuffer
+      var blob = new Blob([reader.result], { type: profilePicture.type });
+
+      // Append the Blob to the changeSettings object
+      changeSettings.profile_picture = blob;
+      changeSettings._method = 'PUT';
+      changeSettings.settings = null;
+
+      console.log(JSON.stringify(changeSettings))
+
+      // Send the changeSettings object via AJAX
+      $$.ajax({
+        url: encodeURI(`users_info/${userGUID}`),
+        data: JSON.stringify(changeSettings),
+        type: 'POST',
+        cache: false,
+        contentType: 'application/json',
+        processData: false,
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer ' + user.token
+        },
+        success: function (r, textStatus, xhr) {
+          console.log(r);
+        },
+        error: function (xhr, textStatus) {
+          // Failed notification
+          failedNotification4AjaxRequest(xhr, textStatus);
+        }
+      });
+    };
+
+    // Read the file as an ArrayBuffer to create the Blob
+    reader.readAsArrayBuffer(profilePicture);
   } else {
     changeSettings.profile_picture = null; // No file selected, set to null
+
+    // Send the form data if no file was selected
+    changeSettings._method = 'PUT';
+    changeSettings.settings = null;
+
+    $$.ajax({
+      url: encodeURI(`users_info/${userGUID}`),
+      data: JSON.stringify(changeSettings),
+      type: 'POST',
+      cache: false,
+      contentType: 'application/json',
+      processData: false,
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer ' + user.token,
+        'GUID': userGUID,
+      },
+      success: function (r, textStatus, xhr) {
+        console.log(r);
+      },
+      error: function (xhr, textStatus) {
+        // Failed notification
+        failedNotification4AjaxRequest(xhr, textStatus);
+      }
+    });
   }
+});
 
-  changeSettings._method = 'put';
-  changeSettings.settings = null;
-
-  console.log(changeSettings);
-
-  // Send the form data via AJAX
-  $$.doAJAX(`users-info/${userGUID}`, {changeSettings}, 'POST', true,
+$$('.envelope').on('click', function () {
+  $$.doAJAX('available-responses', {}, 'GET', false,
     // Success (200)
     function (r, textStatus, xhr) {
-      console.log(r);
+      console.log(r)
+      myApp.modal({
+        text: `
+        ${r.length === 0 ? `<div class="guest-popup-inner">
+            <span>لا يوجد ردود بعد</span>
+          </div>`: `<div class="guest-popup-inner">
+            <span>من فضلك أدخل اسمك</span>
+          </div>`}`,
+        buttons: [
+          {
+            text: 'حسنًا',
+          },
+        ],
+      });
+
     },
     // Failed
     function (xhr, textStatus) {
       // Failed notification
-      failedNotification4AjaxRequest(xhr, textStatus);
-    }
-  );
-});
+      if (textStatus == 401)
+        myApp.alert('البريد الإلكتروني غير صحيح.');
+      else
+        failedNotification4AjaxRequest(xhr, textStatus);
+    });
+})
 
 
-// logout and clear all stored data
-function initUserLogedout() {
-  //clear all data
-  if (useDB) {
-    DB_data = [];
-    db.executeSql('UPDATE user_main_data SET json_result = ?', ['{}']);
-  } else {
-    localStorage.clear();
-  }
-  // document.getElementsByClassName("login-screen")[0].style.visibility = "initial";
-  // $$(".open-login-screen").click();
-  // if (!$$(".login-screen").hasClass('modal-in')) {
-  //   $$(".login-screen").show();
-  //   myApp.openModal('.login-screen');
-  // }
-
-  userLogedin = false;
-  user = undefined;
-  setThis("hideWelcomeScreen", 1);
-}
-
-$$('.logout').on('click',function(){
+$$('.logout').on('click', function () {
   initUserLogedout();
 })
