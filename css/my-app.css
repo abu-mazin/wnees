@@ -381,6 +381,19 @@ li {
   color: #4ac552;
 }
 
+/* .random-msg-sent {
+  content: '\2713';
+
+  position: absolute;
+  bottom: -44px;
+  left: -10px;
+  background: #0000003b;
+  padding: 15px 22px;
+  border-radius: 50%;
+  font-size: 52px;
+  font-weight: 600;
+  color: #4ac552;
+} */
 .envelope {
   flex: 0 0 28%; /*grow | shrink | basis */
   height: 65px;

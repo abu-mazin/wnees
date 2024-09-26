@@ -313,7 +313,7 @@ function initUserLoggedIn() {
   userLogedin = true;
   user = new User(JSON.parse(getThis("userData")));
   userGUID = user.guid;
-  getRandomMs();
+  handleRandomPublicMessage();
   $$('*[data-elm="user-name"]').text(user.name);
   $$('*[data-elm="user-name"]').val(user.name);
   $$('.navbar-user-name').hide();
@@ -386,31 +386,49 @@ if (getThis('hideWelcomeScreen') == '1' && userLogedin != true) {
       },
     ],
   });
-
 }
 
 $$('.dice').on('click', function () {
   $$(this).addClass('shake-animation');
-  getRandomMs();
+  handleRandomPublicMessage();
 });
 
-function getRandomMs(){
-  $$.doAJAX('available-messages/random', { GUID: userGUID }, 'GET', true,
-    // Success (200)
-    function (r, textStatus, xhr) {
-      console.log(r)
-      $$('.random-msg').text(r.message)
-      $$('.random-msg').attr('key',r.id)
-      $$('.dice').removeClass('shake-animation');
-    },
-    // Failed
-    function (xhr, textStatus) {
-      // Failed notification
-      failedNotification4AjaxRequest(xhr, textStatus);
-      $$('.dice').removeClass('shake-animation');
+function handleRandomPublicMessage() {
+  return new Promise((resolve, reject) => {
+    // First AJAX: Get a random message
+    $$.doAJAX('available-messages/random', { GUID: userGUID }, 'GET', true,
+      // Success (200) - when random message is successfully retrieved
+      function (r, textStatus, xhr) {
+        $$('.random-msg').text(r.message);
+        $$('.random-msg').attr('key', r.id);
+        $$('.dice').removeClass('shake-animation');
+        
+        // Prepare the public message parameters with the random message data
+        let publicMsgParms = { message_id: r.id, message: r.message };
 
-    });
+        // Second AJAX: Send the public message
+        $$.doAJAX('public-messages', publicMsgParms, 'POST', true,
+          // Success (200) - when public message is successfully sent
+          function (r, textStatus, xhr) {
+          $$('[data-elm="message-share-link"]').text(r.sharing_url);
+          },
+          // Failed to send public message
+          function (xhr, textStatus) {
+            failedNotification4AjaxRequest(xhr, textStatus);
+            reject("Failed to send public message");
+          });
+
+      },
+      // Failed to retrieve random message
+      function (xhr, textStatus) {
+        failedNotification4AjaxRequest(xhr, textStatus);
+        $$('.dice').removeClass('shake-animation');
+        reject("Failed to retrieve random message");
+      });
+  });
 }
+
+
 
 $$('.random-msg').on('click',function(){
   let key=$$(this).attr('key');
@@ -450,7 +468,9 @@ $$('.changeSettingsForm').on('click', function (e) {
 
   // Get the form data using formToJSON
   var changeSettings = myApp.formToJSON('#change-settings');
-
+  changeSettings._method = 'PUT';
+  changeSettings.settings = null;
+  console.log(changeSettings)
   // Get the file input element
   var fileInput = $$('#profile_picture')[0];
 
@@ -468,42 +488,13 @@ $$('.changeSettingsForm').on('click', function (e) {
 
       // Append the Blob to the changeSettings object
       changeSettings.profile_picture = blob;
-      changeSettings._method = 'PUT';
-      changeSettings.settings = null;
 
       console.log(JSON.stringify(changeSettings))
-
-      // Send the changeSettings object via AJAX
-      $$.ajax({
-        url: encodeURI(`users_info/${userGUID}`),
-        data: JSON.stringify(changeSettings),
-        type: 'POST',
-        cache: false,
-        contentType: 'application/json',
-        processData: false,
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': 'Bearer ' + user.token
-        },
-        success: function (r, textStatus, xhr) {
-          console.log(r);
-        },
-        error: function (xhr, textStatus) {
-          // Failed notification
-          failedNotification4AjaxRequest(xhr, textStatus);
-        }
-      });
     };
-
-    // Read the file as an ArrayBuffer to create the Blob
     reader.readAsArrayBuffer(profilePicture);
   } else {
     changeSettings.profile_picture = null; // No file selected, set to null
-
-    // Send the form data if no file was selected
-    changeSettings._method = 'PUT';
-    changeSettings.settings = null;
-
+  }
     $$.ajax({
       url: encodeURI(`users_info/${userGUID}`),
       data: JSON.stringify(changeSettings),
@@ -514,6 +505,7 @@ $$('.changeSettingsForm').on('click', function (e) {
       headers: {
         'Accept': 'application/json',
         'Authorization': 'Bearer ' + user.token,
+        'content-type':'application/json',
         'GUID': userGUID,
       },
       success: function (r, textStatus, xhr) {
@@ -524,7 +516,7 @@ $$('.changeSettingsForm').on('click', function (e) {
         failedNotification4AjaxRequest(xhr, textStatus);
       }
     });
-  }
+  
 });
 
 $$('.envelope').on('click', function () {
