@@ -87,7 +87,6 @@ $$.doAJAX = function (path, data, type, hideIndicator, callback, errorCallback) 
       headers = { 'accept': 'application/json' };
     else
       headers = { 'accept': 'application/json', 'GUID': userGUID };
-  console.log(userGUID)
   $$.ajax({
     url: APIurl + path,
     data: data, // parameters
@@ -287,7 +286,6 @@ $$('.signInForm-to-json').on('click', function (e) {
   $$.doAJAX('users/login', SignInForm_parms, 'POST', false,
     // Success (200)
     function (r, textStatus, xhr) {
-      console.log(r)
       setThis("logedinUser", 1);
       setThis('userData', JSON.stringify(r));
       myApp.closeModal('.popup-login')
@@ -320,9 +318,9 @@ function initUserLoggedIn() {
   $$('.logout').show();
 
   if (user.profilePicture) {
-    $$('.image-preview').attr('src', user.profilePicture);
+    $$('[data-elm="user-image"]').attr('src', imagePath+user.profilePicture);
   } else {
-    $$('.image-preview').attr('src', 'img/user-pic.svg');
+    $$('[data-elm="user-image"]').attr('src', 'img/user-pic.svg');
 
   }
 }
@@ -346,7 +344,7 @@ function initUserLogedout() {
   userLogedin = false;
   user = undefined;
   setThis("hideWelcomeScreen", 1);
-  $$('.image-preview').attr('src', 'img/user-pic.svg');
+  $$('[data-elm="user-image"]').attr('src', 'img/user-pic.svg');
   $$('*[data-elm="user-name"]').empty();
   $$('.navbar-user-name').show();
   $$('.logout').hide();
@@ -368,12 +366,11 @@ if (getThis('hideWelcomeScreen') == '1' && userLogedin != true) {
           var userName = $$('[data-elm="guest-name"]').val().trim();
           if (userName.length >= 3) {
             // Your callback logic here
-            $$.doAJAX('users_info', { name: userName }, 'POST', true,
+            $$.doAJAX('users-info', { name: userName }, 'POST', true,
               // Success (200)
               function (r, textStatus, xhr) {
                 if (typeof r != 'undefined' && r != null) {
                   userGUID = r.GUID;
-                  console.log(r);
                 }
               },
               // Failed
@@ -432,12 +429,10 @@ function handleRandomPublicMessage() {
 
 $$('.random-msg').on('click',function(){
   let key=$$(this).attr('key');
-  console.log(key);
   let message = {};
   message.availabe_message_id = key;
   message.is_random = 1;
   message.message = $$(this).text()
-  console.log(message)
   $$.doAJAX(`messages`, message, 'POST', true,
     // Success (200)
     function (r, textStatus, xhr) {
@@ -448,7 +443,7 @@ $$('.random-msg').on('click',function(){
     function (xhr, textStatus) {
       // Failed notification
         failedNotification4AjaxRequest(xhr, textStatus);
-    });
+  });
 })
 
 $$('#profile_picture').on('change', function (event) {
@@ -457,7 +452,7 @@ $$('#profile_picture').on('change', function (event) {
   if (input.files && input.files[0]) {
     var reader = new FileReader();
     reader.onload = function (e) {
-      $$('.image-preview').attr('src', e.target.result).css('display', 'block');
+      $$('.user-image').attr('src', e.target.result).css('display', 'block');
     };
     reader.readAsDataURL(input.files[0]); // Convert the file to a base64 string for preview
   }
@@ -466,58 +461,38 @@ $$('#profile_picture').on('change', function (event) {
 $$('.changeSettingsForm').on('click', function (e) {
   e.preventDefault();
 
-  // Get the form data using formToJSON
-  var changeSettings = myApp.formToJSON('#change-settings');
-  changeSettings._method = 'PUT';
-  changeSettings.settings = null;
-  console.log(changeSettings)
+  // Create a FormData object instead of using JSON
+  var formData = new FormData($$('#change-settings')[0]); // Serialize form into FormData
+  formData.append('_method', 'PUT'); // Add _method field to FormData
+  console.log(JSON.stringify(formData))
+
+
   // Get the file input element
   var fileInput = $$('#profile_picture')[0];
 
   // Check if a file is selected
   if (fileInput && fileInput.files.length > 0) {
     var profilePicture = fileInput.files[0];
-
-    // Use FileReader to read the file as an ArrayBuffer
-    var reader = new FileReader();
-
-    // Once the file is fully read
-    reader.onloadend = function (e) {
-      // Create a Blob from the ArrayBuffer
-      var blob = new Blob([reader.result], { type: profilePicture.type });
-
-      // Append the Blob to the changeSettings object
-      changeSettings.profile_picture = blob;
-
-      console.log(JSON.stringify(changeSettings))
-    };
-    reader.readAsArrayBuffer(profilePicture);
-  } else {
-    changeSettings.profile_picture = null; // No file selected, set to null
+    formData.append('profile_picture', profilePicture); // Append the file to FormData
+    console.log('YES')
   }
-    $$.ajax({
-      url: encodeURI(`users_info/${userGUID}`),
-      data: JSON.stringify(changeSettings),
-      type: 'POST',
-      cache: false,
-      contentType: 'application/json',
-      processData: false,
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': 'Bearer ' + user.token,
-        'content-type':'application/json',
-        'GUID': userGUID,
-      },
-      success: function (r, textStatus, xhr) {
-        console.log(r);
-      },
-      error: function (xhr, textStatus) {
-        // Failed notification
+
+  console.log(JSON.stringify(formData))
+  // Proceed with AJAX request to send the FormData
+  $$.doAJAX('users-info', formData, 'POST', true,
+    // Success (200)
+    function (r, textStatus, xhr) {
+      console.log(r)
+
+    },
+    // Failed
+    function (xhr, textStatus) {
+      // Failed notification
         failedNotification4AjaxRequest(xhr, textStatus);
-      }
-    });
-  
+  });
 });
+
+
 
 $$('.envelope').on('click', function () {
   $$.doAJAX('available-responses', {}, 'GET', false,

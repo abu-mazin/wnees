@@ -165,8 +165,8 @@ li {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background-color: #e77e92;
-  background-color: #ff0088;
+  /* background-color: #e77e92;
+  background-color: #ff0088; */
   font-weight: 500;
   font-size: 18px;
 }
@@ -519,7 +519,7 @@ li {
   position: relative;
 }
 
-.image-preview {
+.user-image {
   margin-top: 10px;
   height: 150px;
   width: 150px;
