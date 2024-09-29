@@ -318,10 +318,9 @@ function initUserLoggedIn() {
   $$('.logout').show();
 
   if (user.profilePicture) {
-    $$('[data-elm="user-image"]').attr('src', imagePath+user.profilePicture);
+    $$('[data-elm="user-image"]').attr('src', imagePath + user.profilePicture);
   } else {
     $$('[data-elm="user-image"]').attr('src', 'img/user-pic.svg');
-
   }
 }
 
@@ -346,6 +345,7 @@ function initUserLogedout() {
   setThis("hideWelcomeScreen", 1);
   $$('[data-elm="user-image"]').attr('src', 'img/user-pic.svg');
   $$('*[data-elm="user-name"]').empty();
+  $$('*[data-elm="user-name"]').val('');
   $$('.navbar-user-name').show();
   $$('.logout').hide();
 
@@ -399,7 +399,7 @@ function handleRandomPublicMessage() {
         $$('.random-msg').text(r.message);
         $$('.random-msg').attr('key', r.id);
         $$('.dice').removeClass('shake-animation');
-        
+
         // Prepare the public message parameters with the random message data
         let publicMsgParms = { message_id: r.id, message: r.message };
 
@@ -407,7 +407,7 @@ function handleRandomPublicMessage() {
         $$.doAJAX('public-messages', publicMsgParms, 'POST', true,
           // Success (200) - when public message is successfully sent
           function (r, textStatus, xhr) {
-          $$('[data-elm="message-share-link"]').text(r.sharing_url);
+            $$('[data-elm="message-share-link"]').text(r.sharing_url);
           },
           // Failed to send public message
           function (xhr, textStatus) {
@@ -427,8 +427,8 @@ function handleRandomPublicMessage() {
 
 
 
-$$('.random-msg').on('click',function(){
-  let key=$$(this).attr('key');
+$$('.random-msg').on('click', function () {
+  let key = $$(this).attr('key');
   let message = {};
   message.availabe_message_id = key;
   message.is_random = 1;
@@ -442,8 +442,8 @@ $$('.random-msg').on('click',function(){
     // Failed
     function (xhr, textStatus) {
       // Failed notification
-        failedNotification4AjaxRequest(xhr, textStatus);
-  });
+      failedNotification4AjaxRequest(xhr, textStatus);
+    });
 })
 
 $$('#profile_picture').on('change', function (event) {
@@ -483,13 +483,26 @@ $$('.changeSettingsForm').on('click', function (e) {
     // Success (200)
     function (r, textStatus, xhr) {
       console.log(r)
+      $$('*[data-elm="user-name"]').text(r.name);
+      $$('*[data-elm="user-name"]').val(r.name);
+      if (r.profile_picture) {
+        $$('[data-elm="user-image"]').attr('src', imagePath + r.profile_picture);
+      }
+
+      let data = JSON.parse(getThis("userData"));
+      data.user.user_info.name = r.name;
+      user.name = r.name;
+      data.user.user_info.profile_picture = r.profile_picture;
+      user.profilePicture = r.profile_picture;
+      setThis("userData", JSON.stringify(data));
+      myApp.closeModal('.popup-settings');
 
     },
     // Failed
     function (xhr, textStatus) {
       // Failed notification
-        failedNotification4AjaxRequest(xhr, textStatus);
-  });
+      failedNotification4AjaxRequest(xhr, textStatus);
+    });
 });
 
 
