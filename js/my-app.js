@@ -307,22 +307,25 @@ $$('.signInForm-to-json').on('click', function (e) {
 
 if (typeof getThis("logedinUser") !== "undefined" && getThis("logedinUser") == 1) { initUserLoggedIn(); }
 
-function initUserLoggedIn() {
-  userLogedin = true;
+function initUserLoggedIn(guest = 0) {
   user = new User(JSON.parse(getThis("userData")));
   userGUID = user.guid;
   handleRandomPublicMessage();
   $$('*[data-elm="user-name"]').text(user.name);
   $$('*[data-elm="user-name"]').val(user.name);
-  $$('.navbar-user-name').hide();
-  $$('.logout').show();
 
   if (user.profilePicture) {
     $$('[data-elm="user-image"]').attr('src', imagePath + user.profilePicture);
   } else {
     $$('[data-elm="user-image"]').attr('src', 'img/user-pic.svg');
   }
+  if(guest === 0) {
+    userLogedin = true;
+    $$('.navbar-user-name').hide();
+    $$('.logout').show();
+  }
 }
+
 
 // logout and clear all stored data
 function initUserLogedout() {
@@ -351,38 +354,57 @@ function initUserLogedout() {
 
 }
 
-if (getThis('hideWelcomeScreen') == '1' && userLogedin != true) {
-  myApp.modal({
-    text: `
+if (getThis('hideWelcomeScreen') == '1' && userGUID === undefined) {
+  let data = JSON.parse(getThis("userData"));
+  if (!data) {
+    myApp.modal({
+      text: `
       <div class="guest-popup-inner">
         <span>من فضلك أدخل اسمك</span>
         <input type="text" data-elm="guest-name" placeholder="أدخل اسمك هنا" />
       </div>`,
-    buttons: [
-      {
-        text: 'إرسـال',
-        close: false, // prevent closing until valid input
-        onClick: function () {
-          var userName = $$('[data-elm="guest-name"]').val().trim();
-          if (userName.length >= 3) {
-            // Your callback logic here
-            $$.doAJAX('users-info', { name: userName }, 'POST', true,
-              // Success (200)
-              function (r, textStatus, xhr) {
-                if (typeof r != 'undefined' && r != null) {
-                  userGUID = r.GUID;
-                }
-              },
-              // Failed
-              function (xhr, textStatus) {
-              });
-            myApp.closeModal(); // close the modal after valid input
-          }
+      buttons: [
+        {
+          text: 'إرسـال',
+          close: false, // prevent closing until valid input
+          onClick: function () {
+            var userName = $$('[data-elm="guest-name"]').val().trim();
+            if (userName.length >= 3) {
+              // Your callback logic here
+              $$.doAJAX('users-info', { name: userName }, 'POST', true,
+                // Success (200)
+                function (r, textStatus, xhr) {
+                  if (typeof r != 'undefined' && r != null) {
+                    userGUID = r.GUID;
+                    console.log(userGUID, "HeRe We Are")
+                    let data = { user: { user_info: {} } }
+                    console.log("DATA IS", data)
+                    data.user.user_info.name = r.name;
+                    data.user.user_info.profile_picture = r.profile_picture;
+                    data.user.user_info.settings = r.settings;
+                    data.user.user_info.GUID = r.GUID;
+                    setThis("userData", JSON.stringify(data));
+                    user = new User(JSON.parse(getThis("userData")));
+                    user.guid = userGUID;
+                    user.name = r.name;
+                    user.profilePicture = r.profile_picture;
+                    user.settings = r.settings;
+                    console.log(data)
+                  }
+                },
+                // Failed
+                function (xhr, textStatus) {
+                });
+              myApp.closeModal(); // close the modal after valid input
+            }
+          },
+          disabled: true, // Initially disable the OK button
         },
-        disabled: true, // Initially disable the OK button
-      },
-    ],
-  });
+      ],
+    });
+  } else {
+    initUserLoggedIn(1)
+  }
 }
 
 $$('.dice').on('click', function () {
@@ -402,6 +424,8 @@ function handleRandomPublicMessage() {
 
         // Prepare the public message parameters with the random message data
         let publicMsgParms = { message_id: r.id, message: r.message };
+
+
 
         // Second AJAX: Send the public message
         $$.doAJAX('public-messages', publicMsgParms, 'POST', true,
