@@ -555,6 +555,9 @@ $$('.envelope').on('click', function () {
         buttons: [
           {
             text: 'حسنًا',
+            onClick: function() {
+              $$('.present').css('display','none');
+            }
           },
         ],
       });
