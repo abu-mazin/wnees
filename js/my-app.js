@@ -378,20 +378,13 @@ if (getThis('hideWelcomeScreen') == '1' && userGUID === undefined) {
                 function (r, textStatus, xhr) {
                   if (typeof r != 'undefined' && r != null) {
                     userGUID = r.GUID;
-                    console.log(userGUID, "HeRe We Are")
                     let data = { user: { user_info: {} } }
-                    console.log("DATA IS", data)
                     data.user.user_info.name = r.name;
                     data.user.user_info.profile_picture = r.profile_picture;
                     data.user.user_info.settings = r.settings;
                     data.user.user_info.GUID = r.GUID;
                     setThis("userData", JSON.stringify(data));
-                    user = new User(JSON.parse(getThis("userData")));
-                    user.guid = userGUID;
-                    user.name = r.name;
-                    user.profilePicture = r.profile_picture;
-                    user.settings = r.settings;
-                    console.log(data)
+                    initUserLoggedIn(1);
                   }
                 },
                 // Failed
