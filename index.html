@@ -196,9 +196,7 @@
                   <br />
                   <div style="font-size: 22px;">شارك مع مجهولين</div>
                   <img src="img/bottle.png" style="width: 175px;">
-                  <div
-                    style="width: 165px;margin: auto;font-size: 22px;font-weight: 600;background: #ff7400;/* background: #7e1414; */padding: 5px 20px;border-radius: 10px;">
-                    شارك</div>
+                  <div data-elm="share-message" class="share-btn">شارك</div>
                   <br />
                   <br />
                   <div style="font-size: 22px;">شارك في الشبكات الاجتماعية</div>
@@ -206,7 +204,7 @@
                   <div
                     style="display: flex;gap: 10px;font-size: 22px;background: #ffffff;padding: 10px 20px;border-radius: 10px;color: #000;">
                     <div style="padding: 0 5px;"><i class="fa fa-share"></i></div>
-                    <div style="padding: 0 5px;"><i class="fa fa-copy"></i></div>
+                    <div style="padding: 0 5px;" class="copy-btn"><i class="fa fa-copy"></i></div>
                     <div style=" text-align: left; overflow: hidden; text-overflow: ellipsis; text-wrap: nowrap;"
                       data-elm="message-share-link">http://localhost/soraateH/wnees/</div>
                   </div>
@@ -455,6 +453,8 @@
   <script type="text/javascript" src="cordova.js"></script>
   <!-- Framework7 Library -->
   <script type="text/javascript" src="lib/framework7/js/framework7.min.js"></script>
+    <!-- Framework7 toast plugin -->
+    <script type="text/javascript" src="lib/framework7/js/toast.js"></script>
   <!-- Define Global Vars -->
   <script type="text/javascript" src="js/vars.js"></script>
   <!-- Classes -->

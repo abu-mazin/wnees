@@ -446,16 +446,17 @@ function handleRandomPublicMessage() {
 
 
 
-$$('.random-msg').on('click', function () {
-  let key = $$(this).attr('key');
+$$('[data-elm="share-message"]').on('click', function () {
+  let key = $$('.random-msg').attr('key');
   let message = {};
   message.availabe_message_id = key;
   message.is_random = 1;
-  message.message = $$(this).text()
+  message.message = $$('.random-msg').text()
   $$.doAJAX(`messages`, message, 'POST', true,
     // Success (200)
     function (r, textStatus, xhr) {
-      console.log(r)
+      myApp.toast('تم الإرسال', { duration: 2000 }).show();
+
 
     },
     // Failed
@@ -566,6 +567,27 @@ $$('.envelope').on('click', function () {
     });
 })
 
+$$('.copy-btn').on('click',function(){
+  var textToCopy = $$('[data-elm="message-share-link"]')[0].textContent;
+  var tempTextarea = document.createElement('textarea');
+  tempTextarea.value = textToCopy;
+  
+  // Add the textarea to the DOM
+  document.body.appendChild(tempTextarea);
+
+  // Select the text inside the textarea
+  tempTextarea.select();
+  
+  // Copy the selected text to the clipboard
+  document.execCommand('copy');
+  
+  // Remove the temporary textarea from the DOM
+  document.body.removeChild(tempTextarea);
+  
+  // Optional: Notify the user that the text was copied
+  myApp.toast('تم نسخ الرابط', { duration: 2000 }).show();
+
+})
 
 $$('.logout').on('click', function () {
   initUserLogedout();

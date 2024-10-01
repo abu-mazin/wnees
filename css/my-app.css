@@ -649,7 +649,7 @@ li {
     top ease-out 0.5s,
     left ease-out 0.5s,
     transform ease-out 0.5s;
-    border-radius:10px 10px 0 0;
+  border-radius: 10px 10px 0 0;
 
 }
 
@@ -739,4 +739,15 @@ li {
 
 .received-messages img {
   width: 85%;
+}
+
+.share-btn {
+  width: 165px;
+  margin: auto;
+  font-size: 22px;
+  font-weight: 600;
+  background: #ff7400;
+  /* background: #7e1414; */
+  padding: 5px 20px;
+  border-radius: 10px;
 }
