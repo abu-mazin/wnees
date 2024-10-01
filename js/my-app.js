@@ -258,12 +258,14 @@ $$('.signUpForm-to-json').on('click', function (e) {
 
   // get form parameters
   var SignUPForm_parms = myApp.formToJSON('#signUpForm');
+  SignUPForm_parms.name = user.name;
   delete SignUPForm_parms.terms;
   $$.doAJAX('users/register', SignUPForm_parms, 'POST', false,
     // Success (200)
     function (r, textStatus, xhr) {
       console.log(r)
       initUserLoggedIn();
+      myApp.closeModal('.popup-signup');
 
     },
     // Failed
@@ -536,6 +538,13 @@ $$('.envelope').on('click', function () {
     // Success (200)
     function (r, textStatus, xhr) {
       console.log(r)
+      $$('.present').css('display','block');
+      $$('.present .lid').css({
+        'top': '-120px',
+        'transform': 'rotateZ(10deg)',
+        'left': '10px'
+      });
+      
       myApp.modal({
         text: `
         ${r.length === 0 ? `<div class="guest-popup-inner">

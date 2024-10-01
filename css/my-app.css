@@ -202,8 +202,8 @@ li {
   flex-direction: column;
   padding-top: 90px;
   padding-bottom: 0 !important;
-  background: rgb(201,26,59);
-  background: linear-gradient(180deg, rgba(201,26,59,1) 0%, rgba(241,48,85,1) 55%);
+  background: rgb(201, 26, 59);
+  background: linear-gradient(180deg, rgba(201, 26, 59, 1) 0%, rgba(241, 48, 85, 1) 55%);
   background: rgb(26, 121, 201);
   background: linear-gradient(180deg, rgba(26, 121, 201, 1) 0%, rgba(48, 175, 241, 1) 55%);
   color: var(--white);
@@ -236,8 +236,8 @@ li {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgb(201,26,59);
-  background: linear-gradient(180deg, rgba(201,26,59,1) 0%, rgba(241,48,85,1) 55%);
+  background: rgb(201, 26, 59);
+  background: linear-gradient(180deg, rgba(201, 26, 59, 1) 0%, rgba(241, 48, 85, 1) 55%);
   background: rgb(26, 121, 201);
   background: linear-gradient(180deg, rgba(26, 121, 201, 1) 0%, rgba(48, 175, 241, 1) 55%);
 }
@@ -368,7 +368,9 @@ li {
   background: #007aff;
 }
 
-.random-msg:hover::after, .random-msg:focus::after, .random-msg:active ::after{
+.random-msg:hover::after,
+.random-msg:focus::after,
+.random-msg:active ::after {
   content: '\2713';
   position: absolute;
   bottom: -44px;
@@ -395,7 +397,8 @@ li {
   color: #4ac552;
 } */
 .envelope {
-  flex: 0 0 28%; /*grow | shrink | basis */
+  flex: 0 0 28%;
+  /*grow | shrink | basis */
   height: 65px;
   display: flex;
   font-size: 42px;
@@ -415,11 +418,25 @@ li {
 }
 
 @keyframes shake {
-  0% { transform: rotate(0deg); }
-  25% { transform: rotate(5deg); }
-  50% { transform: rotate(0eg); }
-  75% { transform: rotate(-5deg); }
-  100% { transform: rotate(0deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  25% {
+    transform: rotate(5deg);
+  }
+
+  50% {
+    transform: rotate(0eg);
+  }
+
+  75% {
+    transform: rotate(-5deg);
+  }
+
+  100% {
+    transform: rotate(0deg);
+  }
 }
 
 .dice {
@@ -435,17 +452,49 @@ li {
 
 
 @keyframes shake2 {
-  0% { transform: translate(1px, 1px) rotate(0deg); }
-  10% { transform: translate(-1px, -2px) rotate(-1deg); }
-  20% { transform: translate(-3px, 0px) rotate(1deg); }
-  30% { transform: translate(3px, 2px) rotate(0deg); }
-  40% { transform: translate(1px, -1px) rotate(1deg); }
-  50% { transform: translate(-1px, 2px) rotate(-1deg); }
-  60% { transform: translate(-3px, 1px) rotate(0deg); }
-  70% { transform: translate(3px, 1px) rotate(-1deg); }
-  80% { transform: translate(-1px, -1px) rotate(1deg); }
-  90% { transform: translate(1px, 2px) rotate(0deg); }
-  100% { transform: translate(1px, -2px) rotate(-1deg); }
+  0% {
+    transform: translate(1px, 1px) rotate(0deg);
+  }
+
+  10% {
+    transform: translate(-1px, -2px) rotate(-1deg);
+  }
+
+  20% {
+    transform: translate(-3px, 0px) rotate(1deg);
+  }
+
+  30% {
+    transform: translate(3px, 2px) rotate(0deg);
+  }
+
+  40% {
+    transform: translate(1px, -1px) rotate(1deg);
+  }
+
+  50% {
+    transform: translate(-1px, 2px) rotate(-1deg);
+  }
+
+  60% {
+    transform: translate(-3px, 1px) rotate(0deg);
+  }
+
+  70% {
+    transform: translate(3px, 1px) rotate(-1deg);
+  }
+
+  80% {
+    transform: translate(-1px, -1px) rotate(1deg);
+  }
+
+  90% {
+    transform: translate(1px, 2px) rotate(0deg);
+  }
+
+  100% {
+    transform: translate(1px, -2px) rotate(-1deg);
+  }
 }
 
 
@@ -461,7 +510,8 @@ li {
   color: #ccc;
 }
 
-.modal-inner, .modal-buttons {
+.modal-inner,
+.modal-buttons {
   background-color: rgb(30 131 209);
 }
 
@@ -472,7 +522,8 @@ li {
 .modal-button {
   color: #fff;
 }
-.guest-popup-inner input{
+
+.guest-popup-inner input {
   height: 50px;
   border-radius: 8px;
   border: none;
@@ -485,9 +536,7 @@ li {
 }
 
 
-.modal-buttons .modal-button {
-
-}
+.modal-buttons .modal-button {}
 
 .send-message {
   width: 100%;
@@ -562,53 +611,66 @@ li {
   width: 410px;
   margin: 0 auto;
   position: fixed;
-  top: 50%;
+  top: 53%;
+  left: calc(50% - 205px);
+  z-index: 13500;
+  display: none;
 }
-.box, .lid {
+
+.box,
+.lid {
   background:
     -webkit-radial-gradient(white 15%, transparent 15.1%),
     -webkit-radial-gradient(white 15%, transparent 15.1%),
-  rgb(240, 58, 58);
+    rgb(240, 58, 58);
   background-position: 0 0, 25px 25px;
   background-size: 50px 50px;
   position: relative;
   margin: 0 auto;
 }
+
 .box {
   width: 200px;
   height: 125px;
 }
+
 .lid {
   width: 200px;
   height: 35px;
-  box-shadow: 1px 2px 3px rgba(0,0,0,0.2);
+  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.2);
   z-index: 1;
   padding: 0 2px;
   background-color: rgb(216, 52, 52);
   /* transitions */
   top: 0;
   left: 0;
-  transition: 
+  transition:
     top ease-out 0.5s,
     left ease-out 0.5s,
     transform ease-out 0.5s;
 }
-.box span, .lid span {
+
+.box span,
+.lid span {
   position: absolute;
   display: block;
   background: rgba(235, 199, 0, 0.8);
-  box-shadow: 1px 2px 3px rgba(0,0,0,0.1);
+  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.1);
 }
+
 .box span:first-child {
   width: 100%;
   height: 30px;
   top: 40px;
 }
-.box span:last-child, .lid span {
+
+.box span:last-child,
+.lid span {
   width: 30px;
   height: 100%;
   left: 85px;
 }
+
 .lid span {
   left: 85px;
 }
@@ -623,41 +685,44 @@ li {
   top: 10px;
   transition: all ease-out 0.7s;
 }
+
 .promo p {
   font-size: 24px;
   margin: 0;
 }
+
 .promo h2 {
   font-size: 40px;
   margin: 0;
 }
 
 /* hover effects */
-.present:hover .lid {
+/* .present:hover .lid {
   top: -100px;
   transform: rotateZ(10deg);
   left: 10px;
-}
+} */
+
 .present:hover .promo {
   top: -80px;
 }
 
 /* float button */
-.float-button{
+.float-button {
   position: fixed;
-    z-index: 999999;
-    bottom: 50px;
-    left: 13px;
-    background: rgb(30 131 209);
-    width: 55px;
-    height: 55px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
+  z-index: 999999;
+  bottom: 50px;
+  left: 13px;
+  background: rgb(30 131 209);
+  width: 55px;
+  height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
 }
 
-.float-button img{
+.float-button img {
   width: 28px;
 }
 
