@@ -182,7 +182,7 @@
                   </div>
                   <!-- <div class="random-msg-sent"></div> -->
                   <br />
-                  <a href="send-message.html" style="font-weight: 600;">أو اكتب رسالتك / سؤالك</a>
+                  <a href="#" class="open-picker" data-picker=".picker-send-message" style="font-weight: 600;">أو اكتب رسالتك / سؤالك</a>
                   <br />
                   <br />
                 </div>
@@ -260,14 +260,15 @@
       <span></span>
     </div>
     <div class="promo">
-      <p>20% off promo</p>
-      <h2>CHRISTMAS2020</h2>
+      <!-- <p>20% off promo</p>
+      <h2>CHRISTMAS2020</h2> -->
     </div>
     <div class="box">
       <span></span>
       <span></span>
     </div>
   </div>
+
   <div class="popup popup-login">
     <div class="navbar">
       <div class="navbar-inner">
@@ -447,6 +448,27 @@
   <!-- PICKERS ######################################## -->
   <!-- EMPLOYEES FILTER PICKER -->
   <div class="picker-overlay close-picker"></div>
+
+  <!-- SEND MESSAGE PICKER -->
+  <div class="picker-modal picker-send-message styled-picker">
+    <div class="toolbar">
+      <div class="toolbar-inner">
+        <div class="left">
+          <a href="#" class="close-picker link icon-only"><i class="fa fa-times"></i></a>
+        </div>
+        <div class="center"></div>
+        <div class="right">
+        </div>
+      </div>
+    </div>
+    <div class="picker-modal-picker">
+      <form id="sendMessageForm" name="send-message-form" action="#" class="content-block message-form" method="post" accept-charset="UTF-8">
+        <div class="write-msg">اكتب رسالتك / سؤالك</div>
+        <div><textarea name="message" class="send-message" id=""></textarea></div>
+        <div><a class="submit-message item-link button button-fill">إرسال</a></div>
+      </form>
+    </div>
+  </div>
 
   <!-- SCRIPTS ######################################## -->
   <!-- Cordova JS -->
