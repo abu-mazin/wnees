@@ -368,7 +368,7 @@ li {
   background: #007aff;
 }
 
-.random-msg:hover::after,
+/* .random-msg:hover::after,
 .random-msg:focus::after,
 .random-msg:active ::after {
   content: '\2713';
@@ -381,7 +381,7 @@ li {
   font-size: 52px;
   font-weight: 600;
   color: #4ac552;
-}
+} */
 
 /* .random-msg-sent {
   content: '\2713';
