@@ -6,10 +6,23 @@ myApp.onPageInit('received_messages', function (page) {
       if(r.length === 0) {
         $$('.received-messages').append(
           `
-            <img src="img/no-recieved-message.png" alt="" />
-            <div style="font-size: 22px">لا يوجد رسائل مستلمة بعد</div>
+            <div class="no-messages">
+              <img src="img/no-recieved-message.png" alt="" />
+              <div style="font-size: 22px">لا يوجد رسائل مستلمة بعد</div>
+            </div>
           `
         )
+      } else {
+        r.forEach(msg=> {
+          $$('.received-messages').append(
+            `
+            <div class="received-message">
+              <span class="message-content">${msg.message}</span>
+              <span class="message-sender">من ${msg.sender.name}</span>
+            </div>
+            `
+          )
+        })
       }
         
     },

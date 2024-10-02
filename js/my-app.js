@@ -347,6 +347,7 @@ function initUserLogedout() {
 
   userLogedin = false;
   user = undefined;
+  userGUID = undefined;
   setThis("hideWelcomeScreen", 1);
   $$('[data-elm="user-image"]').attr('src', 'img/user-pic.svg');
   $$('*[data-elm="user-name"]').empty();
@@ -354,54 +355,58 @@ function initUserLogedout() {
   $$('.navbar-user-name').show();
   $$('.logout').hide();
 
+  isGuest();
 }
 
-if (getThis('hideWelcomeScreen') == '1' && userGUID === undefined) {
-  let data = JSON.parse(getThis("userData"));
-  if (!data) {
-    myApp.modal({
-      text: `
-      <div class="guest-popup-inner">
-        <span>من فضلك أدخل اسمك</span>
-        <input type="text" data-elm="guest-name" placeholder="أدخل اسمك هنا" />
-      </div>`,
-      buttons: [
-        {
-          text: 'إرسـال',
-          close: false, // prevent closing until valid input
-          onClick: function () {
-            var userName = $$('[data-elm="guest-name"]').val().trim();
-            if (userName.length >= 3) {
-              // Your callback logic here
-              $$.doAJAX('users-info', { name: userName }, 'POST', true,
-                // Success (200)
-                function (r, textStatus, xhr) {
-                  if (typeof r != 'undefined' && r != null) {
-                    userGUID = r.GUID;
-                    let data = { user: { user_info: {} } }
-                    data.user.user_info.name = r.name;
-                    data.user.user_info.profile_picture = r.profile_picture;
-                    data.user.user_info.settings = r.settings;
-                    data.user.user_info.GUID = r.GUID;
-                    setThis("userData", JSON.stringify(data));
-                    initUserLoggedIn(1);
-                  }
-                },
-                // Failed
-                function (xhr, textStatus) {
-                });
-              myApp.closeModal(); // close the modal after valid input
-            }
+function isGuest() {
+  if (getThis('hideWelcomeScreen') == '1' && userGUID === undefined) {
+    let data = JSON.parse(getThis("userData"));
+    if (!data) {
+      myApp.modal({
+        text: `
+        <div class="guest-popup-inner">
+          <span>من فضلك أدخل اسمك</span>
+          <input type="text" data-elm="guest-name" placeholder="أدخل اسمك هنا" />
+        </div>`,
+        buttons: [
+          {
+            text: 'إرسـال',
+            close: false, // prevent closing until valid input
+            onClick: function () {
+              var userName = $$('[data-elm="guest-name"]').val().trim();
+              if (userName.length >= 3) {
+                // Your callback logic here
+                $$.doAJAX('users-info', { name: userName }, 'POST', true,
+                  // Success (200)
+                  function (r, textStatus, xhr) {
+                    if (typeof r != 'undefined' && r != null) {
+                      userGUID = r.GUID;
+                      let data = { user: { user_info: {} } }
+                      data.user.user_info.name = r.name;
+                      data.user.user_info.profile_picture = r.profile_picture;
+                      data.user.user_info.settings = r.settings;
+                      data.user.user_info.GUID = r.GUID;
+                      setThis("userData", JSON.stringify(data));
+                      initUserLoggedIn(1);
+                    }
+                  },
+                  // Failed
+                  function (xhr, textStatus) {
+                  });
+                myApp.closeModal(); // close the modal after valid input
+              }
+            },
+            disabled: true, // Initially disable the OK button
           },
-          disabled: true, // Initially disable the OK button
-        },
-      ],
-    });
-  } else {
-    initUserLoggedIn(1)
+        ],
+      });
+    } else {
+      initUserLoggedIn(1)
+    }
   }
 }
 
+isGuest();
 $$('.dice').on('click', function () {
   $$(this).addClass('shake-animation');
   handleRandomPublicMessage();
@@ -553,6 +558,15 @@ $$('.envelope').on('click', function () {
     // Success (200)
     function (r, textStatus, xhr) {
       console.log(r)
+
+      r.forEach(res=>{
+        $$('[data-elm="available-responses"]').append(`
+          <div class="envelope">
+            <i class="fa fa-envelope" style="margin: auto;"></i>
+          </div>
+          `)
+      });
+      
       $$('.present').css('display','block');
       $$('.present .lid').css({
         'top': '-120px',
