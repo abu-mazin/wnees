@@ -321,7 +321,7 @@ function initUserLoggedIn(guest = 0) {
   } else {
     $$('[data-elm="user-image"]').attr('src', 'img/user-pic.svg');
   }
-  if(guest === 0) {
+  if (guest === 0) {
     userLogedin = true;
     $$('.navbar-user-name').hide();
     $$('.logout').show();
@@ -460,7 +460,7 @@ $$('[data-elm="share-message"]').on('click', function () {
   $$.doAJAX(`messages`, message, 'POST', true,
     // Success (200)
     function (r, textStatus, xhr) {
-      myApp.toast('تم الإرسال',  '✓',{ duration: 2000 }).show();
+      myApp.toast('تم الإرسال', '✓', { duration: 2000 }).show();
 
 
     },
@@ -548,77 +548,83 @@ $$('.submit-message').on('click', function (e) {
     // Failed
     function (xhr, textStatus) {
       // Failed notification
-        failedNotification4AjaxRequest(xhr, textStatus);
+      failedNotification4AjaxRequest(xhr, textStatus);
     });
 });
 
 
-$$('.envelope').on('click', function () {
-  $$.doAJAX('available-responses', {}, 'GET', false,
-    // Success (200)
-    function (r, textStatus, xhr) {
-      console.log(r)
-
-      r.forEach(res=>{
+// $$('.envelope').on('click', function () {
+// })
+$$.doAJAX('available-responses', {}, 'GET', false,
+  // Success (200)
+  function (r, textStatus, xhr) {
+    console.log(r)
+    console.log(r.length)
+    if (r.length == 0) {
+      $$('[data-elm="available-responses"]').append(`
+        <span>تنبيه لا يوحد ردود...</span>
+        `)
+    } else {
+      r.forEach(res => {
         $$('[data-elm="available-responses"]').append(`
-          <div class="envelope">
-            <i class="fa fa-envelope" style="margin: auto;"></i>
-          </div>
-          `)
+        <div class="envelope">
+          <i class="fa fa-envelope" style="margin: auto;"></i>
+        </div>
+        `)
       });
-      
-      $$('.present').css('display','block');
-      $$('.present .lid').css({
-        'top': '-120px',
-        'transform': 'rotateZ(10deg)',
-        'left': '10px'
-      });
-      
-      myApp.modal({
-        text: `
-        ${r.length === 0 ? `<div class="guest-popup-inner">
-            <span>لا يوجد ردود بعد</span>
-          </div>`: `<div class="guest-popup-inner">
-            <span>من فضلك أدخل اسمك</span>
-          </div>`}`,
-        buttons: [
-          {
-            text: 'حسنًا',
-            onClick: function() {
-              $$('.present').css('display','none');
-            }
-          },
-        ],
-      });
+    }
 
-    },
-    // Failed
-    function (xhr, textStatus) {
-      // Failed notification
-      if (textStatus == 401)
-        myApp.alert('البريد الإلكتروني غير صحيح.');
-      else
-        failedNotification4AjaxRequest(xhr, textStatus);
-    });
-})
+    // $$('.present').css('display', 'block');
+    // $$('.present .lid').css({
+    //   'top': '-120px',
+    //   'transform': 'rotateZ(10deg)',
+    //   'left': '10px'
+    // });
 
-$$('.copy-btn').on('click',function(){
+    // myApp.modal({
+    //   text: `
+    //   ${r.length === 0 ? `<div class="guest-popup-inner">
+    //       <span>لا يوجد ردود بعد</span>
+    //     </div>`: `<div class="guest-popup-inner">
+    //       <span>من فضلك أدخل اسمك</span>
+    //     </div>`}`,
+    //   buttons: [
+    //     {
+    //       text: 'حسنًا',
+    //       onClick: function () {
+    //         $$('.present').css('display', 'none');
+    //       }
+    //     },
+    //   ],
+    // });
+
+  },
+  // Failed
+  function (xhr, textStatus) {
+    // Failed notification
+    if (textStatus == 401)
+      myApp.alert('البريد الإلكتروني غير صحيح.');
+    else
+      failedNotification4AjaxRequest(xhr, textStatus);
+  });
+
+$$('.copy-btn').on('click', function () {
   var textToCopy = $$('[data-elm="message-share-link"]')[0].textContent;
   var tempTextarea = document.createElement('textarea');
   tempTextarea.value = textToCopy;
-  
+
   // Add the textarea to the DOM
   document.body.appendChild(tempTextarea);
 
   // Select the text inside the textarea
   tempTextarea.select();
-  
+
   // Copy the selected text to the clipboard
   document.execCommand('copy');
-  
+
   // Remove the temporary textarea from the DOM
   document.body.removeChild(tempTextarea);
-  
+
   // Optional: Notify the user that the text was copied
   myApp.toast('تم نسخ الرابط', { duration: 2000 }).show();
 

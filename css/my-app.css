@@ -879,3 +879,20 @@ li {
 .message-sender {
   color: #ccc;
 }
+
+.auth-title,
+.forget-password,
+.register-link {
+  color: #1c86d4;
+}
+
+.register-links-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.register-links-container  span {
+  color: #ccc;
+}

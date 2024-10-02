@@ -283,7 +283,7 @@
       <form name="signInForm" class="signInForm" id="signInForm" action="#" method="post" accept-charset="UTF-8">
         <div class="content-block">
           <div class="header">
-            <h1 data-i18n-key="signin">تسجيل الدخول</h1>
+            <h1 class="auth-title" data-i18n-key="signin">تسجيل الدخول</h1>
           </div>
           <form>
             <div class="list-block inset">
@@ -322,9 +322,9 @@
           </form>
           <div class="content-block">
             <a class="signInForm-to-json item-link button button-fill">تسجيل الدخول</a>
-            <p>
+            <p class="register-links-container">
               <span data-i18n-key="don't_have_account_?">ليس لدي حساب؟</span>
-              <a href="#" class="open-popup" data-popup=".popup-signup" data-i18n-key="create_a_new_account">إنشاء
+              <a href="#" class="open-popup register-link" data-popup=".popup-signup" data-i18n-key="create_a_new_account">إنشاء
                 حساب جديد</a>
             </p>
           </div>
@@ -352,7 +352,10 @@
         <div class="right"></div>
       </div>
     </div>
-    <div class="login-form-container">
+    <div class="login-form-container content-block">
+      <div class="header">
+        <h1 class="auth-title" data-i18n-key="signin">حساب جديد</h1>
+      </div>
       <form name="signUpForm" id="signUpForm" action="#" method="post" accept-charset="UTF-8">
         <div class="content-block">
           <div class="list-block inset">
@@ -398,10 +401,14 @@
 
         <div class="content-block">
           <a class="signUpForm-to-json item-link button button-fill">تسجيل</a>
+          <p class="register-links-container">
+            <span data-i18n-key="don't_have_account_?">لديك حساب؟</span>
+            <a href="#" class="open-popup register-link" data-popup=".popup-login" data-i18n-key="create_a_new_account">تسجيل الدخول</a>
+          </p>
         </div>
-        <div class="content-block">
+        <!-- <div class="content-block">
           <a href="#" class="color-white button showSigninForm-link">دخول حسابي</a>
-        </div>
+        </div> -->
       </form>
     </div>
   </div>
