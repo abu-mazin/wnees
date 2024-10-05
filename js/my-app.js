@@ -175,8 +175,6 @@ function failedNotification4AjaxRequest(xhr, textStatus) {
   }
 }
 
-
-
 // ======================================
 // WELCOME SCREEN
 // ======================================
@@ -187,7 +185,6 @@ var welcomeSlider = myApp.swiper('.welcome-screen-swiper', {
 $$('.welcome-screen').on('popup:close', function () {
   setThis("hideWelcomeScreen", 1);
 });
-
 
 // ======================================
 // REGISTER/LOGIN SCREEN
@@ -238,7 +235,6 @@ $$('.signInFormLink').on('click', function (e) {
   myApp.closeModal('.login-screen');
 });
 
-
 $$('[data-elm="guest-name"]').on('input', function () {
   var input = $$(this).val().replace(/\s/g, ''); // Remove spaces
   if (input.length >= 3) {
@@ -248,15 +244,8 @@ $$('[data-elm="guest-name"]').on('input', function () {
   }
 });
 
-$$('[data-elm="close-welcome-screen"]').on('click', function () {
-
-})
-
-
 $$('.signUpForm-to-json').on('click', function (e) {
   e.preventDefault();
-
-  // get form parameters
   var SignUPForm_parms = myApp.formToJSON('#signUpForm');
   SignUPForm_parms.name = user.name;
   delete SignUPForm_parms.terms;
@@ -307,7 +296,9 @@ $$('.signInForm-to-json').on('click', function (e) {
   return false;
 });
 
-if (typeof getThis("logedinUser") !== "undefined" && getThis("logedinUser") == 1) { initUserLoggedIn(); }
+if (typeof getThis("logedinUser") !== "undefined" && getThis("logedinUser") == 1) { 
+  initUserLoggedIn(); 
+}
 
 function initUserLoggedIn(guest = 0) {
   user = new User(JSON.parse(getThis("userData")));
@@ -328,8 +319,6 @@ function initUserLoggedIn(guest = 0) {
   }
 }
 
-
-// logout and clear all stored data
 function initUserLogedout() {
   //clear all data
   if (useDB) {
@@ -418,15 +407,12 @@ function handleRandomPublicMessage() {
     $$.doAJAX('available-messages/random', { GUID: userGUID }, 'GET', true,
       // Success (200) - when random message is successfully retrieved
       function (r, textStatus, xhr) {
-        $$('.random-msg').text(r.message);
-        $$('.random-msg').attr('key', r.id);
+        $$('.random-message').text(r.message);
+        $$('.random-message').attr('key', r.id);
         $$('.dice').removeClass('shake-animation');
 
         // Prepare the public message parameters with the random message data
         let publicMsgParms = { message_id: r.id, message: r.message };
-
-
-
         // Second AJAX: Send the public message
         $$.doAJAX('public-messages', publicMsgParms, 'POST', true,
           // Success (200) - when public message is successfully sent
@@ -449,28 +435,6 @@ function handleRandomPublicMessage() {
   });
 }
 
-
-
-$$('[data-elm="share-message"]').on('click', function () {
-  let key = $$('.random-msg').attr('key');
-  let message = {};
-  message.availabe_message_id = key;
-  message.is_random = 1;
-  message.message = $$('.random-msg').text()
-  $$.doAJAX(`messages`, message, 'POST', true,
-    // Success (200)
-    function (r, textStatus, xhr) {
-      myApp.toast('تم الإرسال', '✓', { duration: 2000 }).show();
-
-
-    },
-    // Failed
-    function (xhr, textStatus) {
-      // Failed notification
-      failedNotification4AjaxRequest(xhr, textStatus);
-    });
-})
-
 $$('#profile_picture').on('change', function (event) {
   var input = event.target;
 
@@ -489,8 +453,6 @@ $$('.changeSettingsForm').on('click', function (e) {
   // Create a FormData object instead of using JSON
   var formData = new FormData($$('#change-settings')[0]); // Serialize form into FormData
   formData.append('_method', 'PUT'); // Add _method field to FormData
-  console.log(JSON.stringify(formData))
-
 
   // Get the file input element
   var fileInput = $$('#profile_picture')[0];
@@ -552,9 +514,35 @@ $$('.submit-message').on('click', function (e) {
     });
 });
 
+$$('[data-elm="share-message"]').on('click', function () {
+  let key = $$('.random-message').attr('key');
+  let message = {};
+  message.availabe_message_id = key;
+  message.is_random = 1;
+  message.message = $$('.random-message').text()
+  $$.doAJAX(`messages`, message, 'POST', true,
+    // Success (200)
+    function (r, textStatus, xhr) {
+      myApp.toast('تم الإرسال', '✓', { duration: 2000 }).show();
+    },
+    // Failed
+    function (xhr, textStatus) {
+      // Failed notification
+      failedNotification4AjaxRequest(xhr, textStatus);
+    });
+});
 
-// $$('.envelope').on('click', function () {
-// })
+$$('[data-elm=copy-btn]').on('click', function () {
+  var textToCopy = $$('[data-elm="message-share-link"]')[0].textContent;
+  var tempTextarea = document.createElement('textarea');
+  tempTextarea.value = textToCopy;
+  document.body.appendChild(tempTextarea);
+  tempTextarea.select();
+  document.execCommand('copy');
+  document.body.removeChild(tempTextarea);
+  myApp.toast('تم نسخ الرابط', { duration: 2000 }).show();
+});
+
 $$.doAJAX('available-responses', {}, 'GET', false,
   // Success (200)
   function (r, textStatus, xhr) {
@@ -606,29 +594,7 @@ $$.doAJAX('available-responses', {}, 'GET', false,
       myApp.alert('البريد الإلكتروني غير صحيح.');
     else
       failedNotification4AjaxRequest(xhr, textStatus);
-  });
-
-$$('.copy-btn').on('click', function () {
-  var textToCopy = $$('[data-elm="message-share-link"]')[0].textContent;
-  var tempTextarea = document.createElement('textarea');
-  tempTextarea.value = textToCopy;
-
-  // Add the textarea to the DOM
-  document.body.appendChild(tempTextarea);
-
-  // Select the text inside the textarea
-  tempTextarea.select();
-
-  // Copy the selected text to the clipboard
-  document.execCommand('copy');
-
-  // Remove the temporary textarea from the DOM
-  document.body.removeChild(tempTextarea);
-
-  // Optional: Notify the user that the text was copied
-  myApp.toast('تم نسخ الرابط', { duration: 2000 }).show();
-
-})
+});
 
 $$('.logout').on('click', function () {
   initUserLogedout();

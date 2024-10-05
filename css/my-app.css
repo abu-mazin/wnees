@@ -351,94 +351,7 @@ li {
   margin-bottom: 10px;
 }
 
-.random-msg {
-  position: relative;
-  margin-top: 10px;
-  padding: 20px;
-  /*
-  background: #bf103180;
-  background: #59020245;
-  border: 1px solid #ab1734;
-  border: 1px solid #c5c13f;
-  */
-  border: 4px solid #c5c13f33;
-  border-radius: 50px;
-  font-size: 22px;
-  font-weight: 500;
-  background: #007aff;
-}
-
-/* .random-msg:hover::after,
-.random-msg:focus::after,
-.random-msg:active ::after {
-  content: '\2713';
-  position: absolute;
-  bottom: -44px;
-  left: -10px;
-  background: #0000003b;
-  padding: 15px 22px;
-  border-radius: 50%;
-  font-size: 52px;
-  font-weight: 600;
-  color: #4ac552;
-} */
-
-/* .random-msg-sent {
-  content: '\2713';
-
-  position: absolute;
-  bottom: -44px;
-  left: -10px;
-  background: #0000003b;
-  padding: 15px 22px;
-  border-radius: 50%;
-  font-size: 52px;
-  font-weight: 600;
-  color: #4ac552;
-} */
-.envelope {
-  flex: 0 0 28%;
-  /*grow | shrink | basis */
-  height: 65px;
-  display: flex;
-  font-size: 42px;
-  background: #00000021;
-  background: #ff4f4f;
-  border: 1px solid #cd6a6a;
-  border: 1px solid #ff9e9e;
-  border-radius: 5px;
-}
-
-.envelope i {
-  /* Start the shake animation and make the animation last for 0.5 seconds */
-  animation: shake 1.5s;
-
-  /* When the animation is finished, start again */
-  animation-iteration-count: infinite;
-}
-
-@keyframes shake {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  25% {
-    transform: rotate(5deg);
-  }
-
-  50% {
-    transform: rotate(0eg);
-  }
-
-  75% {
-    transform: rotate(-5deg);
-  }
-
-  100% {
-    transform: rotate(0deg);
-  }
-}
-
+/* STEP 1 STYLES */
 .dice {
   width: 100px;
   fill: #750017;
@@ -449,7 +362,6 @@ li {
   animation: shake2 0.5s;
   animation-iteration-count: infinite;
 }
-
 
 @keyframes shake2 {
   0% {
@@ -497,7 +409,141 @@ li {
   }
 }
 
+.random-message {
+  position: relative;
+  margin-top: 10px;
+  padding: 20px;
+  /*
+  background: #bf103180;
+  background: #59020245;
+  border: 1px solid #ab1734;
+  border: 1px solid #c5c13f;
+  */
+  border: 4px solid #c5c13f33;
+  border-radius: 50px;
+  font-size: 22px;
+  font-weight: 500;
+  background: #007aff;
+}
 
+/* 
+.random-message:hover::after,
+.random-message:focus::after,
+.random-message:active ::after {
+  content: '\2713';
+  position: absolute;
+  bottom: -44px;
+  left: -10px;
+  background: #0000003b;
+  padding: 15px 22px;
+  border-radius: 50%;
+  font-size: 52px;
+  font-weight: 600;
+  color: #4ac552;
+} 
+
+.random-message-sent {
+  content: '\2713';
+  position: absolute;
+  bottom: -44px;
+  left: -10px;
+  background: #0000003b;
+  padding: 15px 22px;
+  border-radius: 50%;
+  font-size: 52px;
+  font-weight: 600;
+  color: #4ac552;
+} 
+*/
+
+/* STEP 2 STYLES */
+.share-btn {
+  width: 165px;
+  margin: auto;
+  font-size: 22px;
+  font-weight: 600;
+  background: #ff7400;
+  /* background: #7e1414; */
+  padding: 5px 20px;
+  border-radius: 10px;
+}
+
+.message-link-container {
+  display: flex;
+  gap: 10px;
+  font-size: 22px;
+  background: #ffffff;
+  padding: 10px 20px;
+  border-radius: 10px;
+  color: #000;
+}
+
+.message-link-container .icon {
+  padding: 0 5px;
+}
+
+.message-share-link {
+  overflow: hidden;
+  text-wrap: nowrap;
+  text-overflow: ellipsis;
+  text-align: left;
+}
+
+.social-media-icon {
+  width: 45px;
+}
+
+/* STEP 3 STYLES */
+.available-responses {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+.envelope {
+  flex: 0 0 28%;
+  /*grow | shrink | basis */
+  height: 65px;
+  display: flex;
+  font-size: 42px;
+  background: #00000021;
+  background: #ff4f4f;
+  border: 1px solid #cd6a6a;
+  border: 1px solid #ff9e9e;
+  border-radius: 5px;
+}
+
+.envelope i {
+  margin: auto;
+  animation: shake 1.5s;
+  animation-iteration-count: infinite;
+}
+
+@keyframes shake {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  25% {
+    transform: rotate(5deg);
+  }
+
+  50% {
+    transform: rotate(0eg);
+  }
+
+  75% {
+    transform: rotate(-5deg);
+  }
+
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+/* GUEST POPUP */
 .guest-popup-inner {
   display: flex;
   flex-direction: column;
@@ -510,19 +556,6 @@ li {
   color: #ccc;
 }
 
-.modal-inner,
-.modal-buttons {
-  background-color: rgb(30 131 209);
-}
-
-.modal-button {
-  background-color: rgb(0 115 203);
-}
-
-.modal-button {
-  color: #fff;
-}
-
 .guest-popup-inner input {
   height: 50px;
   border-radius: 8px;
@@ -530,13 +563,20 @@ li {
   padding: 0 10px;
 }
 
+/* MODAL */
+.modal-inner,
+.modal-buttons {
+  background-color: rgb(30 131 209);
+}
 
 .modal-inner::after {
   display: none;
 }
 
-
-.modal-buttons .modal-button {}
+.modal-button {
+  background-color: rgb(0 115 203);
+  color: #fff;
+}
 
 .send-message {
   width: 100%;
@@ -650,7 +690,6 @@ li {
     left ease-out 0.5s,
     transform ease-out 0.5s;
   border-radius: 10px 10px 0 0;
-
 }
 
 .box span,
@@ -699,13 +738,6 @@ li {
   margin: 0;
 }
 
-/* hover effects */
-/* .present:hover .lid {
-  top: -100px;
-  transform: rotateZ(10deg);
-  left: 10px;
-} */
-
 .present:hover .promo {
   top: -80px;
 }
@@ -745,17 +777,6 @@ li {
   width: 85%;
 }
 
-.share-btn {
-  width: 165px;
-  margin: auto;
-  font-size: 22px;
-  font-weight: 600;
-  background: #ff7400;
-  /* background: #7e1414; */
-  padding: 5px 20px;
-  border-radius: 10px;
-}
-
 /** PICKER STYLE **/
 
 .styled-picker {
@@ -773,14 +794,6 @@ li {
 .styled-picker .toolbar::before {
   content: none;
 }
-
-
-/*
-.styled-picker .picker-modal-inner:not(.picker-items) {
-  max-height: 550px;
-  overflow: auto;
-}
-*/
 
 @media (max-aspect-ratio: 9/16) {
   .styled-picker .picker-modal-inner:not(.picker-items) {
@@ -848,27 +861,23 @@ li {
   display: none;
 }
 
-/* .styled-picker:not(.is-favourite) .fav .fas.fa-heart {
-  display: none;
-} */
-
-.write-msg {
+.write-message {
   color: #fff76f;
   font-weight: 500;
   margin-bottom: 10px;
 }
 
 .received-message {
-    border: 3px solid #59c5e3;
-    border-radius: 10px 10px 0;
-    width: calc(100% - 20px);
-    margin: 10px;
-    background: #bf103133;
-    min-height: 48px;
-    display: flex;
-    flex-direction: column;
-    padding: 10px;
-
+  border: 3px solid #59c5e3;
+  border-radius: 10px 10px 0;
+  width: calc(100% - 20px);
+  margin: 10px;
+  background: #bf103133;
+  min-height: 48px;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  gap: 10px;
 }
 
 .message-content {
@@ -878,6 +887,17 @@ li {
 
 .message-sender {
   color: #ccc;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  
+}
+
+img.sender-image {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .auth-title,
@@ -893,6 +913,6 @@ li {
   gap: 5px;
 }
 
-.register-links-container  span {
+.register-links-container span {
   color: #ccc;
 }

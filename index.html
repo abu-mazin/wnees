@@ -178,11 +178,10 @@
                       d="m116.3383942 21.8710995c-1.4667969-4.1479988-6.0615005-8.7421999-10.2094955-10.2094994l-31.0820008-10.9941001c-1.1405945-.4033-2.415596-.5943-3.7309952-.5943-3.4687042 0-7.2119064 1.3277-9.467804 3.5834999l-24.1913986 24.1914008c-1.5786018 1.5786991-2.7630997 3.9062996-3.3964005 6.3696995l.7972984-.3809013c2.4473039-1.1683999 5.6231004-1.8120004 8.942402-1.8120004.2974014 0 .5918007.0112.8866997.0214996 1.1738014-1.2753982 2.535202-2.0463981 3.793499-2.0463981.3344002 0 .661602.0531998.9751015.1646004 1.2098999.4295998 1.9790001 1.6385994 2.2406998 3.2249985.3608017.1397018.7118988.2876015 1.0469017.4477997l12.6220016 6.0259018c1.3588943-2.3466988 3.340393-3.8633004 5.1152954-3.8633004.3348999-.0004997.6615982.0531998.9756012.1646004 2.1654968.7679977 2.9287033 4.0248985 1.8675995 7.4980011l5.2076035 2.4862976 1.0277939-1.0375977-10.859398-38.7998013c-.2997971-1.0630002.3189011-2.1679001 1.3819046-2.4677 1.0663986-.2989001 2.168396.3188 2.4676971 1.3817997l10.9677963 39.1849976 38.9253006 11.1016006c1.0619965.3031998 1.6772003 1.410202 1.373497 2.4722023-.2509995.8783989-1.0516968 1.4510994-1.9217987 1.4510994-.1631012 0-31.8632965-9.0141029-38.521492-10.9081993 2.2372971 1.3344994 4.2186966 3.372097 5.6966934 5.7265968 1.2559052.349102 2.1993027 1.0552025 2.5660019 2.0903015.3192978.899498.1591034 1.908699-.3692017 2.8941002.3404008 1.2583022.5342027 2.5288024.5342027 3.7685027v31.077198c3.0903015-.4458008 6.1952972-1.7842026 8.1519012-3.7406998l24.1913986-24.1913986c3.1112976-3.1114006 4.4560013-9.0508003 2.9891968-13.1988029zm-49.1029969 1.4169998c-1.2695999 2.8022003-3.753498 4.7119007-5.9160957 4.7119007-.3348999 0-.661602-.0459003-.975502-.1410999-2.3394012-.711401-3.0454979-3.9120998-1.578701-7.147501 1.2691002-2.8016987 3.7530021-4.7113991 5.9151001-4.7113991.3348999 0 .6621017.0459003.9756012.1410999 2.3397979.711401 3.0467987 3.9120999 1.5795974 7.1469994zm34.9720993 13.9214001c-.5355987.5355987-1.2871017.7905006-2.1557006.7905006-1.7944946 0-4.0903931-1.0858994-6.0283966-3.0238991-2.8763962-2.8764992-3.8754959-6.5415001-2.2329025-8.1841011.5371017-.5370998 1.2891006-.7919998 2.1592025-.7919998 1.7939987 0 4.0888977 1.0858994 6.0263977 3.0233994 2.8768997 2.876501 3.8764038 6.5410995 2.2313995 8.1861zm6.2958985 32.0258979c-1.3320008.5175019-2.659195.7646027-3.8554993.7646027-2.1927948 0-3.9458008-.830101-4.4828949-2.3432999-.8300018-2.3403015 1.556694-5.4257011 5.3320999-6.8921013 1.3319931-.517498 2.659195-.7645988 3.8554001-.7645988 2.192894 0 3.9462967.8306007 4.4828949 2.3446999.8296051 2.3389015-1.5565948 5.4242973-5.3320007 6.8906974z" />
                   </svg>
                   <div style="color: #ccc;">اضغط على النرد لاختيار رسالة جديدة</div>
-                  <div class="random-msg">
-                  </div>
-                  <!-- <div class="random-msg-sent"></div> -->
+                  <div class="random-message"></div>
                   <br />
-                  <a href="#" class="open-picker" data-picker=".picker-send-message" style="font-weight: 600;">أو اكتب رسالتك / سؤالك</a>
+                  <a href="#" class="open-picker" data-picker=".picker-send-message" style="font-weight: 600;">أو اكتب
+                    رسالتك / سؤالك</a>
                   <br />
                   <br />
                 </div>
@@ -201,21 +200,19 @@
                   <br />
                   <div style="font-size: 22px;">شارك في الشبكات الاجتماعية</div>
                   <br />
-                  <div
-                    style="display: flex;gap: 10px;font-size: 22px;background: #ffffff;padding: 10px 20px;border-radius: 10px;color: #000;">
-                    <div style="padding: 0 5px;"><i class="fa fa-share"></i></div>
-                    <div style="padding: 0 5px;" class="copy-btn"><i class="fa fa-copy"></i></div>
-                    <div style=" text-align: left; overflow: hidden; text-overflow: ellipsis; text-wrap: nowrap;"
-                      data-elm="message-share-link">http://localhost/soraateH/wnees/</div>
+                  <div class="message-link-container">
+                    <div class="icon"><i class="fa fa-share"></i></div>
+                    <div class="icon" data-elm="copy-btn"><i class="fa fa-copy"></i></div>
+                    <div class="message-share-link" data-elm="message-share-link">http://localhost/soraateH/wnees/</div>
                   </div>
                   <br />
-                  <img src="img/socialMedia/facebook.png" style="width: 45px;">
-                  <img src="img/socialMedia/instagram.png" style="width: 45px;">
-                  <!-- <img src="img/socialMedia/linkedin.png" style="width: 45px;"> -->
-                  <img src="img/socialMedia/snapchat.png" style="width: 45px;">
-                  <img src="img/socialMedia/tiktok.png" style="width: 45px;">
-                  <img src="img/socialMedia/whatsapp.png" style="width: 45px;">
-                  <img src="img/socialMedia/x.png" style="width: 45px;">
+                  <img src="img/socialMedia/facebook.png" class="social-media-icon">
+                  <img src="img/socialMedia/instagram.png" class="social-media-icon">
+                  <!-- <img src="img/socialMedia/linkedin.png" class="social-media-icon"> -->
+                  <img src="img/socialMedia/snapchat.png" class="social-media-icon">
+                  <img src="img/socialMedia/tiktok.png" class="social-media-icon">
+                  <img src="img/socialMedia/whatsapp.png" class="social-media-icon">
+                  <img src="img/socialMedia/x.png" class="social-media-icon">
                   <br />
                 </div>
               </div>
@@ -225,19 +222,18 @@
                 <span class="app-subtitle">تلقى الردود</span>
                 <br />
                 <br />
-                <div data-elm="available-responses"
-                  style="display: flex;flex-wrap: wrap;align-items: center; gap: 20px;justify-content: space-between;">
+                <div data-elm="available-responses" class="available-responses">
                   <!-- <div class="envelope">
-                    <i class="fa fa-envelope" style="margin: auto;"></i>
+                    <i class="fa fa-envelope"></i>
                   </div>
                   <div class="envelope">
-                    <i class="fa fa-envelope" style="margin: auto;"></i>
+                    <i class="fa fa-envelope"></i>
                   </div>
                   <div class="envelope">
-                    <i class="fa fa-envelope" style="margin: auto;"></i>
+                    <i class="fa fa-envelope"></i>
                   </div>
                   <div class="envelope">
-                    <i class="fa fa-envelope" style="margin: auto;"></i>
+                    <i class="fa fa-envelope"></i>
                   </div> -->
                 </div>
               </div>
@@ -324,7 +320,8 @@
             <a class="signInForm-to-json item-link button button-fill">تسجيل الدخول</a>
             <p class="register-links-container">
               <span data-i18n-key="don't_have_account_?">ليس لدي حساب؟</span>
-              <a href="#" class="open-popup register-link" data-popup=".popup-signup" data-i18n-key="create_a_new_account">إنشاء
+              <a href="#" class="open-popup register-link" data-popup=".popup-signup"
+                data-i18n-key="create_a_new_account">إنشاء
                 حساب جديد</a>
             </p>
           </div>
@@ -403,7 +400,8 @@
           <a class="signUpForm-to-json item-link button button-fill">تسجيل</a>
           <p class="register-links-container">
             <span data-i18n-key="don't_have_account_?">لديك حساب؟</span>
-            <a href="#" class="open-popup register-link" data-popup=".popup-login" data-i18n-key="create_a_new_account">تسجيل الدخول</a>
+            <a href="#" class="open-popup register-link" data-popup=".popup-login"
+              data-i18n-key="create_a_new_account">تسجيل الدخول</a>
           </p>
         </div>
         <!-- <div class="content-block">
@@ -469,8 +467,9 @@
       </div>
     </div>
     <div class="picker-modal-picker">
-      <form id="sendMessageForm" name="send-message-form" action="#" class="content-block message-form" method="post" accept-charset="UTF-8">
-        <div class="write-msg">اكتب رسالتك / سؤالك</div>
+      <form id="sendMessageForm" name="send-message-form" action="#" class="content-block message-form" method="post"
+        accept-charset="UTF-8">
+        <div class="write-message">اكتب رسالتك / سؤالك</div>
         <div><textarea name="message" class="send-message" id=""></textarea></div>
         <div><a class="submit-message item-link button button-fill">إرسال</a></div>
       </form>
@@ -482,8 +481,8 @@
   <script type="text/javascript" src="cordova.js"></script>
   <!-- Framework7 Library -->
   <script type="text/javascript" src="lib/framework7/js/framework7.min.js"></script>
-    <!-- Framework7 toast plugin -->
-    <script type="text/javascript" src="lib/framework7/js/toast.js"></script>
+  <!-- Framework7 toast plugin -->
+  <script type="text/javascript" src="lib/framework7/js/toast.js"></script>
   <!-- Define Global Vars -->
   <script type="text/javascript" src="js/vars.js"></script>
   <!-- Classes -->

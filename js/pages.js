@@ -18,7 +18,7 @@ myApp.onPageInit('received_messages', function (page) {
             `
             <div class="received-message">
               <span class="message-content">${msg.message}</span>
-              <span class="message-sender">من ${msg.sender.name}</span>
+              <span class="message-sender">من <img src=${msg.sender.profile_picture?imagePath + msg.sender.profile_picture:"img/user-pic.svg"} alt="" class="sender-image"/> ${msg.sender.name}</span>
             </div>
             `
           )
