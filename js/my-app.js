@@ -227,14 +227,6 @@ myApp.swiper('.login-screen .slider-onboarding', {
   },
 });
 
-$$('.signInFormLink').on('click', function (e) {
-  e.preventDefault();
-
-  // close popups
-  myApp.closeModal('.popup-login');
-  myApp.closeModal('.login-screen');
-});
-
 $$('[data-elm="guest-name"]').on('input', function () {
   var input = $$(this).val().replace(/\s/g, ''); // Remove spaces
   if (input.length >= 3) {
@@ -242,6 +234,14 @@ $$('[data-elm="guest-name"]').on('input', function () {
   } else {
     $$('.modal-button').addClass('disabled'); // Disable the OK button
   }
+});
+
+$$('.signInFormLink').on('click', function (e) {
+  e.preventDefault();
+
+  // close popups
+  myApp.closeModal('.popup-login');
+  myApp.closeModal('.login-screen');
 });
 
 $$('.signUpForm-to-json').on('click', function (e) {
@@ -296,55 +296,8 @@ $$('.signInForm-to-json').on('click', function (e) {
   return false;
 });
 
-if (typeof getThis("logedinUser") !== "undefined" && getThis("logedinUser") == 1) { 
-  initUserLoggedIn(); 
-}
-
-function initUserLoggedIn(guest = 0) {
-  user = new User(JSON.parse(getThis("userData")));
-  userGUID = user.guid;
-  handleRandomPublicMessage();
-  $$('*[data-elm="user-name"]').text(user.name);
-  $$('*[data-elm="user-name"]').val(user.name);
-
-  if (user.profilePicture) {
-    $$('[data-elm="user-image"]').attr('src', imagePath + user.profilePicture);
-  } else {
-    $$('[data-elm="user-image"]').attr('src', 'img/user-pic.svg');
-  }
-  if (guest === 0) {
-    userLogedin = true;
-    $$('.navbar-user-name').hide();
-    $$('.logout').show();
-  }
-}
-
-function initUserLogedout() {
-  //clear all data
-  if (useDB) {
-    DB_data = [];
-    db.executeSql('UPDATE user_main_data SET json_result = ?', ['{}']);
-  } else {
-    localStorage.clear();
-  }
-  // document.getElementsByClassName("login-screen")[0].style.visibility = "initial";
-  // $$(".open-login-screen").click();
-  // if (!$$(".login-screen").hasClass('modal-in')) {
-  //   $$(".login-screen").show();
-  //   myApp.openModal('.login-screen');
-  // }
-
-  userLogedin = false;
-  user = undefined;
-  userGUID = undefined;
-  setThis("hideWelcomeScreen", 1);
-  $$('[data-elm="user-image"]').attr('src', 'img/user-pic.svg');
-  $$('*[data-elm="user-name"]').empty();
-  $$('*[data-elm="user-name"]').val('');
-  $$('.navbar-user-name').show();
-  $$('.logout').hide();
-
-  isGuest();
+if (typeof getThis("logedinUser") !== "undefined" && getThis("logedinUser") == 1) {
+  initUserLoggedIn();
 }
 
 function isGuest() {
@@ -395,11 +348,52 @@ function isGuest() {
   }
 }
 
-isGuest();
-$$('.dice').on('click', function () {
-  $$(this).addClass('shake-animation');
+function initUserLoggedIn(guest = 0) {
+  user = new User(JSON.parse(getThis("userData")));
+  userGUID = user.guid;
   handleRandomPublicMessage();
-});
+  $$('*[data-elm="user-name"]').text(user.name);
+  $$('*[data-elm="user-name"]').val(user.name);
+
+  if (user.profilePicture) {
+    $$('[data-elm="user-image"]').attr('src', imagePath + user.profilePicture);
+  } else {
+    $$('[data-elm="user-image"]').attr('src', 'img/user-pic.svg');
+  }
+  if (guest === 0) {
+    userLogedin = true;
+    $$('.navbar-user-name').hide();
+    $$('.logout').show();
+  }
+}
+
+function initUserLogedout() {
+  //clear all data
+  if (useDB) {
+    DB_data = [];
+    db.executeSql('UPDATE user_main_data SET json_result = ?', ['{}']);
+  } else {
+    localStorage.clear();
+  }
+  // document.getElementsByClassName("login-screen")[0].style.visibility = "initial";
+  // $$(".open-login-screen").click();
+  // if (!$$(".login-screen").hasClass('modal-in')) {
+  //   $$(".login-screen").show();
+  //   myApp.openModal('.login-screen');
+  // }
+
+  userLogedin = false;
+  user = undefined;
+  userGUID = undefined;
+  setThis("hideWelcomeScreen", 1);
+  $$('[data-elm="user-image"]').attr('src', 'img/user-pic.svg');
+  $$('*[data-elm="user-name"]').empty();
+  $$('*[data-elm="user-name"]').val('');
+  $$('.navbar-user-name').show();
+  $$('.logout').hide();
+
+  isGuest();
+}
 
 function handleRandomPublicMessage() {
   return new Promise((resolve, reject) => {
@@ -434,6 +428,55 @@ function handleRandomPublicMessage() {
       });
   });
 }
+
+isGuest();
+var currentStep = 1;
+var totalSteps = 3;
+
+// Show the first step when the start button is clicked
+$$('#startBtn').on('click', function () {
+  showStep(1);
+  $$('#nextBtn').css('display', 'flex');  // Show the next button
+  $$(this).css('display', 'none');         // Hide the start button
+  scrollToStep(1);                         // Scroll to the first step
+});
+
+// Handle the next button click
+$$('#nextBtn').on('click', function () {
+  if (currentStep < totalSteps) {
+    currentStep++;
+    showStep(currentStep);  // Show the next step while keeping previous steps visible
+    scrollToStep(currentStep);  // Scroll to the newly shown step
+  }
+  // Hide the Next button after the last step
+  if (currentStep === totalSteps) {
+    $$('#nextBtn').css('display', 'none');
+  }
+});
+
+// Function to show the desired step while keeping previous steps visible
+function showStep(stepNumber) {
+  // Show the current step with animation
+  $$('#step' + stepNumber).addClass('show');
+}
+
+// Function to scroll to the current step
+function scrollToStep(stepNumber) {
+  var stepElement = $$('#step' + stepNumber)[0]; // Get the DOM element for the step
+  stepElement.scrollIntoView({ behavior: 'smooth', block: 'start' }); // Smooth scroll to the element
+}
+
+
+// Function to show the desired step while keeping previous steps visible
+function showStep(stepNumber) {
+  // Show the current step with animation
+  $$('#step' + stepNumber).addClass('show');
+}
+
+$$('.dice').on('click', function () {
+  $$(this).addClass('shake-animation');
+  handleRandomPublicMessage();
+});
 
 $$('#profile_picture').on('change', function (event) {
   var input = event.target;
@@ -532,7 +575,7 @@ $$('[data-elm="share-message"]').on('click', function () {
     });
 });
 
-$$('[data-elm=copy-btn]').on('click', function () {
+$$('[data-elm=copy-button]').on('click', function () {
   var textToCopy = $$('[data-elm="message-share-link"]')[0].textContent;
   var tempTextarea = document.createElement('textarea');
   tempTextarea.value = textToCopy;
@@ -594,7 +637,7 @@ $$.doAJAX('available-responses', {}, 'GET', false,
       myApp.alert('البريد الإلكتروني غير صحيح.');
     else
       failedNotification4AjaxRequest(xhr, textStatus);
-});
+  });
 
 $$('.logout').on('click', function () {
   initUserLogedout();

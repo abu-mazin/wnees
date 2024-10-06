@@ -352,6 +352,23 @@ li {
 }
 
 /* STEP 1 STYLES */
+.step {
+  display: none;
+  transform: translateY(100%);
+  opacity: 0;
+  transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+}
+
+.step.show {
+  display: block;
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.step-container {
+  position: relative;
+}
+
 .dice {
   width: 100px;
   fill: #750017;
@@ -466,6 +483,7 @@ li {
   /* background: #7e1414; */
   padding: 5px 20px;
   border-radius: 10px;
+  text-align: center;
 }
 
 .message-link-container {
@@ -759,6 +777,10 @@ li {
 
 .float-button img {
   width: 28px;
+}
+
+#nextBtn.float-button {
+  display: none;
 }
 
 .received-messages {

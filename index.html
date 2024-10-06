@@ -160,8 +160,10 @@
       <div class="pages navbar-through toolbar-through">
         <div data-page="index" class="page">
           <div class="page-content">
-            <div class="app-container">
-              <div class="app-block">
+            <div class="share-btn" id="startBtn">ابدأ</div>
+
+            <div class="app-container step-container">
+              <div class="app-block step" id="step1">
                 <span class="app-num">1</span>
                 <span class="app-title">الخطوة 1</span>
                 <span class="app-subtitle">انشئ رسالتك أو سؤالك</span>
@@ -186,7 +188,7 @@
                   <br />
                 </div>
               </div>
-              <div class="app-block">
+              <div class="app-block step" id="step2">
                 <span class="app-num">2</span>
                 <span class="app-title">الخطوة 2</span>
                 <span class="app-subtitle">شارك وارسل</span>
@@ -202,7 +204,7 @@
                   <br />
                   <div class="message-link-container">
                     <div class="icon"><i class="fa fa-share"></i></div>
-                    <div class="icon" data-elm="copy-btn"><i class="fa fa-copy"></i></div>
+                    <div class="icon" data-elm="copy-button"><i class="fa fa-copy"></i></div>
                     <div class="message-share-link" data-elm="message-share-link">http://localhost/soraateH/wnees/</div>
                   </div>
                   <br />
@@ -216,7 +218,7 @@
                   <br />
                 </div>
               </div>
-              <div class="app-block">
+              <div class="app-block step"id="step3">
                 <span class="app-num">3</span>
                 <span class="app-title">الخطوة 3</span>
                 <span class="app-subtitle">تلقى الردود</span>
@@ -238,9 +240,12 @@
                 </div>
               </div>
 
-              <a href="received-messages.html" class="float-button">
+              <!-- <a href="received-messages.html" class="float-button">
                 <img src="img/icons/inbox.png" alt="">
-              </a>
+              </a> -->
+              <div class="float-button" id="nextBtn">
+                <img src="img/icons/next.png" alt="">
+              </ي>
             </div>
           </div>
         </div>
