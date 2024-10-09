@@ -581,6 +581,11 @@ li {
   padding: 0 10px;
 }
 
+.guest-popup-inner .reaction {
+  text-align: center;
+  font-size: 32px;
+}
+
 /* MODAL */
 .modal-inner,
 .modal-buttons {

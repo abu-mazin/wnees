@@ -451,6 +451,7 @@ $$('#nextBtn').on('click', function () {
   // Hide the Next button after the last step
   if (currentStep === totalSteps) {
     $$('#nextBtn').css('display', 'none');
+    $$('[data-elm="received-messages-btn"]').css('display','flex')
   }
 });
 
@@ -594,41 +595,36 @@ $$.doAJAX('available-responses', {}, 'GET', false,
     if (r.length == 0) {
       $$('[data-elm="available-responses"]').append(`
         <span>تنبيه لا يوحد ردود...</span>
-        `)
+      `);
     } else {
       r.forEach(res => {
         $$('[data-elm="available-responses"]').append(`
-        <div class="envelope">
-          <i class="fa fa-envelope" style="margin: auto;"></i>
-        </div>
-        `)
+          <div class="envelope" data-reaction="${res.reaction}">
+            <i class="fa fa-envelope" style="margin: auto;"></i>
+          </div>
+        `);
+      });
+
+      // Add click event listener to .envelope elements
+      $$('.envelope').on('click', function () {
+        const reaction = $$(this).data('reaction');
+        myApp.modal({
+          text: `
+            <div class="guest-popup-inner">
+              <span class="reaction">${reaction}</span>
+            </div>
+          `,
+          buttons: [
+            {
+              text: 'حسنًا',
+              onClick: function () {
+                $$('.present').css('display', 'none');
+              }
+            },
+          ],
+        });
       });
     }
-
-    // $$('.present').css('display', 'block');
-    // $$('.present .lid').css({
-    //   'top': '-120px',
-    //   'transform': 'rotateZ(10deg)',
-    //   'left': '10px'
-    // });
-
-    // myApp.modal({
-    //   text: `
-    //   ${r.length === 0 ? `<div class="guest-popup-inner">
-    //       <span>لا يوجد ردود بعد</span>
-    //     </div>`: `<div class="guest-popup-inner">
-    //       <span>من فضلك أدخل اسمك</span>
-    //     </div>`}`,
-    //   buttons: [
-    //     {
-    //       text: 'حسنًا',
-    //       onClick: function () {
-    //         $$('.present').css('display', 'none');
-    //       }
-    //     },
-    //   ],
-    // });
-
   },
   // Failed
   function (xhr, textStatus) {
@@ -638,6 +634,7 @@ $$.doAJAX('available-responses', {}, 'GET', false,
     else
       failedNotification4AjaxRequest(xhr, textStatus);
   });
+
 
 $$('.logout').on('click', function () {
   initUserLogedout();
