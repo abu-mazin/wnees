@@ -15,12 +15,12 @@ class User {
     // user main attributes
     this.token = parms.access_token;
 
-    this.name = parms.user.user_info.name;
-    this.username = parms.user.username;
-    this.email = parms.user.email;
-    this.guid = parms.user.user_info.GUID;
-    this.profilePicture = parms.user.user_info.profile_picture;
-    this.settings = parms.user.user_info.settings;
+    this.name = parms.name;
+    this.username = parms.username;
+    this.email = parms.email;
+    this.guid = parms.GUID;
+    this.profilePicture = parms.profile_picture;
+    this.settings = parms.settings;
   }
 
 

@@ -2,7 +2,6 @@ myApp.onPageInit('received_messages', function (page) {
   $$.doAJAX(`messages/user-received-messages`, {}, 'GET', true,
     // Success (200)
     function (r, textStatus, xhr) {
-
       if(r.length === 0) {
         $$('.received-messages').append(
           `

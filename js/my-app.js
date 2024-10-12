@@ -82,11 +82,11 @@ $$.doAJAX = function (path, data, type, hideIndicator, callback, errorCallback) 
   if (!hideIndicator)
     myApp.showIndicator();
   var headers = { 'accept': 'application/json' };
-  if (typeof userLogedin != "undefined" && typeof userGUID != "undefined")
+  if ((getThis("userLogedin") == 1 || getThis("randomUserLogedin") == 1) && typeof userGUID != "undefined") {
+    headers = { 'accept': 'application/json', 'GUID': userGUID };
     if (path == "users/login")
       headers = { 'accept': 'application/json' };
-    else
-      headers = { 'accept': 'application/json', 'GUID': userGUID };
+  }
   $$.ajax({
     url: APIurl + path,
     data: data, // parameters
@@ -184,66 +184,13 @@ var welcomeSlider = myApp.swiper('.welcome-screen-swiper', {
 
 $$('.welcome-screen').on('popup:close', function () {
   setThis("hideWelcomeScreen", 1);
+  if(getThis("userLogedin") != 1 && getThis("randomUserLogedin") != 1) createRandomUser();
 });
+
 
 // ======================================
-// REGISTER/LOGIN SCREEN
+// REGISTER/LOGIN
 // ======================================
-// pagination handle
-myApp.swiper('.login-screen .slider-onboarding', {
-  prevButton: '.login-screen .navbar .swiper-back',
-  nextButton: '.login-screen .register-footer button.next-slide',
-  noSwiping: true,
-  noSwipingClass: 'no-swiping',
-  //paginationClickable: false,
-  //pagination: '.login-screen .pagination',
-  //paginationType: 'progress',
-  onInit: function (s) {
-    if (s.activeIndex === 0) {
-      $$('.login-screen-content .quarter-circle').css('display', 'none');
-      $$('.login-screen .navbar .swiper-back').css('display', 'none');
-      $$('.login-screen .onboarding-progress').css('visibility', 'hidden');
-    }
-  },
-  onSlideChangeStart: function (s) {
-    $$('.onboarding-progress .percentage').css('width', 'calc(' + (s.activeIndex + 1) + ' / ' + (s.slides.length - 1) + ' * 100%');
-
-    var $progress = $$('.login-screen .onboarding-progress');
-    var $back = $$('.login-screen .navbar .swiper-back');
-
-    $$('.login-screen-content .quarter-circle').css('display', 'block');
-    $back.css('display', 'block');
-    $progress.css('visibility', 'visible');
-
-    if (s.activeIndex === 0) {
-      $$('.login-screen-content .quarter-circle').css('display', 'none');
-      $back.css('display', 'none');
-      $progress.css('visibility', 'hidden');
-    }
-
-    if (s.activeIndex + 1 === s.slides.length) {
-      $progress.css('visibility', 'hidden');
-    }
-  },
-});
-
-$$('[data-elm="guest-name"]').on('input', function () {
-  var input = $$(this).val().replace(/\s/g, ''); // Remove spaces
-  if (input.length >= 3) {
-    $$('.modal-button').removeClass('disabled'); // Enable the OK button
-  } else {
-    $$('.modal-button').addClass('disabled'); // Disable the OK button
-  }
-});
-
-$$('.signInFormLink').on('click', function (e) {
-  e.preventDefault();
-
-  // close popups
-  myApp.closeModal('.popup-login');
-  myApp.closeModal('.login-screen');
-});
-
 $$('.signUpForm-to-json').on('click', function (e) {
   e.preventDefault();
   var SignUPForm_parms = myApp.formToJSON('#signUpForm');
@@ -252,10 +199,10 @@ $$('.signUpForm-to-json').on('click', function (e) {
   $$.doAJAX('users/register', SignUPForm_parms, 'POST', false,
     // Success (200)
     function (r, textStatus, xhr) {
-      console.log(r)
       initUserLoggedIn();
-      myApp.closeModal('.popup-signup');
 
+      // close popups
+      myApp.closeModal('.popup-signup');
     },
     // Failed
     function (xhr, textStatus) {
@@ -277,12 +224,13 @@ $$('.signInForm-to-json').on('click', function (e) {
   $$.doAJAX('users/login', SignInForm_parms, 'POST', false,
     // Success (200)
     function (r, textStatus, xhr) {
-      setThis("logedinUser", 1);
+      setThis("userLogedin", 1);
       setThis('userData', JSON.stringify(r));
-      myApp.closeModal('.popup-login')
 
       initUserLoggedIn();
 
+      // close popups
+      myApp.closeModal('.popup-login')
     },
     // Failed
     function (xhr, textStatus) {
@@ -296,75 +244,76 @@ $$('.signInForm-to-json').on('click', function (e) {
   return false;
 });
 
-if (typeof getThis("logedinUser") !== "undefined" && getThis("logedinUser") == 1) {
-  initUserLoggedIn();
-}
+$$('.logout').on('click', function () {
+  initUserLogedout();
+})
 
-function isGuest() {
-  if (getThis('hideWelcomeScreen') == '1' && userGUID === undefined) {
-    let data = JSON.parse(getThis("userData"));
-    if (!data) {
-      myApp.modal({
-        text: `
-        <div class="guest-popup-inner">
-          <span>من فضلك أدخل اسمك</span>
-          <input type="text" data-elm="guest-name" placeholder="أدخل اسمك هنا" />
-        </div>`,
-        buttons: [
-          {
-            text: 'إرسـال',
-            close: false, // prevent closing until valid input
-            onClick: function () {
-              var userName = $$('[data-elm="guest-name"]').val().trim();
-              if (userName.length >= 3) {
-                // Your callback logic here
-                $$.doAJAX('users-info', { name: userName }, 'POST', true,
-                  // Success (200)
-                  function (r, textStatus, xhr) {
-                    if (typeof r != 'undefined' && r != null) {
-                      userGUID = r.GUID;
-                      let data = { user: { user_info: {} } }
-                      data.user.user_info.name = r.name;
-                      data.user.user_info.profile_picture = r.profile_picture;
-                      data.user.user_info.settings = r.settings;
-                      data.user.user_info.GUID = r.GUID;
-                      setThis("userData", JSON.stringify(data));
-                      initUserLoggedIn(1);
-                    }
-                  },
-                  // Failed
-                  function (xhr, textStatus) {
-                  });
-                myApp.closeModal(); // close the modal after valid input
-              }
-            },
-            disabled: true, // Initially disable the OK button
-          },
-        ],
-      });
-    } else {
-      initUserLoggedIn(1)
-    }
+function initUserLoggedIn() {
+  if(getThis("userLogedin")) {
+    userLogedin = true;
+    $$('.navbar-user-name').hide();
+    $$('.logout').show();
   }
-}
 
-function initUserLoggedIn(guest = 0) {
   user = new User(JSON.parse(getThis("userData")));
   userGUID = user.guid;
-  handleRandomPublicMessage();
   $$('*[data-elm="user-name"]').text(user.name);
   $$('*[data-elm="user-name"]').val(user.name);
-
   if (user.profilePicture) {
     $$('[data-elm="user-image"]').attr('src', imagePath + user.profilePicture);
   } else {
     $$('[data-elm="user-image"]').attr('src', 'img/user-pic.svg');
   }
-  if (guest === 0) {
-    userLogedin = true;
-    $$('.navbar-user-name').hide();
-    $$('.logout').show();
+
+  if(getThis('showStep2') == 1) {
+    $$('[data-elm="step2"]').addClass('show');
   }
+  if(getThis('showStep3') == 1) {
+    $$('[data-elm="step3"]').addClass('show');
+  }
+
+  handleRandomPublicMessage();
+  availableResponses();
+}
+
+// is Guest? then create random user 
+function createRandomUser() {
+  myApp.modal({
+    text: `
+    <div class="guest-popup-inner">
+      <span>من فضلك أدخل اسمك</span>
+      <input type="text" data-elm="guest-name" placeholder="أدخل اسمك هنا" />
+    </div>`,
+    buttons: [
+      {
+        text: 'إرسـال',
+        close: false, // prevent closing until valid input
+        onClick: function () {
+          var userName = $$('[data-elm="guest-name"]').val().trim();
+          if (userName.length >= 2) {
+            // Your callback logic here
+            $$.doAJAX('users-info', { name: userName }, 'POST', true,
+              // Success (200)
+              function (r, textStatus, xhr) {
+                if (typeof r != 'undefined' && r != null) {
+                  setThis("randomUserLogedin", 1);
+                  setThis("userData", JSON.stringify(r));
+
+                  initUserLoggedIn()
+                  handleRandomPublicMessage();
+                }
+              },
+              // Failed
+              function (xhr, textStatus) {
+              });
+            myApp.closeModal(); // close the modal after valid input
+          } else {
+            myApp.addNotification({ hold: 5000, title: 'تنبيه', message: 'الاسم قصير جداً! حاول مجدداً' });
+          }
+        }
+      },
+    ],
+  });
 }
 
 function initUserLogedout() {
@@ -375,110 +324,27 @@ function initUserLogedout() {
   } else {
     localStorage.clear();
   }
-  // document.getElementsByClassName("login-screen")[0].style.visibility = "initial";
-  // $$(".open-login-screen").click();
-  // if (!$$(".login-screen").hasClass('modal-in')) {
-  //   $$(".login-screen").show();
-  //   myApp.openModal('.login-screen');
-  // }
 
   userLogedin = false;
   user = undefined;
   userGUID = undefined;
-  setThis("hideWelcomeScreen", 1);
   $$('[data-elm="user-image"]').attr('src', 'img/user-pic.svg');
   $$('*[data-elm="user-name"]').empty();
   $$('*[data-elm="user-name"]').val('');
+
   $$('.navbar-user-name').show();
   $$('.logout').hide();
 
-  isGuest();
+  setThis("hideWelcomeScreen", 1);
 }
 
-function handleRandomPublicMessage() {
-  return new Promise((resolve, reject) => {
-    // First AJAX: Get a random message
-    $$.doAJAX('available-messages/random', { GUID: userGUID }, 'GET', true,
-      // Success (200) - when random message is successfully retrieved
-      function (r, textStatus, xhr) {
-        $$('.random-message').text(r.message);
-        $$('.random-message').attr('key', r.id);
-        $$('.dice').removeClass('shake-animation');
-
-        // Prepare the public message parameters with the random message data
-        let publicMsgParms = { message_id: r.id, message: r.message };
-        // Second AJAX: Send the public message
-        $$.doAJAX('public-messages', publicMsgParms, 'POST', true,
-          // Success (200) - when public message is successfully sent
-          function (r, textStatus, xhr) {
-            $$('[data-elm="message-share-link"]').text(r.sharing_url);
-          },
-          // Failed to send public message
-          function (xhr, textStatus) {
-            failedNotification4AjaxRequest(xhr, textStatus);
-            reject("Failed to send public message");
-          });
-
-      },
-      // Failed to retrieve random message
-      function (xhr, textStatus) {
-        failedNotification4AjaxRequest(xhr, textStatus);
-        $$('.dice').removeClass('shake-animation');
-        reject("Failed to retrieve random message");
-      });
-  });
-}
-
-isGuest();
-var currentStep = 1;
-var totalSteps = 3;
-
-// Show the first step when the start button is clicked
-$$('#startBtn').on('click', function () {
-  showStep(1);
-  $$('#nextBtn').css('display', 'flex');  // Show the next button
-  $$(this).css('display', 'none');         // Hide the start button
-  scrollToStep(1);                         // Scroll to the first step
-});
-
-// Handle the next button click
-$$('#nextBtn').on('click', function () {
-  if (currentStep < totalSteps) {
-    currentStep++;
-    showStep(currentStep);  // Show the next step while keeping previous steps visible
-    scrollToStep(currentStep);  // Scroll to the newly shown step
-  }
-  // Hide the Next button after the last step
-  if (currentStep === totalSteps) {
-    $$('#nextBtn').css('display', 'none');
-    $$('[data-elm="received-messages-btn"]').css('display','flex')
-  }
-});
-
-// Function to show the desired step while keeping previous steps visible
-function showStep(stepNumber) {
-  // Show the current step with animation
-  $$('#step' + stepNumber).addClass('show');
-}
-
-// Function to scroll to the current step
-function scrollToStep(stepNumber) {
-  var stepElement = $$('#step' + stepNumber)[0]; // Get the DOM element for the step
-  stepElement.scrollIntoView({ behavior: 'smooth', block: 'start' }); // Smooth scroll to the element
-}
+if(getThis("userLogedin") == 1 || getThis("randomUserLogedin") == 1) initUserLoggedIn();
+else if (getThis('hideWelcomeScreen') == '1') createRandomUser();
 
 
-// Function to show the desired step while keeping previous steps visible
-function showStep(stepNumber) {
-  // Show the current step with animation
-  $$('#step' + stepNumber).addClass('show');
-}
-
-$$('.dice').on('click', function () {
-  $$(this).addClass('shake-animation');
-  handleRandomPublicMessage();
-});
-
+// ======================================
+// USER
+// ======================================
 $$('#profile_picture').on('change', function (event) {
   var input = event.target;
 
@@ -505,35 +371,61 @@ $$('.changeSettingsForm').on('click', function (e) {
   if (fileInput && fileInput.files.length > 0) {
     var profilePicture = fileInput.files[0];
     formData.append('profile_picture', profilePicture); // Append the file to FormData
-    console.log('YES')
   }
 
-  console.log(JSON.stringify(formData))
   // Proceed with AJAX request to send the FormData
   $$.doAJAX('users-info', formData, 'POST', true,
     // Success (200)
     function (r, textStatus, xhr) {
-      console.log(r)
       $$('*[data-elm="user-name"]').text(r.name);
       $$('*[data-elm="user-name"]').val(r.name);
       if (r.profile_picture) {
         $$('[data-elm="user-image"]').attr('src', imagePath + r.profile_picture);
       }
 
-      let data = JSON.parse(getThis("userData"));
-      data.user.user_info.name = r.name;
       user.name = r.name;
-      data.user.user_info.profile_picture = r.profile_picture;
       user.profilePicture = r.profile_picture;
-      setThis("userData", JSON.stringify(data));
-      myApp.closeModal('.popup-settings');
 
+      let data = JSON.parse(getThis("userData"));
+      data.name = r.name;
+      data.profile_picture = r.profile_picture;
+      setThis("userData", JSON.stringify(data));
+
+      myApp.closeModal('.popup-settings');
     },
     // Failed
     function (xhr, textStatus) {
       // Failed notification
       failedNotification4AjaxRequest(xhr, textStatus);
     });
+});
+
+
+// ======================================
+// STEPS
+// ======================================
+// Show the first step when the start button is clicked
+$$('[data-elm="go2step2"]').on('click', function () {
+  var step2 = $$('[data-elm="step2"]');
+  step2.addClass('show');
+  step2[0].scrollIntoView({ behavior: 'smooth', block: 'start' }); // Smooth scroll to the element
+  setThis('showStep2', 1);
+});
+
+$$('[data-elm="go2step3"]').on('click', function () {
+  var step3 = $$('[data-elm="step3"]');
+  step3.addClass('show');
+  step3[0].scrollIntoView({ behavior: 'smooth', block: 'start' }); // Smooth scroll to the element
+  setThis('showStep3', 1);
+});
+
+
+// ======================================
+// MESSAGES AND RESPONCES
+// ======================================
+$$('.dice').on('click', function () {
+  $$(this).addClass('shake-animation');
+  handleRandomPublicMessage();
 });
 
 $$('.submit-message').on('click', function (e) {
@@ -547,9 +439,7 @@ $$('.submit-message').on('click', function (e) {
   $$.doAJAX(`messages`, submitMessage, 'POST', true,
     // Success (200)
     function (r, textStatus, xhr) {
-      console.log(r)
       myApp.closeModal(".picker-send-message")
-
     },
     // Failed
     function (xhr, textStatus) {
@@ -587,55 +477,88 @@ $$('[data-elm=copy-button]').on('click', function () {
   myApp.toast('تم نسخ الرابط', { duration: 2000 }).show();
 });
 
-$$.doAJAX('available-responses', {}, 'GET', false,
-  // Success (200)
-  function (r, textStatus, xhr) {
-    console.log(r)
-    console.log(r.length)
-    if (r.length == 0) {
-      $$('[data-elm="available-responses"]').append(`
-        <span>تنبيه لا يوحد ردود...</span>
-      `);
-    } else {
-      r.forEach(res => {
+function availableResponses() {
+  $$.doAJAX('available-responses', {}, 'GET', false,
+    // Success (200)
+    function (r, textStatus, xhr) {
+      if (r.length == 0) {
         $$('[data-elm="available-responses"]').append(`
-          <div class="envelope" data-reaction="${res.reaction}">
-            <i class="fa fa-envelope" style="margin: auto;"></i>
-          </div>
+          <span>تنبيه لا يوحد ردود...</span>
         `);
-      });
-
-      // Add click event listener to .envelope elements
-      $$('.envelope').on('click', function () {
-        const reaction = $$(this).data('reaction');
-        myApp.modal({
-          text: `
-            <div class="guest-popup-inner">
-              <span class="reaction">${reaction}</span>
+      } else {
+        setThis('showStep2', 1);
+        setThis('showStep3', 1);
+        $$('[data-elm="step2"]').addClass('show');
+        $$('[data-elm="step3"]').addClass('show');
+      
+        r.forEach(res => {
+          $$('[data-elm="available-responses"]').append(`
+            <div class="envelope" data-reaction="${res.reaction}">
+              <i class="fa fa-envelope" style="margin: auto;"></i>
             </div>
-          `,
-          buttons: [
-            {
-              text: 'حسنًا',
-              onClick: function () {
-                $$('.present').css('display', 'none');
-              }
-            },
-          ],
+          `);
         });
-      });
-    }
-  },
-  // Failed
-  function (xhr, textStatus) {
-    // Failed notification
-    if (textStatus == 401)
-      myApp.alert('البريد الإلكتروني غير صحيح.');
-    else
+
+        // Add click event listener to .envelope elements
+        $$('.envelope').on('click', function () {
+          const reaction = $$(this).data('reaction');
+          myApp.modal({
+            text: `
+              <div class="guest-popup-inner">
+                <span class="reaction">${reaction}</span>
+              </div>
+            `,
+            buttons: [
+              {
+                text: 'حسنًا',
+                onClick: function () {
+                  $$('.present').css('display', 'none');
+                }
+              },
+            ],
+          });
+        });
+      }
+    },
+    // Failed
+    function (xhr, textStatus) {
+      // Failed notification
+      if (textStatus == 401)
+        myApp.alert('البريد الإلكتروني غير صحيح.');
+      else
+        failedNotification4AjaxRequest(xhr, textStatus);
+    });
+}
+
+function handleRandomPublicMessage() {
+  // First AJAX: Get a random message
+  $$.doAJAX('available-messages/random', { GUID: userGUID }, 'GET', true,
+    // Success (200) - when random message is successfully retrieved
+    function (r, textStatus, xhr) {
+      $$('.random-message').text(r.message);
+      $$('.random-message').attr('key', r.id);
+      $$('.dice').removeClass('shake-animation');
+
+      // Prepare the public message parameters with the random message data
+      let publicMsgParms = { message_id: r.id, message: r.message };
+      // Second AJAX: Send the public message
+      $$.doAJAX('public-messages', publicMsgParms, 'POST', true,
+        // Success (200) - when public message is successfully sent
+        function (r, textStatus, xhr) {
+          $$('[data-elm="message-share-link"]').text(r.sharing_url);
+        },
+        // Failed to send public message
+        function (xhr, textStatus) {
+          failedNotification4AjaxRequest(xhr, textStatus);
+          reject("Failed to send public message");
+        });
+
+    },
+    // Failed to retrieve random message
+    function (xhr, textStatus) {
       failedNotification4AjaxRequest(xhr, textStatus);
-  });
+      $$('.dice').removeClass('shake-animation');
+      reject("Failed to retrieve random message");
+    });
+}
 
-
-$$('.logout').on('click', function () {
-  initUserLogedout();
-})

@@ -76,10 +76,6 @@ body {
   font-family: 'Tajawal', sans-serif;
 }
 
-body {
-  color: var(--white);
-}
-
 a {
   color: #fff76f;
 }
@@ -221,6 +217,14 @@ li {
 
 .content-block {
   color: var(--white);
+}
+
+.modal-button.active-state, html:not(.watch-active-state) .modal-button:active {
+ background: initial;
+}
+
+.modal-button:last-child {
+  border-right: initial;
 }
 
 /** WELCOME SCREEN **/
@@ -517,7 +521,7 @@ li {
   flex-wrap: wrap;
   align-items: center;
   gap: 20px;
-  justify-content: space-between;
+  justify-content: center;
 }
 
 .envelope {

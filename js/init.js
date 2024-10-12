@@ -5,6 +5,7 @@ var myApp = new Framework7({
   swipePanel: 'left',
   swipePanelActiveArea: 70,
   showBarsOnPageScrollEnd: false,
+  modalTitle: '',
   modalButtonOk: OkButton,
   modalButtonCancel: CancelButton,
   modalButtonYes: YesButton,
