@@ -273,6 +273,7 @@ function initUserLoggedIn() {
   }
 
   handleRandomPublicMessage();
+  userSentMessages();
 }
 
 // is Guest? then create random user 
@@ -565,53 +566,47 @@ function handleRandomPublicMessage() {
     });
 }
 
-
 function userSentMessages() {
+  $$('[data-elm="get-responses"]').empty();
+  
   $$.doAJAX('messages/user-sent-messages', { GUID: userGUID }, 'GET', true,
-    // Success (200) - when random message is successfully retrieved
+    // Success (200) - when user messages are successfully retrieved
     function (r, textStatus, xhr) {
-      console.log(r)
       let apiResponse = r;
-      // Select the element where responses will be appended using $$ in F7 v1.7.1
       const getResponsesElement = $$('[data-elm="get-responses"]');
 
-      // Iterate through the messages
+      // Flag to check if any message has responses
+      let hasResponses = false;
+
       apiResponse.forEach((messageObj) => {
         const { message, id, responses } = messageObj;
 
         // Check if the message has responses
         if (responses.length > 0) {
+          hasResponses = true; // Set the flag to true if there's at least one response
+
           // Append the message text to the element
           const messageDiv = $$('<div class="sent-message"></div>').text(message);
           getResponsesElement.append(messageDiv);
 
-          // Iterate through the responses
           responses.forEach((response, index) => {
             // Create the envelope div for each response
             const envelopeDiv = $$('<div></div>').addClass('envelope');
 
             // Create a unique key by concatenating message id and index
             const uniqueKey = `${id}-${index}`;
-
-            // Add the unique key as a data attribute
             envelopeDiv.attr('data-key', uniqueKey);
-
-            // Add the envelope icon
             const envelopeIcon = $$('<i></i>').addClass('fa fa-envelope');
             envelopeDiv.append(envelopeIcon);
-
-            // Append the envelope div to the getResponsesElement
             getResponsesElement.append(envelopeDiv);
 
             // Add click event listener to the envelope
             envelopeDiv.on('click', function () {
               // Extract the message ID and index from the data-key
               const [messageId, responseIndex] = uniqueKey.split('-');
-
-              // Convert the values to numbers
               const responseContent = getResponseContent(Number(messageId), Number(responseIndex));
 
-              $$('.present').show()
+              $$('.present').show();
               myApp.modal({
                 text: `
                   <div class="guest-popup-inner">
@@ -627,13 +622,17 @@ function userSentMessages() {
                   },
                 ],
               });
-
-              // Log or do something with the response content
-              console.log(responseContent);
             });
           });
         }
       });
+
+      // If no message has responses, show the notification
+      if (!hasResponses) {
+        getResponsesElement.append(`
+          <span>تنبيه لا يوجد ردود...</span>
+        `);
+      }
 
       // Function to get response content by message ID and index
       function getResponseContent(messageId, index) {
@@ -647,12 +646,11 @@ function userSentMessages() {
 
         return null; // Return null if no response found
       }
-
     },
-    // Failed to retrieve random message
+    // Failed to retrieve messages
     function (xhr, textStatus) {
       failedNotification4AjaxRequest(xhr, textStatus);
       $$('.dice').removeClass('shake-animation');
-      reject("Failed to retrieve random message");
+      reject("Failed to retrieve messages");
     });
 }
