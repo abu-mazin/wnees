@@ -43,6 +43,34 @@
   font-display: block;
 }
 
+@font-face {
+  font-family: ElMessiri;
+  src: url(fonts/ElMessiri-Bold.ttf) format('truetype');
+  font-weight: 700;
+  font-display: block;
+}
+
+@font-face {
+  font-family: ElMessiri;
+  src: url(fonts/ElMessiri-Medium.ttf) format('truetype');
+  font-weight: 500;
+  font-display: block;
+}
+
+@font-face {
+  font-family: ElMessiri;
+  src: url(fonts/ElMessiri-Regular.ttf) format('truetype');
+  font-weight: 400;
+  font-display: block;
+}
+
+@font-face {
+  font-family: ElMessiri;
+  src: url(fonts/ElMessiri-SemiBold.ttf) format('truetype');
+  font-weight: 600;
+  font-display: block;
+}
+
 :root {
   --main-clr: #6e44ff;
   --light-blue: #45bdfb;
@@ -73,7 +101,7 @@
 
 *,
 body {
-  font-family: 'Tajawal', sans-serif;
+  font-family: 'ElMessiri', sans-serif;
 }
 
 a {
@@ -336,6 +364,11 @@ li {
   width: 100%;
 }
 
+.logo {
+  width: 70px;
+  filter: drop-shadow(2px 4px 6px black);
+}
+
 .login-screen, .popup {
   background: linear-gradient(180deg, rgba(26, 121, 201, 1) 0%, rgba(48, 175, 241, 1) 55%);
 }
@@ -519,6 +552,7 @@ li {
 
 .message-link-container {
   display: flex;
+  align-items: center;
   gap: 10px;
   font-size: 22px;
   background: #ffffff;
