@@ -568,7 +568,7 @@ function handleRandomPublicMessage() {
 
 function userSentMessages() {
   $$('[data-elm="get-responses"]').empty();
-  
+
   $$.doAJAX('messages/user-sent-messages', { GUID: userGUID }, 'GET', true,
     // Success (200) - when user messages are successfully retrieved
     function (r, textStatus, xhr) {
@@ -577,6 +577,9 @@ function userSentMessages() {
 
       // Flag to check if any message has responses
       let hasResponses = false;
+
+      // Create an object to store opened envelope status
+      let openedEnvelopes = {};
 
       apiResponse.forEach((messageObj) => {
         const { message, id, responses } = messageObj;
@@ -596,7 +599,16 @@ function userSentMessages() {
             // Create a unique key by concatenating message id and index
             const uniqueKey = `${id}-${index}`;
             envelopeDiv.attr('data-key', uniqueKey);
-            const envelopeIcon = $$('<i></i>').addClass('fa fa-envelope');
+
+            // Check if the envelope was previously opened
+            const isOpened = openedEnvelopes[uniqueKey] === 1;
+            const envelopeIcon = $$('<i></i>').addClass(isOpened ? 'fa fa-envelope-open' : 'fa fa-envelope');
+
+            // If opened, add the "open" class
+            if (isOpened) {
+              envelopeDiv.addClass('open');
+            }
+
             envelopeDiv.append(envelopeIcon);
             getResponsesElement.append(envelopeDiv);
 
@@ -622,6 +634,16 @@ function userSentMessages() {
                   },
                 ],
               });
+
+              // Check if the envelope is not already opened
+              if (!openedEnvelopes[uniqueKey]) {
+                // Mark as opened
+                openedEnvelopes[uniqueKey] = 1;
+
+                // Update the envelope icon and add 'open' class
+                envelopeIcon.removeClass('fa-envelope').addClass('fa-envelope-open');
+                envelopeDiv.addClass('open');
+              }
             });
           });
         }
@@ -654,3 +676,4 @@ function userSentMessages() {
       reject("Failed to retrieve messages");
     });
 }
+

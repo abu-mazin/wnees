@@ -127,11 +127,11 @@ li {
   height: 2px;
 }
 
-.list-block.inset .item-input input{
+.list-block.inset .item-input input {
   color: #fff;
-    font-weight: 700;
-    direction: ltr;
-    text-align: center;
+  font-weight: 700;
+  direction: ltr;
+  text-align: center;
 }
 
 /* This will be deleted later on */
@@ -262,8 +262,9 @@ li {
   color: var(--white);
 }
 
-.modal-button.active-state, html:not(.watch-active-state) .modal-button:active {
- background: initial;
+.modal-button.active-state,
+html:not(.watch-active-state) .modal-button:active {
+  background: initial;
 }
 
 .modal-button:last-child {
@@ -369,9 +370,11 @@ li {
   filter: drop-shadow(2px 4px 6px black);
 }
 
-.login-screen, .popup {
+.login-screen,
+.popup {
   background: linear-gradient(180deg, rgba(26, 121, 201, 1) 0%, rgba(48, 175, 241, 1) 55%);
 }
+
 /*** APP ***/
 .app-block {
   margin: 15px;
@@ -598,10 +601,25 @@ li {
   border-radius: 5px;
 }
 
+.envelope.open {
+  flex: 0 0 28%;
+  height: 65px;
+  display: flex;
+  font-size: 42px;
+  background: #00000021;
+  border-radius: 5px;
+  color: #c3d9ec;
+  border: none;
+}
+
 .envelope i {
   margin: auto;
   animation: shake 1.5s;
   animation-iteration-count: infinite;
+}
+
+.envelope.open i {
+  animation: none;
 }
 
 @keyframes shake {
@@ -982,7 +1000,7 @@ li {
   display: flex;
   align-items: center;
   gap: 5px;
-  
+
 }
 
 img.sender-image {
