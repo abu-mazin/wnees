@@ -184,7 +184,7 @@ var welcomeSlider = myApp.swiper('.welcome-screen-swiper', {
 
 $$('.welcome-screen').on('popup:close', function () {
   setThis("hideWelcomeScreen", 1);
-  if(getThis("userLogedin") != 1 && getThis("randomUserLogedin") != 1) createRandomUser();
+  if (getThis("userLogedin") != 1 && getThis("randomUserLogedin") != 1) createRandomUser();
 });
 
 
@@ -249,7 +249,7 @@ $$('.logout').on('click', function () {
 })
 
 function initUserLoggedIn() {
-  if(getThis("userLogedin")) {
+  if (getThis("userLogedin")) {
     userLogedin = true;
     $$('.navbar-user-name').hide();
     $$('.logout').show();
@@ -265,15 +265,14 @@ function initUserLoggedIn() {
     $$('[data-elm="user-image"]').attr('src', 'img/user-pic.svg');
   }
 
-  if(getThis('showStep2') == 1) {
+  if (getThis('showStep2') == 1) {
     $$('[data-elm="step2"]').addClass('show');
   }
-  if(getThis('showStep3') == 1) {
+  if (getThis('showStep3') == 1) {
     $$('[data-elm="step3"]').addClass('show');
   }
 
   handleRandomPublicMessage();
-  availableResponses();
 }
 
 // is Guest? then create random user 
@@ -298,9 +297,7 @@ function createRandomUser() {
                 if (typeof r != 'undefined' && r != null) {
                   setThis("randomUserLogedin", 1);
                   setThis("userData", JSON.stringify(r));
-
                   initUserLoggedIn()
-                  handleRandomPublicMessage();
                 }
               },
               // Failed
@@ -338,7 +335,7 @@ function initUserLogedout() {
   setThis("hideWelcomeScreen", 1);
 }
 
-if(getThis("userLogedin") == 1 || getThis("randomUserLogedin") == 1) initUserLoggedIn();
+if (getThis("userLogedin") == 1 || getThis("randomUserLogedin") == 1) initUserLoggedIn();
 else if (getThis('hideWelcomeScreen') == '1') createRandomUser();
 
 
@@ -426,6 +423,8 @@ $$('[data-elm="go2step3"]').on('click', function () {
 $$('.dice').on('click', function () {
   $$(this).addClass('shake-animation');
   handleRandomPublicMessage();
+  $$('[data-elm="show-share-link"]').show();
+  $$('[data-elm="message-link-container"]').hide();
 });
 
 $$('.submit-message').on('click', function (e) {
@@ -466,6 +465,21 @@ $$('[data-elm="share-message"]').on('click', function () {
     });
 });
 
+$$('[data-elm="show-share-link"]').on('click', function () {
+  $$(this).hide();
+  $$.doAJAX('public-messages', publicMsgParms, 'POST', true,
+    // Success (200) - when public message is successfully sent
+    function (r, textStatus, xhr) {
+      $$('[data-elm="message-share-link"]').text(r.sharing_url);
+    },
+    // Failed to send public message
+    function (xhr, textStatus) {
+      failedNotification4AjaxRequest(xhr, textStatus);
+      reject("Failed to send public message");
+    });
+  $$('[data-elm="message-link-container"]').show();
+})
+
 $$('[data-elm=copy-button]').on('click', function () {
   var textToCopy = $$('[data-elm="message-share-link"]')[0].textContent;
   var tempTextarea = document.createElement('textarea');
@@ -490,7 +504,7 @@ function availableResponses() {
         setThis('showStep3', 1);
         $$('[data-elm="step2"]').addClass('show');
         $$('[data-elm="step3"]').addClass('show');
-      
+
         r.forEach(res => {
           $$('[data-elm="available-responses"]').append(`
             <div class="envelope" data-reaction="${res.reaction}">
@@ -540,19 +554,8 @@ function handleRandomPublicMessage() {
       $$('.dice').removeClass('shake-animation');
 
       // Prepare the public message parameters with the random message data
-      let publicMsgParms = { message_id: r.id, message: r.message };
+      publicMsgParms = { message_id: r.id, message: r.message };
       // Second AJAX: Send the public message
-      $$.doAJAX('public-messages', publicMsgParms, 'POST', true,
-        // Success (200) - when public message is successfully sent
-        function (r, textStatus, xhr) {
-          $$('[data-elm="message-share-link"]').text(r.sharing_url);
-        },
-        // Failed to send public message
-        function (xhr, textStatus) {
-          failedNotification4AjaxRequest(xhr, textStatus);
-          reject("Failed to send public message");
-        });
-
     },
     // Failed to retrieve random message
     function (xhr, textStatus) {
@@ -562,3 +565,94 @@ function handleRandomPublicMessage() {
     });
 }
 
+
+function userSentMessages() {
+  $$.doAJAX('messages/user-sent-messages', { GUID: userGUID }, 'GET', true,
+    // Success (200) - when random message is successfully retrieved
+    function (r, textStatus, xhr) {
+      console.log(r)
+      let apiResponse = r;
+      // Select the element where responses will be appended using $$ in F7 v1.7.1
+      const getResponsesElement = $$('[data-elm="get-responses"]');
+
+      // Iterate through the messages
+      apiResponse.forEach((messageObj) => {
+        const { message, id, responses } = messageObj;
+
+        // Check if the message has responses
+        if (responses.length > 0) {
+          // Append the message text to the element
+          const messageDiv = $$('<div class="sent-message"></div>').text(message);
+          getResponsesElement.append(messageDiv);
+
+          // Iterate through the responses
+          responses.forEach((response, index) => {
+            // Create the envelope div for each response
+            const envelopeDiv = $$('<div></div>').addClass('envelope');
+
+            // Create a unique key by concatenating message id and index
+            const uniqueKey = `${id}-${index}`;
+
+            // Add the unique key as a data attribute
+            envelopeDiv.attr('data-key', uniqueKey);
+
+            // Add the envelope icon
+            const envelopeIcon = $$('<i></i>').addClass('fa fa-envelope');
+            envelopeDiv.append(envelopeIcon);
+
+            // Append the envelope div to the getResponsesElement
+            getResponsesElement.append(envelopeDiv);
+
+            // Add click event listener to the envelope
+            envelopeDiv.on('click', function () {
+              // Extract the message ID and index from the data-key
+              const [messageId, responseIndex] = uniqueKey.split('-');
+
+              // Convert the values to numbers
+              const responseContent = getResponseContent(Number(messageId), Number(responseIndex));
+
+              $$('.present').show()
+              myApp.modal({
+                text: `
+                  <div class="guest-popup-inner">
+                    <span class="reaction">${responseContent.reaction}</span>
+                  </div>
+                `,
+                buttons: [
+                  {
+                    text: 'حسنًا',
+                    onClick: function () {
+                      $$('.present').hide();
+                    }
+                  },
+                ],
+              });
+
+              // Log or do something with the response content
+              console.log(responseContent);
+            });
+          });
+        }
+      });
+
+      // Function to get response content by message ID and index
+      function getResponseContent(messageId, index) {
+        // Find the message with the given message ID
+        const messageObj = apiResponse.find((msg) => msg.id === messageId);
+
+        // If the message is found and has responses, return the specific response
+        if (messageObj && messageObj.responses.length > index) {
+          return messageObj.responses[index];
+        }
+
+        return null; // Return null if no response found
+      }
+
+    },
+    // Failed to retrieve random message
+    function (xhr, textStatus) {
+      failedNotification4AjaxRequest(xhr, textStatus);
+      $$('.dice').removeClass('shake-animation');
+      reject("Failed to retrieve random message");
+    });
+}

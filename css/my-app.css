@@ -95,6 +95,17 @@ li {
   justify-content: end;
 }
 
+.list-block.inset .item-inner::after {
+  height: 2px;
+}
+
+.list-block.inset .item-input input{
+  color: #fff;
+    font-weight: 700;
+    direction: ltr;
+    text-align: center;
+}
+
 /* This will be deleted later on */
 .for-later-use {
   display: none !important;
@@ -127,6 +138,10 @@ li {
   -webkit-transition: all 500ms linear;
   -ms-transition: all 500ms linear;
   transition: all 500ms linear;
+}
+
+.navbar .center {
+  color: #fff;
 }
 
 .navbar .left a+a,
@@ -321,6 +336,9 @@ li {
   width: 100%;
 }
 
+.login-screen, .popup {
+  background: linear-gradient(180deg, rgba(26, 121, 201, 1) 0%, rgba(48, 175, 241, 1) 55%);
+}
 /*** APP ***/
 .app-block {
   margin: 15px;
@@ -377,6 +395,10 @@ li {
   width: 100px;
   fill: #750017;
   fill: #dcd73f;
+}
+
+.dice:focus {
+  outline: none;
 }
 
 .shake-animation {
@@ -488,6 +510,11 @@ li {
   padding: 5px 20px;
   border-radius: 10px;
   text-align: center;
+}
+
+[data-elm="show-share-link"] {
+  font-size: 20px;
+  width: auto;
 }
 
 .message-link-container {
@@ -935,6 +962,7 @@ img.sender-image {
 .forget-password,
 .register-link {
   color: #1c86d4;
+  color: #fff;
 }
 
 .register-links-container {
@@ -946,4 +974,13 @@ img.sender-image {
 
 .register-links-container span {
   color: #ccc;
+}
+
+.sent-message {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  background: #1671b8;
+  padding: 15px;
+  border-radius: 15px 15px 0;
 }
