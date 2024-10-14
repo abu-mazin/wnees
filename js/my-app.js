@@ -339,6 +339,7 @@ function initUserLogedout() {
 
   setThis("hideWelcomeScreen", 1);
   createRandomUser();
+  initUserLoggedIn()
 }
 
 if (getThis("userLogedin") == 1 || getThis("randomUserLogedin") == 1) initUserLoggedIn();

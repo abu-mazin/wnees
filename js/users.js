@@ -13,15 +13,15 @@ class User {
 
   constructor(parms) {
     // user main attributes
-    this.token = parms.access_token;
+    this.token = parms.access_token || null;
 
-    this.username = parms.username;
-    this.email = parms.email;
+    this.username = parms.username || null;
+    this.email = parms.email || null;
 
     this.name = parms.name || parms.user.user_info.name;
     this.guid = parms.GUID || parms.user.user_info.GUID;
-    this.profilePicture = parms.profile_picture || parms.user.user_info.profile_picture;
-    this.settings = parms.settings || parms.user.user_info.settings;
+    this.profilePicture = parms.profile_picture === undefined ? parms.user.user_info.profile_picture : parms.profile_picture;
+    this.settings = parms.settings === undefined ? parms.user.user_info.settings : parms.settings;
   }
 
 
