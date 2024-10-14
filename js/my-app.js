@@ -279,8 +279,12 @@ function initUserLoggedIn() {
 // is Guest? then create random user 
 function createRandomUser() {
   myApp.modal({
+    title:"من فضلك أدخل اسمك",
     text: `
     <div class="guest-popup-inner">
+      <div class="check-guest">
+      هذه أول زيارة لك؟ أدخل اسمك أو <a href="#" class="open-popup" onclick="myApp.closeModal();" data-popup=".popup-login">اضغط هنا</a> لتسجيل الدخول لحسابك
+      </div>
       <span>من فضلك أدخل اسمك</span>
       <input type="text" data-elm="guest-name" placeholder="أدخل اسمك هنا" />
     </div>`,
@@ -334,6 +338,7 @@ function initUserLogedout() {
   $$('.logout').hide();
 
   setThis("hideWelcomeScreen", 1);
+  createRandomUser();
 }
 
 if (getThis("userLogedin") == 1 || getThis("randomUserLogedin") == 1) initUserLoggedIn();

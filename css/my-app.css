@@ -669,7 +669,18 @@ html:not(.watch-active-state) .modal-button:active {
   font-size: 32px;
 }
 
+.check-guest {
+  background-color: #3f90d1;
+  padding: 10px;
+  border-radius: 10px;
+  color: #d5f7ff;
+}
+
 /* MODAL */
+.modal-title {
+  font-size: 16px;
+  color: #fff;
+}
 .modal-inner,
 .modal-buttons {
   background-color: rgb(30 131 209);
