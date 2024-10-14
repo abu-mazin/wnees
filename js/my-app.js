@@ -237,6 +237,8 @@ $$('.signInForm-to-json').on('click', function (e) {
       // Failed notification
       if (textStatus == 401)
         myApp.alert('البريد الإلكتروني غير صحيح.');
+      else if (textStatus == 422) 
+        myApp.addNotification({ hold: 3000, title: 'تنبيه', message: 'من فضلك أدخل بريد الإلكتروني صحيح' });
       else
         failedNotification4AjaxRequest(xhr, textStatus);
     });

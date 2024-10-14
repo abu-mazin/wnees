@@ -104,6 +104,13 @@ body {
   font-family: 'ElMessiri', sans-serif;
 }
 
+html:not(.watch-active-state) label.label-checkbox:active,
+html:not(.watch-active-state) label.label-radio:active,
+label.label-checkbox.active-state,
+label.label-radio.active-state {
+  background-color: #30aff1;
+}
+
 a {
   color: #fff76f;
 }
@@ -690,6 +697,7 @@ html:not(.watch-active-state) .modal-button:active {
   font-size: 16px;
   color: #fff;
 }
+
 .modal-inner,
 .modal-buttons {
   background-color: rgb(30 131 209);
