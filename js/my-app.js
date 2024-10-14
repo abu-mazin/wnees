@@ -237,8 +237,8 @@ $$('.signInForm-to-json').on('click', function (e) {
       // Failed notification
       if (textStatus == 401)
         myApp.alert('البريد الإلكتروني غير صحيح.');
-      else if (textStatus == 422) 
-        myApp.addNotification({ hold: 3000, title: 'تنبيه', message: 'من فضلك أدخل بريد الإلكتروني صحيح' });
+      else if (textStatus == 422)
+        myApp.addNotification({ hold: 3000, title: 'تنبيه', message: 'من فضلك أدخل بريد إلكتروني صحيح' });
       else
         failedNotification4AjaxRequest(xhr, textStatus);
     });
@@ -263,7 +263,7 @@ function initUserLoggedIn() {
   $$('*[data-elm="user-name"]').val(user.name);
   $$('[data-elm="show-share-link"]').show();
   $$('[data-elm="message-link-container"]').hide();
-  
+
   if (user.profilePicture) {
     $$('[data-elm="user-image"]').attr('src', imagePath + user.profilePicture);
   } else {
@@ -284,7 +284,7 @@ function initUserLoggedIn() {
 // is Guest? then create random user 
 function createRandomUser() {
   myApp.modal({
-    title:"من فضلك أدخل اسمك",
+    title: "من فضلك أدخل اسمك",
     text: `
     <div class="guest-popup-inner">
       <div class="check-guest">
@@ -576,9 +576,11 @@ function handleRandomPublicMessage() {
       reject("Failed to retrieve random message");
     });
 }
-
 function userSentMessages() {
   $$('[data-elm="get-responses"]').empty();
+
+  // Retrieve or initialize openedResponses from localStorage
+  let openedResponses = JSON.parse(getThis('openedResponses')) || {};
 
   $$.doAJAX('messages/user-sent-messages', { GUID: userGUID }, 'GET', true,
     // Success (200) - when user messages are successfully retrieved
@@ -588,9 +590,6 @@ function userSentMessages() {
 
       // Flag to check if any message has responses
       let hasResponses = false;
-
-      // Create an object to store opened envelope status
-      let openedEnvelopes = {};
 
       apiResponse.forEach((messageObj) => {
         const { message, id, responses } = messageObj;
@@ -611,8 +610,8 @@ function userSentMessages() {
             const uniqueKey = `${id}-${index}`;
             envelopeDiv.attr('data-key', uniqueKey);
 
-            // Check if the envelope was previously opened
-            const isOpened = openedEnvelopes[uniqueKey] === 1;
+            // Check if the envelope has been opened in localStorage
+            const isOpened = openedResponses[uniqueKey] === 1;
             const envelopeIcon = $$('<i></i>').addClass(isOpened ? 'fa fa-envelope-open' : 'fa fa-envelope');
 
             // If opened, add the "open" class
@@ -647,9 +646,10 @@ function userSentMessages() {
               });
 
               // Check if the envelope is not already opened
-              if (!openedEnvelopes[uniqueKey]) {
-                // Mark as opened
-                openedEnvelopes[uniqueKey] = 1;
+              if (!openedResponses[uniqueKey]) {
+                // Mark as opened in localStorage
+                openedResponses[uniqueKey] = 1;
+                setThis('openedResponses', JSON.stringify(openedResponses));
 
                 // Update the envelope icon and add 'open' class
                 envelopeIcon.removeClass('fa-envelope').addClass('fa-envelope-open');
@@ -687,4 +687,5 @@ function userSentMessages() {
       reject("Failed to retrieve messages");
     });
 }
+
 

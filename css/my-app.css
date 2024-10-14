@@ -1018,6 +1018,11 @@ html:not(.watch-active-state) .modal-button:active {
   gap: 10px;
 }
 
+.received-message.unread {
+  background-color: #f0744c;
+  border-color: #f0744c;
+}
+
 .message-content {
   font-size: 16px;
   font-weight: 500;
