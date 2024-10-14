@@ -259,6 +259,9 @@ function initUserLoggedIn() {
   userGUID = user.guid;
   $$('*[data-elm="user-name"]').text(user.name);
   $$('*[data-elm="user-name"]').val(user.name);
+  $$('[data-elm="show-share-link"]').show();
+  $$('[data-elm="message-link-container"]').hide();
+  
   if (user.profilePicture) {
     $$('[data-elm="user-image"]').attr('src', imagePath + user.profilePicture);
   } else {

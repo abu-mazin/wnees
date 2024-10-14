@@ -134,6 +134,15 @@ li {
   text-align: center;
 }
 
+.list-block.inset .item-input input::placeholder {
+  color: #dbdbdb;
+  font-weight: 500;
+}
+
+.list-block ul {
+  background-color: transparent;
+}
+
 /* This will be deleted later on */
 .for-later-use {
   display: none !important;
