@@ -279,6 +279,8 @@ function initUserLoggedIn() {
 
   handleRandomPublicMessage();
   userSentMessages();
+  getReceivedMessages()
+
 }
 
 // is Guest? then create random user 
@@ -576,6 +578,7 @@ function handleRandomPublicMessage() {
       reject("Failed to retrieve random message");
     });
 }
+
 function userSentMessages() {
   $$('[data-elm="get-responses"]').empty();
 
@@ -689,3 +692,20 @@ function userSentMessages() {
 }
 
 
+function getReceivedMessages() {
+  return new Promise((resolve, reject) => {
+    $$.doAJAX('messages/user-received-messages', {}, 'GET', true,
+      // Success (200)
+      function (r, textStatus, xhr) {
+        $$('[data-elm="received-messages-num"]').text(r.length);
+        resolve(r); // Resolve the promise with the response
+      },
+      // Failed
+      function (xhr, textStatus) {
+        // Failed notification
+        failedNotification4AjaxRequest(xhr, textStatus);
+        reject(textStatus); // Reject the promise on error
+      }
+    );
+  });
+}

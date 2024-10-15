@@ -895,6 +895,22 @@ html:not(.watch-active-state) .modal-button:active {
   width: 28px;
 }
 
+.float-button .messages-num {
+  color: rgb(30 131 209);
+  position: absolute;
+  z-index: 9999999;
+  background: #e8e8e8;
+  border-radius: 50%;
+  height: 20px;
+  width: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  left: 0;
+  top: -5px;
+}
+
 #nextBtn.float-button {
   display: none;
 }
@@ -1033,9 +1049,11 @@ html:not(.watch-active-state) .modal-button:active {
   left: 10px;
   top: 10px;
 }
+
 .received-message .replies-num img {
   width: 25px;
 }
+
 .message-content {
   font-size: 16px;
   font-weight: 500;
