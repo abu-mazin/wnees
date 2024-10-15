@@ -1034,6 +1034,7 @@ html:not(.watch-active-state) .modal-button:active {
   gap: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.16);
   position: relative;
+  color: #FFF;
 }
 
 .received-message.unread {
@@ -1099,4 +1100,43 @@ img.sender-image {
   background: #1671b8;
   padding: 15px;
   border-radius: 15px 15px 0;
+}
+
+.respond-message-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0 35px;
+  
+}
+
+.respond-message-form .sender-message-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: center;
+  justify-content: center;
+  margin: 15px 0;
+  color: #fff;
+}
+
+.respond-message-form .available-responses{
+  display: flex;
+  font-size: 25px;
+  margin-bottom: 10px;
+}
+
+.respond-message-form img {
+  height: 70px;
+  width: 70px;
+  border-radius: 50%;
+}
+
+[data-elm="sender-name"] {
+  font-size: 20px;
+}
+
+[data-elm="message-content"] {
+  font-size: 22px;
 }

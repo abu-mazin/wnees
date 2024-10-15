@@ -1,117 +1,118 @@
 ﻿<!DOCTYPE html>
 <html>
-  <head>
-    <!-- Required meta tags-->
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta name="viewport"
-      content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui, viewport-fit=cover">
-    <meta http-equiv="Content-Security-Policy"
-      content="default-src https://wnees.com 'self' data: gap: 'unsafe-inline' 'unsafe-eval'; style-src https://wnees.com 'self' 'unsafe-inline' 'unsafe-eval' gap:; script-src https://wnees.com 'self' 'unsafe-inline' 'unsafe-eval' gap:; img-src https://wnees.com 'self' filesystem: data:; connect-src https://wnees.com 'self'; frame-src https://wnees.com 'self'; child-src https://wnees.com 'self'">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <!-- Your app title -->
-    <title>Wnees</title>
-    <!-- Framework7 iOS Core CSS theme styles-->
-    <link rel="stylesheet" href="lib/framework7/css/framework7.ios.min.css">
-    <!-- Framework7 iOS Right to Left styles -->
-    <link rel="stylesheet" href="lib/framework7/css/framework7.ios.rtl.min.css">
-    <!-- Framework7 iOS related color styles -->
-    <link rel="stylesheet" href="lib/framework7/css/framework7.ios.colors.min.css">
-    <!-- Framework7 toast plugin -->
-    <link rel="stylesheet" href="lib/framework7/css/toast.css">
-    <!-- Framework7 iOS modified CSS theme styles -->
-    <link rel="stylesheet" href="lib/framework7/css/style.css">
-    <!-- Font Awesome Icon style -->
-    <link rel="stylesheet" href="lib/fontawesome/css/font-awesome.min.css">
-    <link rel="stylesheet" href="lib/fontawesome/css/regular.min.css">
-    <link rel="stylesheet" href="lib/fontawesome/css/solid.min.css">
-    <!-- your custom app styles-->
-    <link rel="stylesheet" href="css/my-app.css">
-    <!-- START Icons -->
-    <link rel="icon" href="img/icon.png">
-    <link rel="apple-touch-icon" href="img/icon.png">
-    <link rel="icon" type="image/x-icon" href="img/favicon.png">
 
-  </head>
-  <body>
-    <!-- Overlays -->
-    <div class="statusbar-overlay"></div>
-    <div class="panel-overlay"></div>
-    <div class="modal-overlay"></div>
+<head>
+  <!-- Required meta tags-->
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport"
+    content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src https://wnees.com 'self' data: gap: 'unsafe-inline' 'unsafe-eval'; style-src https://wnees.com 'self' 'unsafe-inline' 'unsafe-eval' gap:; script-src https://wnees.com 'self' 'unsafe-inline' 'unsafe-eval' gap:; img-src https://wnees.com 'self' filesystem: data:; connect-src https://wnees.com 'self'; frame-src https://wnees.com 'self'; child-src https://wnees.com 'self'">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <!-- Your app title -->
+  <title>Wnees</title>
+  <!-- Framework7 iOS Core CSS theme styles-->
+  <link rel="stylesheet" href="lib/framework7/css/framework7.ios.min.css">
+  <!-- Framework7 iOS Right to Left styles -->
+  <link rel="stylesheet" href="lib/framework7/css/framework7.ios.rtl.min.css">
+  <!-- Framework7 iOS related color styles -->
+  <link rel="stylesheet" href="lib/framework7/css/framework7.ios.colors.min.css">
+  <!-- Framework7 toast plugin -->
+  <link rel="stylesheet" href="lib/framework7/css/toast.css">
+  <!-- Framework7 iOS modified CSS theme styles -->
+  <link rel="stylesheet" href="lib/framework7/css/style.css">
+  <!-- Font Awesome Icon style -->
+  <link rel="stylesheet" href="lib/fontawesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="lib/fontawesome/css/regular.min.css">
+  <link rel="stylesheet" href="lib/fontawesome/css/solid.min.css">
+  <!-- your custom app styles-->
+  <link rel="stylesheet" href="css/my-app.css">
+  <!-- START Icons -->
+  <link rel="icon" href="img/icon.png">
+  <link rel="apple-touch-icon" href="img/icon.png">
+  <link rel="icon" type="image/x-icon" href="img/favicon.png">
 
-    <!-- Welcome Screen -->
-    <div class="popup welcome-screen tablet-fullscreen">
-      <div class="view">
-        <div class="pages">
-          <div class="page">
-            <div class="navbar">
-              <div class="navbar-inner">
-                <div class="left">
-                  <a href="#" class="close-popup link icon-only" data-popup=".welcome-screen"
-                    data-i18n-key="skip">تخطي</a>
-                </div>
+</head>
+
+<body>
+  <!-- Overlays -->
+  <div class="statusbar-overlay"></div>
+  <div class="panel-overlay"></div>
+  <div class="modal-overlay"></div>
+
+  <!-- Welcome Screen -->
+  <div class="popup welcome-screen tablet-fullscreen">
+    <div class="view">
+      <div class="pages">
+        <div class="page">
+          <div class="navbar">
+            <div class="navbar-inner">
+              <div class="left">
+                <a href="#" class="close-popup link icon-only" data-popup=".welcome-screen"
+                  data-i18n-key="skip">تخطي</a>
               </div>
             </div>
-            <div class="page-content welcome-screen-content slider">
-              <div class="swiper-container welcome-screen-swiper">
-                <div class="swiper-wrapper">
-                  <div class="swiper-slide">
-                    <div class="content-block weclome-screen-slide">
-                      <div class="weclome-screen-img">
-                        <img src="img/welcome/onbaording-1.png" alt="">
-                      </div>
-                      <div class="weclome-screen-desc">
-                        <h1 data-i18n-key="">اسئله وتفاعل حريقه</h1>
-                        <p data-i18n-key="welcome-screen-desc">اطرح الاسئلة وتعلم أشياء جديدة عن نفسك وشارك الردود مع
-                          الآخرين</p>
-                      </div>
-                      <div class="weclome-screen-footer">
-                        <a href="#" class="next-slide welcome-next-btn" data-i18n-key="Next">التالي</a>
-                      </div>
+          </div>
+          <div class="page-content welcome-screen-content slider">
+            <div class="swiper-container welcome-screen-swiper">
+              <div class="swiper-wrapper">
+                <div class="swiper-slide">
+                  <div class="content-block weclome-screen-slide">
+                    <div class="weclome-screen-img">
+                      <img src="img/welcome/onbaording-1.png" alt="">
+                    </div>
+                    <div class="weclome-screen-desc">
+                      <h1 data-i18n-key="">اسئله وتفاعل حريقه</h1>
+                      <p data-i18n-key="welcome-screen-desc">اطرح الاسئلة وتعلم أشياء جديدة عن نفسك وشارك الردود مع
+                        الآخرين</p>
+                    </div>
+                    <div class="weclome-screen-footer">
+                      <a href="#" class="next-slide welcome-next-btn" data-i18n-key="Next">التالي</a>
                     </div>
                   </div>
-                  <div class="swiper-slide">
-                    <div class="content-block weclome-screen-slide">
-                      <div class="weclome-screen-img">
-                        <img src="img/welcome/onbaording-2.png" alt="">
-                      </div>
-                      <div class="weclome-screen-desc">
-                        <h1 data-i18n-key="">عبارات ورسائل محفزة</h1>
-                        <p data-i18n-key="">تبادل العبارات التحفيزية واصنع يوماً جديداً وملهماً</p>
-                      </div>
-                      <div class="weclome-screen-footer">
-                        <a href="#" class="next-slide welcome-next-btn" data-i18n-key="Next">التالي</a>
-                      </div>
+                </div>
+                <div class="swiper-slide">
+                  <div class="content-block weclome-screen-slide">
+                    <div class="weclome-screen-img">
+                      <img src="img/welcome/onbaording-2.png" alt="">
+                    </div>
+                    <div class="weclome-screen-desc">
+                      <h1 data-i18n-key="">عبارات ورسائل محفزة</h1>
+                      <p data-i18n-key="">تبادل العبارات التحفيزية واصنع يوماً جديداً وملهماً</p>
+                    </div>
+                    <div class="weclome-screen-footer">
+                      <a href="#" class="next-slide welcome-next-btn" data-i18n-key="Next">التالي</a>
                     </div>
                   </div>
-                  <div class="swiper-slide">
-                    <div class="content-block weclome-screen-slide">
-                      <div class="weclome-screen-img">
-                        <img src="img/welcome/onbaording-3.png" alt="">
-                      </div>
-                      <div class="weclome-screen-desc">
-                        <h1 data-i18n-key="">مفاجآت معبرة ومبهجة</h1>
-                        <p data-i18n-key="">تلقى وارسل المفاجآت والرموز التعبيرية وادخل البهجة لقلبك</p>
-                      </div>
-                      <div class="weclome-screen-footer">
-                        <a href="#" class="next-slide welcome-next-btn" data-i18n-key="Next">التالي</a>
-                      </div>
+                </div>
+                <div class="swiper-slide">
+                  <div class="content-block weclome-screen-slide">
+                    <div class="weclome-screen-img">
+                      <img src="img/welcome/onbaording-3.png" alt="">
+                    </div>
+                    <div class="weclome-screen-desc">
+                      <h1 data-i18n-key="">مفاجآت معبرة ومبهجة</h1>
+                      <p data-i18n-key="">تلقى وارسل المفاجآت والرموز التعبيرية وادخل البهجة لقلبك</p>
+                    </div>
+                    <div class="weclome-screen-footer">
+                      <a href="#" class="next-slide welcome-next-btn" data-i18n-key="Next">التالي</a>
                     </div>
                   </div>
-                  <div class="swiper-slide">
-                    <div class="content-block weclome-screen-slide">
-                      <div class="weclome-screen-img">
-                        <img src="img/welcome/onbaording-4.png" alt="">
-                      </div>
-                      <div class="weclome-screen-desc">
-                        <h1 data-i18n-key="">ونيس</h1>
-                        <p data-i18n-key="">ببساطة ابقى على اتصال مع الآخرين وانت ونيس ومستانس</p>
-                      </div>
-                      <div class="weclome-screen-footer">
-                        <a href="#" class="welcome-next-btn close-popup" data-popup=".welcome-screen"
-                          data-i18n-key="Start_now" data-elm="close-welcome-screen">ابدأ الآن</a>
-                      </div>
+                </div>
+                <div class="swiper-slide">
+                  <div class="content-block weclome-screen-slide">
+                    <div class="weclome-screen-img">
+                      <img src="img/welcome/onbaording-4.png" alt="">
+                    </div>
+                    <div class="weclome-screen-desc">
+                      <h1 data-i18n-key="">ونيس</h1>
+                      <p data-i18n-key="">ببساطة ابقى على اتصال مع الآخرين وانت ونيس ومستانس</p>
+                    </div>
+                    <div class="weclome-screen-footer">
+                      <a href="#" class="welcome-next-btn close-popup" data-popup=".welcome-screen"
+                        data-i18n-key="Start_now" data-elm="close-welcome-screen">ابدأ الآن</a>
                     </div>
                   </div>
                 </div>
@@ -121,15 +122,16 @@
         </div>
       </div>
     </div>
-    <script>
-      if (typeof (Storage) !== "undefined") {
-        if (typeof (localStorage.wnees_hideWelcomeScreen) !== "undefined") {
-          if (localStorage.wnees_hideWelcomeScreen) {
-            document.getElementsByClassName("welcome-screen")[0].style.display = "none";
-          }
+  </div>
+  <script>
+    if (typeof (Storage) !== "undefined") {
+      if (typeof (localStorage.wnees_hideWelcomeScreen) !== "undefined") {
+        if (localStorage.wnees_hideWelcomeScreen) {
+          document.getElementsByClassName("welcome-screen")[0].style.display = "none";
         }
       }
-    </script>
+    }
+  </script>
 
   <!-- VIEWS #################################### -->
   <div class="views tabs">
@@ -185,7 +187,8 @@
                   <br />
                   <br />
                 </div>
-                <a href="#" class="button" data-elm="go2step2" style=" background: #6a9bc8; color: #fff; border-radius: 30px; width: 120px; margin: auto; ">التالي</a>
+                <a href="#" class="button" data-elm="go2step2"
+                  style=" background: #6a9bc8; color: #fff; border-radius: 30px; width: 120px; margin: auto; ">التالي</a>
               </div>
               <div class="app-block step" data-elm="step2">
                 <span class="app-num">2</span>
@@ -219,7 +222,8 @@
                   <img src="img/socialMedia/x.png" class="social-media-icon">
                   <br />
                 </div>
-                <a href="#" class="button" data-elm="go2step3" style=" background: #6a9bc8; color: #fff; border-radius: 30px; width: 120px; margin: auto; ">التالي</a>
+                <a href="#" class="button" data-elm="go2step3"
+                  style=" background: #6a9bc8; color: #fff; border-radius: 30px; width: 120px; margin: auto; ">التالي</a>
               </div>
               <div class="app-block step" data-elm="step3">
                 <span class="app-num">3</span>
@@ -383,8 +387,7 @@
                   <div class="item-media"><i class="icon icon-form-checkbox"></i></div>
                   <div class="item-inner">
                     <div class="item-title" style="color: #d3d3d3;">
-                      أوافق على <a href="#"
-                        onclick="cordova.InAppBrowser.open('https://wnees.com/terms', '_system');"
+                      أوافق على <a href="#" onclick="cordova.InAppBrowser.open('https://wnees.com/terms', '_system');"
                         style="color: #e1e050;">شروط الاستخدام</a>
                     </div>
                   </div>
@@ -476,6 +479,38 @@
     </div>
   </div>
 
+  <!-- RESPOND TO MESSAGE PICKER -->
+  <div class="picker-modal picker-respond-to-message styled-picker">
+    <div class="toolbar">
+      <div class="toolbar-inner">
+        <div class="left">
+          <a href="#" class="close-picker link icon-only"><i class="fa fa-times"></i></a>
+        </div>
+        <div class="center"></div>
+        <div class="right">
+        </div>
+      </div>
+    </div>
+    <div class="picker-modal-picker">
+      <form data-elm="respond-to-message-form" class="respond-message-form">
+        <img src="" alt="" data-elm="sender-image">
+        <div class="sender-message-info">
+          <span data-elm="sender-name"></span>
+          <span>شارك معك هذه الرسالة</span>
+          <span data-elm="message-content"></span>
+        </div>
+        <div class="available-responses">
+          <span class="close-picker" data-elm="reply" id="1">👍</span>
+          <span class="close-picker" data-elm="reply" id="2">❤️</span>
+          <span class="close-picker" data-elm="reply" id="3">😂</span>
+          <span class="close-picker" data-elm="reply" id="4">😮</span>
+          <span class="close-picker" data-elm="reply" id="5">😢</span>
+        </div>
+        <!-- <a class="respond-message item-link button button-fill">إرسال ردك</a> -->
+      </form>
+    </div>
+  </div>
+
   <!-- SCRIPTS ######################################## -->
   <!-- Cordova JS -->
   <script type="text/javascript" src="cordova.js"></script>
@@ -496,4 +531,5 @@
   <!-- Translations -->
   <script type="text/javascript" src="js/translation.js"></script>
 </body>
+
 </html>
