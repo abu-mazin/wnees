@@ -24,6 +24,7 @@ myApp.onPageInit('received_messages', function (page) {
           $$('.received-messages').append(
             `
             <div class="received-message ${messageClass}" data-key=${msg.id}>
+              <div class="replies-num"><img alt="" src="img/icons/reply.svg" /> <span>${msg.responses.length}</span></div>
               <span class="message-content">${msg.message}</span>
               <span class="message-sender">من 
                 <img src=${msg.sender.profile_picture ? imagePath + msg.sender.profile_picture : "img/user-pic.svg"} alt="" class="sender-image"/> 
