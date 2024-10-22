@@ -184,7 +184,7 @@ var welcomeSlider = myApp.swiper('.welcome-screen-swiper', {
 
 $$('.welcome-screen').on('popup:close', function () {
   setThis("hideWelcomeScreen", 1);
-  if (getThis("userLogedin") != 1 && getThis("randomUserLogedin") != 1) createRandomUser();
+  if (getThis("userLogedin") != 1 && getThis("randomUserLogedin") != 1) requestName();
 });
 
 
@@ -251,6 +251,9 @@ $$('.logout').on('click', function () {
 })
 
 function initUserLoggedIn() {
+  $$('[data-elm="create-random-user-container"]').hide();
+  $$('.app-block').removeClass('disabled');
+
   if (getThis("userLogedin")) {
     userLogedin = true;
     $$('.navbar-user-name').hide();
@@ -262,70 +265,67 @@ function initUserLoggedIn() {
   $$('*[data-elm="user-name"]').text(user.name);
   $$('*[data-elm="user-name"]').val(user.name);
   $$('[data-elm="show-share-link"]').show();
-  $$('[data-elm="message-link-container"]').hide();
+  $$('[data-elm="share-link-container"]').hide();
 
   if (user.profilePicture) {
     $$('[data-elm="user-image"]').attr('src', imagePath + user.profilePicture);
+    $$('[data-elm="step2"]').addClass('show');
+    $$('[data-elm="step3"]').addClass('show');
+    $$('[data-elm="go2step2"]').hide();
+    $$('[data-elm="go2step3"]').hide();
+    setThis('showStep2', 1);
+    setThis('showStep3', 1);
   } else {
     $$('[data-elm="user-image"]').attr('src', 'img/user-pic.svg');
-  }
-
-  if (getThis('showStep2') == 1) {
-    $$('[data-elm="step2"]').addClass('show');
-  }
-  if (getThis('showStep3') == 1) {
-    $$('[data-elm="step3"]').addClass('show');
+    if (getThis('showStep2') == 1) {
+      $$('[data-elm="step2"]').addClass('show');
+    }
+    if (getThis('showStep3') == 1) {
+      $$('[data-elm="step3"]').addClass('show');
+    }
   }
 
   handleRandomPublicMessage();
   userSentMessages();
   getReceivedMessages()
-
 }
 
-// is Guest? then create random user 
-function createRandomUser() {
-  myApp.modal({
-    title: "من فضلك أدخل اسمك",
-    text: `
-    <div class="guest-popup-inner">
-      <div class="check-guest">
-      هذه أول زيارة لك؟ أدخل اسمك أو <a href="#" class="open-popup" onclick="myApp.closeModal();" data-popup=".popup-login">اضغط هنا</a> لتسجيل الدخول لحسابك
-      </div>
-      <span>من فضلك أدخل اسمك</span>
-      <input type="text" data-elm="guest-name" placeholder="أدخل اسمك هنا" />
-    </div>`,
-    buttons: [
-      {
-        text: 'إرسـال',
-        close: false, // prevent closing until valid input
-        onClick: function () {
-          var userName = $$('[data-elm="guest-name"]').val().trim();
-          if (userName.length >= 2) {
-            // Your callback logic here
-            $$.doAJAX('users-info', { name: userName }, 'POST', true,
-              // Success (200)
-              function (r, textStatus, xhr) {
-                if (typeof r != 'undefined' && r != null) {
-                  setThis("randomUserLogedin", 1);
-                  setThis("userData", JSON.stringify(r));
-                  initUserLoggedIn()
-                }
-              },
-              // Failed
-              function (xhr, textStatus) {
-              });
-            myApp.closeModal(); // close the modal after valid input
-          } else {
-            myApp.addNotification({ hold: 5000, title: 'تنبيه', message: 'الاسم قصير جداً! حاول مجدداً' });
-          }
+// is Guest (first time)? then request name
+function requestName() {
+  $$('[data-elm="create-random-user-container"]').show();
+  $$('.app-block').addClass('disabled');
+}
+
+// create random user 
+$$('[data-elm="create-random-user"]').on('click', function (e) {
+  e.preventDefault();
+
+  var userName = $$('[data-elm="guest-name"]').val().trim();
+  if (userName.length >= 2) {
+    // Your callback logic here
+    $$.doAJAX('users-info', { name: userName }, 'POST', true,
+      // Success (200)
+      function (r, textStatus, xhr) {
+        if (typeof r != 'undefined' && r != null) {
+          setThis("randomUserLogedin", 1);
+          setThis("userData", JSON.stringify(r));
+          initUserLoggedIn()
         }
       },
-    ],
-  });
-}
+      // Failed
+      function (xhr, textStatus) {
+        failedNotification4AjaxRequest(xhr, textStatus);
+      });
+  } else {
+    myApp.alert('الاسم قصير جداً! حاول مجدداً');
+  }
+});
 
+// logout
 function initUserLogedout() {
+  $$('[data-elm="create-random-user-container"]').show();
+  $$('.app-block').addClass('disabled');
+
   //clear all data
   if (useDB) {
     DB_data = [];
@@ -345,12 +345,12 @@ function initUserLogedout() {
   $$('.logout').hide();
 
   setThis("hideWelcomeScreen", 1);
-  createRandomUser();
+  requestName();
   initUserLoggedIn()
 }
 
 if (getThis("userLogedin") == 1 || getThis("randomUserLogedin") == 1) initUserLoggedIn();
-else if (getThis('hideWelcomeScreen') == '1') createRandomUser();
+else if (getThis('hideWelcomeScreen') == '1') requestName();
 
 
 // ======================================
@@ -421,6 +421,7 @@ $$('[data-elm="go2step2"]').on('click', function () {
   step2.addClass('show');
   step2[0].scrollIntoView({ behavior: 'smooth', block: 'start' }); // Smooth scroll to the element
   setThis('showStep2', 1);
+  $$('[data-elm="go2step2"]').hide();
 });
 
 $$('[data-elm="go2step3"]').on('click', function () {
@@ -428,6 +429,7 @@ $$('[data-elm="go2step3"]').on('click', function () {
   step3.addClass('show');
   step3[0].scrollIntoView({ behavior: 'smooth', block: 'start' }); // Smooth scroll to the element
   setThis('showStep3', 1);
+  $$('[data-elm="go2step3"]').hide();
 });
 
 
@@ -438,35 +440,39 @@ $$('.dice').on('click', function () {
   $$(this).addClass('shake-animation');
   handleRandomPublicMessage();
   $$('[data-elm="show-share-link"]').show();
-  $$('[data-elm="message-link-container"]').hide();
+  $$('[data-elm="share-link-container"]').hide();
 });
 
-$$('.submit-message').on('click', function (e) {
+$$('.custom-message').on('click', function (e) {
   e.preventDefault();
 
-  var submitMessage = myApp.formToJSON('#sendMessageForm');
-  // submitMessage.available_message_id = 2;
-  submitMessage.is_random = 1;
-  console.log(submitMessage)
-
-  $$.doAJAX(`messages`, submitMessage, 'POST', true,
-    // Success (200)
-    function (r, textStatus, xhr) {
-      myApp.closeModal(".picker-send-message")
-    },
-    // Failed
-    function (xhr, textStatus) {
-      // Failed notification
-      failedNotification4AjaxRequest(xhr, textStatus);
-    });
+  var msg = myApp.formToJSON('#sendMessageForm').message;
+  msgParms = { message_id: -1, message: msg };
+  $$(".random-message").text(msg);
+  myApp.closeModal(".picker-send-message")
 });
 
+$$('[data-elm="show-share-link"]').on('click', function () {
+  $$(this).hide();
+  $$.doAJAX('public-messages', msgParms, 'POST', true,
+    // Success (200) - when public message is successfully sent
+    function (r, textStatus, xhr) {
+      $$('[data-elm="message-share-link"]').text(r.sharing_url);
+    },
+    // Failed to send public message
+    function (xhr, textStatus) {
+      failedNotification4AjaxRequest(xhr, textStatus);
+      reject("Failed to send public message");
+    });
+  $$('[data-elm="share-link-container"]').show();
+})
+
 $$('[data-elm="share-message"]').on('click', function () {
-  let key = $$('.random-message').attr('key');
   let message = {};
-  message.availabe_message_id = key;
   message.is_random = 1;
-  message.message = $$('.random-message').text()
+  if(msgParms.message_id > -1) message.availabe_message_id = msgParms.message_id;
+  message.message = msgParms.message;
+
   $$.doAJAX(`messages`, message, 'POST', true,
     // Success (200)
     function (r, textStatus, xhr) {
@@ -479,21 +485,6 @@ $$('[data-elm="share-message"]').on('click', function () {
     });
 });
 
-$$('[data-elm="show-share-link"]').on('click', function () {
-  $$(this).hide();
-  $$.doAJAX('public-messages', publicMsgParms, 'POST', true,
-    // Success (200) - when public message is successfully sent
-    function (r, textStatus, xhr) {
-      $$('[data-elm="message-share-link"]').text(r.sharing_url);
-    },
-    // Failed to send public message
-    function (xhr, textStatus) {
-      failedNotification4AjaxRequest(xhr, textStatus);
-      reject("Failed to send public message");
-    });
-  $$('[data-elm="message-link-container"]').show();
-})
-
 $$('[data-elm=copy-button]').on('click', function () {
   var textToCopy = $$('[data-elm="message-share-link"]')[0].textContent;
   var tempTextarea = document.createElement('textarea');
@@ -505,77 +496,22 @@ $$('[data-elm=copy-button]').on('click', function () {
   myApp.toast('تم نسخ الرابط', { duration: 2000 }).show();
 });
 
-function availableResponses() {
-  $$.doAJAX('available-responses', {}, 'GET', false,
-    // Success (200)
-    function (r, textStatus, xhr) {
-      if (r.length == 0) {
-        $$('[data-elm="available-responses"]').append(`
-          <span>تنبيه لا يوحد ردود...</span>
-        `);
-      } else {
-        setThis('showStep2', 1);
-        setThis('showStep3', 1);
-        $$('[data-elm="step2"]').addClass('show');
-        $$('[data-elm="step3"]').addClass('show');
-
-        r.forEach(res => {
-          $$('[data-elm="available-responses"]').append(`
-            <div class="envelope" data-reaction="${res.reaction}">
-              <i class="fa fa-envelope" style="margin: auto;"></i>
-            </div>
-          `);
-        });
-
-        // Add click event listener to .envelope elements
-        $$('.envelope').on('click', function () {
-          const reaction = $$(this).data('reaction');
-          myApp.modal({
-            text: `
-              <div class="guest-popup-inner">
-                <span class="reaction">${reaction}</span>
-              </div>
-            `,
-            buttons: [
-              {
-                text: 'حسنًا',
-                onClick: function () {
-                  $$('.present').css('display', 'none');
-                }
-              },
-            ],
-          });
-        });
-      }
-    },
-    // Failed
-    function (xhr, textStatus) {
-      // Failed notification
-      if (textStatus == 401)
-        myApp.alert('البريد الإلكتروني غير صحيح.');
-      else
-        failedNotification4AjaxRequest(xhr, textStatus);
-    });
-}
-
 function handleRandomPublicMessage() {
   // First AJAX: Get a random message
   $$.doAJAX('available-messages/random', { GUID: userGUID }, 'GET', true,
     // Success (200) - when random message is successfully retrieved
     function (r, textStatus, xhr) {
       $$('.random-message').text(r.message);
-      $$('.random-message').attr('key', r.id);
       $$('.dice').removeClass('shake-animation');
 
       // Prepare the public message parameters with the random message data
-      publicMsgParms = { message_id: r.id, message: r.message };
+      msgParms = { message_id: r.id, message: r.message };
       // Second AJAX: Send the public message
     },
     // Failed to retrieve random message
     function (xhr, textStatus) {
       failedNotification4AjaxRequest(xhr, textStatus);
       $$('.dice').removeClass('shake-animation');
-      reject("Failed to retrieve random message");
     });
 }
 
@@ -668,19 +604,13 @@ function userSentMessages() {
         getResponsesElement.append(`
           <span>تنبيه لا يوجد ردود...</span>
         `);
-      }
-
-      // Function to get response content by message ID and index
-      function getResponseContent(messageId, index) {
-        // Find the message with the given message ID
-        const messageObj = apiResponse.find((msg) => msg.id === messageId);
-
-        // If the message is found and has responses, return the specific response
-        if (messageObj && messageObj.responses.length > index) {
-          return messageObj.responses[index];
-        }
-
-        return null; // Return null if no response found
+      } else {
+        setThis('showStep2', 1);
+        setThis('showStep3', 1);
+        $$('[data-elm="step2"]').addClass('show');
+        $$('[data-elm="step3"]').addClass('show');
+        $$('[data-elm="go2step2"]').hide();
+        $$('[data-elm="go2step3"]').hide();
       }
     },
     // Failed to retrieve messages
@@ -691,21 +621,91 @@ function userSentMessages() {
     });
 }
 
-
 function getReceivedMessages() {
-  return new Promise((resolve, reject) => {
-    $$.doAJAX('messages/user-received-messages', {}, 'GET', true,
-      // Success (200)
-      function (r, textStatus, xhr) {
+  $$('[data-elm="received-messages-num"]').hide();
+  $$('[data-elm="received-messages-num"]').text('');
+
+  $$.doAJAX('messages/user-received-messages', {}, 'GET', true,
+    // Success (200)
+    function (r, textStatus, xhr) {
+      if(r.length > 0) {
+        $$('[data-elm="received-messages-num"]').show();
         $$('[data-elm="received-messages-num"]').text(r.length);
-        resolve(r); // Resolve the promise with the response
-      },
-      // Failed
-      function (xhr, textStatus) {
-        // Failed notification
-        failedNotification4AjaxRequest(xhr, textStatus);
-        reject(textStatus); // Reject the promise on error
+
+        setThis('showStep2', 1);
+        setThis('showStep3', 1);
+        $$('[data-elm="step2"]').addClass('show');
+        $$('[data-elm="step3"]').addClass('show');
+        $$('[data-elm="go2step2"]').hide();
+        $$('[data-elm="go2step3"]').hide();
       }
-    );
-  });
+
+    },
+    // Failed
+    function (xhr, textStatus) {
+      // Failed notification
+      failedNotification4AjaxRequest(xhr, textStatus);
+    });
 }
+
+// Function to get response content by message ID and index
+function getResponseContent(messageId, index) {
+  // Find the message with the given message ID
+  const messageObj = apiResponse.find((msg) => msg.id === messageId);
+
+  // If the message is found and has responses, return the specific response
+  if (messageObj && messageObj.responses.length > index) {
+    return messageObj.responses[index];
+  }
+
+  return null; // Return null if no response found
+}
+
+function availableResponses() {
+  $$.doAJAX('available-responses', {}, 'GET', false,
+    // Success (200)
+    function (r, textStatus, xhr) {
+      if (r.length == 0) {
+        $$('[data-elm="available-responses"]').append(`
+          <span>تنبيه لا يوحد ردود...</span>
+        `);
+      } else {
+        r.forEach(res => {
+          $$('[data-elm="available-responses"]').append(`
+            <div class="envelope" data-reaction="${res.reaction}">
+              <i class="fa fa-envelope" style="margin: auto;"></i>
+            </div>
+          `);
+        });
+
+        // Add click event listener to .envelope elements
+        $$('.envelope').on('click', function () {
+          const reaction = $$(this).data('reaction');
+          myApp.modal({
+            text: `
+              <div class="guest-popup-inner">
+                <span class="reaction">${reaction}</span>
+              </div>
+            `,
+            buttons: [
+              {
+                text: 'حسنًا',
+                onClick: function () {
+                  $$('.present').css('display', 'none');
+                }
+              },
+            ],
+          });
+        });
+      }
+    },
+    // Failed
+    function (xhr, textStatus) {
+      // Failed notification
+      if (textStatus == 401)
+        myApp.alert('البريد الإلكتروني غير صحيح.');
+      else
+        failedNotification4AjaxRequest(xhr, textStatus);
+    });
+}
+

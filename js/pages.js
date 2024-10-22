@@ -66,7 +66,4 @@ myApp.onPageInit('received_messages', function (page) {
     .catch(error => {
       console.error("Failed to get messages:", error);
     });
-
-
-
 });
