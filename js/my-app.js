@@ -331,6 +331,11 @@ function initUserLogedout() {
   $$('[data-elm="show-share-link"]').show();
   $$('[data-elm="share-link-container"]').hide();
   $$('[data-elm="share-message"]').removeClass('disabled');
+  $$('[data-elm="step2"]').removeClass('show');
+  $$('[data-elm="step3"]').removeClass('show');
+  $$('[data-elm="go2step2"]').show();
+  $$('[data-elm="go2step3"]').hide();
+  $$('[data-elm="messages-container"]').html('');
 
   //clear all data
   if (useDB) {
@@ -352,7 +357,6 @@ function initUserLogedout() {
 
   setThis("hideWelcomeScreen", 1);
   requestName();
-  initUserLoggedIn()
 }
 
 if (getThis("userLogedin") == 1 || getThis("randomUserLogedin") == 1) initUserLoggedIn();
