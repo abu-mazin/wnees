@@ -38,6 +38,7 @@ var user;
 // APP VARS
 // ======================================
 var msgParms = {};
+var sentMessages = [];
 
 // ======================================
 // LANGS VARS

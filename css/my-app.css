@@ -253,13 +253,7 @@ li {
 .tabbar-through .page-content,
 .toolbar-fixed .page-content,
 .toolbar-through .page-content {
-  display: flex;
-  flex-direction: column;
   padding-top: 90px;
-  padding-bottom: 0 !important;
-  background: rgb(201, 26, 59);
-  background: linear-gradient(180deg, rgba(201, 26, 59, 1) 0%, rgba(241, 48, 85, 1) 55%);
-  background: rgb(26, 121, 201);
   background: linear-gradient(180deg, rgba(26, 121, 201, 1) 0%, rgba(48, 175, 241, 1) 55%);
   color: var(--white);
 }
@@ -596,34 +590,56 @@ html:not(.watch-active-state) .modal-button:active {
 }
 
 /* STEP 3 STYLES */
-.available-responses {
+.messages-container {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 20px;
-  justify-content: center;
+  justify-content: space-between;
+}
+
+.message-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: start;
+  gap: 20px;
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  background: #6ea1d5;
+}
+
+.sent-message {
+  width: 100%;
+  /* background: #1671b8;
+  background: #2c3b57; */
+  background: #6696c6;
+  padding: 15px;
+  border-radius: 15px;
+  /* text-align: center; */
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: break-spaces;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
 }
 
 .envelope {
-  flex: 0 0 28%;
-  /*grow | shrink | basis */
-  height: 65px;
   display: flex;
-  font-size: 42px;
-  background: #00000021;
+  flex: 12%;
+  height: 40px;
+  font-size: 24px;
   background: #ff4f4f;
   border: 1px solid #cd6a6a;
-  border: 1px solid #ff9e9e;
   border-radius: 5px;
+  transition: opacity .7s ease-in-out;
+  opacity: 1;
 }
 
 .envelope.open {
-  flex: 0 0 28%;
-  height: 65px;
-  display: flex;
-  font-size: 42px;
   background: #00000021;
-  border-radius: 5px;
   color: #c3d9ec;
   border: none;
 }
@@ -638,6 +654,33 @@ html:not(.watch-active-state) .modal-button:active {
   animation: none;
 }
 
+.emoji {
+  text-align: center;
+  flex: 12%;
+  min-height: 40px;
+  font-size: 26px;
+  animation: shakeZome 1.5s;
+  animation-iteration-count: infinite;
+  transition: opacity 1s ease-in-out;
+  opacity: 1;
+}
+
+.fadeIn {
+  -webkit-animation-name: fadeIn;
+  animation-name: fadeIn;
+  animation-duration: 5s;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
 @keyframes shake {
   0% {
     transform: rotate(0deg);
@@ -648,7 +691,7 @@ html:not(.watch-active-state) .modal-button:active {
   }
 
   50% {
-    transform: rotate(0eg);
+    transform: rotate(0deg);
   }
 
   75% {
@@ -660,8 +703,37 @@ html:not(.watch-active-state) .modal-button:active {
   }
 }
 
-/* GUEST POPUP */
-.guest-popup-inner {
+@keyframes shakeZome {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  20% {
+    transform: rotate(5deg);
+    zoom: 105%;
+  }
+
+  40% {
+    transform: rotate(5deg);
+    zoom: 108%;
+  }
+
+  60% {
+    transform: rotate(0deg);
+    zoom: 110%;
+  }
+
+  80% {
+    transform: rotate(-5deg);
+  }
+
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+/* Fitst Time / Name request */
+.name-container {
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -669,27 +741,25 @@ html:not(.watch-active-state) .modal-button:active {
   text-align: right;
 }
 
-.guest-popup-inner span {
-  color: #ccc;
-}
-
-.guest-popup-inner input {
+.name-container input {
   height: 50px;
   border-radius: 8px;
   border: none;
   padding: 0 10px;
 }
 
-.guest-popup-inner .reaction {
-  text-align: center;
-  font-size: 32px;
-}
-
-.check-guest {
+.first-time-txt {
   background-color: #3f90d1;
   padding: 10px;
   border-radius: 10px;
   color: #d5f7ff;
+}
+
+/* ............ */
+
+.reaction {
+  text-align: center;
+  font-size: 32px;
 }
 
 /* MODAL */
@@ -712,6 +782,8 @@ html:not(.watch-active-state) .modal-button:active {
   color: #fff;
 }
 
+/* .............. */
+
 .send-message {
   width: 100%;
   height: 200px;
@@ -727,6 +799,8 @@ html:not(.watch-active-state) .modal-button:active {
   color: #fff76f;
 }
 
+/* .............. */
+
 .button.button-fill {
   height: 40px;
   display: flex;
@@ -734,6 +808,7 @@ html:not(.watch-active-state) .modal-button:active {
   justify-content: center;
 }
 
+/* .............. */
 
 .edit-pic {
   background-color: #007aff;
@@ -773,6 +848,8 @@ html:not(.watch-active-state) .modal-button:active {
   object-fit: cover;
 }
 
+/* .............. */
+
 .content-block.message-form {
   margin-top: 0;
 }
@@ -781,103 +858,8 @@ html:not(.watch-active-state) .modal-button:active {
   margin-top: 10px;
 }
 
-/* Present */
-.present {
-  width: 410px;
-  margin: 0 auto;
-  position: fixed;
-  top: 53%;
-  left: calc(50% - 205px);
-  z-index: 13500;
-  display: none;
-}
-
-.box,
-.lid {
-  background:
-    -webkit-radial-gradient(white 15%, transparent 15.1%),
-    -webkit-radial-gradient(white 15%, transparent 15.1%),
-    rgb(240, 58, 58);
-  background-position: 0 0, 25px 25px;
-  background-size: 50px 50px;
-  position: relative;
-  margin: 0 auto;
-}
-
-.box {
-  width: 200px;
-  height: 125px;
-  border-radius: 0 0 10px 10px;
-}
-
-.lid {
-  width: 200px;
-  height: 35px;
-  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.2);
-  z-index: 1;
-  padding: 0 2px;
-  background-color: rgb(216, 52, 52);
-  /* transitions */
-  top: 0;
-  left: 0;
-  transition:
-    top ease-out 0.5s,
-    left ease-out 0.5s,
-    transform ease-out 0.5s;
-  border-radius: 10px 10px 0 0;
-}
-
-.box span,
-.lid span {
-  position: absolute;
-  display: block;
-  background: rgba(235, 199, 0, 0.8);
-  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.1);
-}
-
-.box span:first-child {
-  width: 100%;
-  height: 30px;
-  top: 40px;
-}
-
-.box span:last-child,
-.lid span {
-  width: 30px;
-  height: 100%;
-  left: 85px;
-}
-
-.lid span {
-  left: 85px;
-}
-
-.promo {
-  font-size: 30px;
-  color: white;
-  font-family: Georgia, 'Times New Roman', Times, serif;
-  text-align: center;
-  position: relative;
-  height: 0;
-  top: 10px;
-  transition: all ease-out 0.7s;
-}
-
-.promo p {
-  font-size: 24px;
-  margin: 0;
-}
-
-.promo h2 {
-  font-size: 40px;
-  margin: 0;
-}
-
-.present:hover .promo {
-  top: -80px;
-}
-
 /* float button */
+
 .float-button {
   position: fixed;
   z-index: 999999;
@@ -916,19 +898,21 @@ html:not(.watch-active-state) .modal-button:active {
   display: none;
 }
 
-.received-messages {
+/* .............. */
+
+.inbox {
   display: flex;
   flex-direction: column;
 }
 
-.received-messages .no-messages {
+.inbox .no-messages {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 
-.received-messages img {
+.inbox img {
   width: 85%;
 }
 
@@ -992,35 +976,15 @@ html:not(.watch-active-state) .modal-button:active {
   text-align: center;
 }
 
-/* .styled-picker.is-favourite .far.fa-heart {
-  display: none;
-} */
-
-.styled-picker .fav {
-  font-size: 18px;
-  line-height: 1;
-}
-
-.styled-picker .fav i.far,
-.styled-picker .fav i.far,
-.styled-picker .fav.is-favourite i.fas,
-.styled-picker .fav.is-favourite i.fas {
-  color: var(--main-color);
-  display: flex;
-}
-
-.styled-picker .fav i.fas,
-.styled-picker .fav i.fas,
-.styled-picker .fav.is-favourite i.far,
-.styled-picker .fav.is-favourite i.far {
-  display: none;
-}
+/* .............. */
 
 .write-message {
   color: #fff76f;
   font-weight: 500;
   margin-bottom: 10px;
 }
+
+/* .............. */
 
 .received-message {
   /* border: 3px solid #59c5e3; */
@@ -1094,15 +1058,6 @@ img.sender-image {
   color: #ccc;
 }
 
-.sent-message {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  background: #1671b8;
-  padding: 15px;
-  border-radius: 15px 15px 0;
-}
-
 .respond-message-form {
   display: flex;
   flex-direction: column;
@@ -1140,4 +1095,28 @@ img.sender-image {
 
 [data-elm="message-content"] {
   font-size: 22px;
+}
+
+/* INAMTIONS */
+
+.inmated-emoji {
+  position: absolute;
+  top: -50%;
+  -webkit-transform: rotate(-45deg);
+  -moz-transform: rotate(-45deg);
+  -m-transform: rotate(-45deg);
+  transform: rotate(-45deg)
+}
+
+@-webkit-keyframes inmatedEmojiFrames {
+  0%{top:110%}
+}
+@-moz-keyframes inmatedEmojiFrames {
+  0%{top:110%}
+}
+@-ms-keyframes inmatedEmojiFrames {
+  0%{top:110%}
+}
+@keyframes inmatedEmojiFrames {
+  0%{top:110%}
 }

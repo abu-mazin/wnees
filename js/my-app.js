@@ -254,6 +254,8 @@ function initUserLoggedIn() {
   $$('[data-elm="create-random-user-container"]').hide();
   $$('.app-block').removeClass('disabled');
 
+  $$('[data-elm="share-message"]').removeClass('disabled');
+
   if (getThis("userLogedin")) {
     userLogedin = true;
     $$('.navbar-user-name').hide();
@@ -285,8 +287,8 @@ function initUserLoggedIn() {
     }
   }
 
-  handleRandomPublicMessage();
-  userSentMessages();
+  getRandomMessage();
+  getSentMessages();
   getReceivedMessages()
 }
 
@@ -325,6 +327,10 @@ $$('[data-elm="create-random-user"]').on('click', function (e) {
 function initUserLogedout() {
   $$('[data-elm="create-random-user-container"]').show();
   $$('.app-block').addClass('disabled');
+  
+  $$('[data-elm="show-share-link"]').show();
+  $$('[data-elm="share-link-container"]').hide();
+  $$('[data-elm="share-message"]').removeClass('disabled');
 
   //clear all data
   if (useDB) {
@@ -350,7 +356,7 @@ function initUserLogedout() {
 }
 
 if (getThis("userLogedin") == 1 || getThis("randomUserLogedin") == 1) initUserLoggedIn();
-else if (getThis('hideWelcomeScreen') == '1') requestName();
+else requestName();
 
 
 // ======================================
@@ -438,9 +444,7 @@ $$('[data-elm="go2step3"]').on('click', function () {
 // ======================================
 $$('.dice').on('click', function () {
   $$(this).addClass('shake-animation');
-  handleRandomPublicMessage();
-  $$('[data-elm="show-share-link"]').show();
-  $$('[data-elm="share-link-container"]').hide();
+  getRandomMessage();
 });
 
 $$('.custom-message').on('click', function (e) {
@@ -449,7 +453,11 @@ $$('.custom-message').on('click', function (e) {
   var msg = myApp.formToJSON('#sendMessageForm').message;
   msgParms = { message_id: -1, message: msg };
   $$(".random-message").text(msg);
-  myApp.closeModal(".picker-send-message")
+  myApp.closeModal(".picker-send-message");
+
+  $$('[data-elm="show-share-link"]').show();
+  $$('[data-elm="share-link-container"]').hide();
+  $$('[data-elm="share-message"]').removeClass('disabled');
 });
 
 $$('[data-elm="show-share-link"]').on('click', function () {
@@ -477,6 +485,8 @@ $$('[data-elm="share-message"]').on('click', function () {
     // Success (200)
     function (r, textStatus, xhr) {
       myApp.toast('تم الإرسال', '✓', { duration: 2000 }).show();
+      
+      $$('[data-elm="share-message"]').addClass('disabled');
     },
     // Failed
     function (xhr, textStatus) {
@@ -496,7 +506,108 @@ $$('[data-elm=copy-button]').on('click', function () {
   myApp.toast('تم نسخ الرابط', { duration: 2000 }).show();
 });
 
-function handleRandomPublicMessage() {
+// Add click event listener to the envelope
+$$(document).on('click', '.envelope', function () {
+  // Extract the message ID and index from the data-key
+  var uniqueKey = $$(this).attr('data-key');
+  const [messageId, responseIndex] = uniqueKey.split('-');
+  const responseContent = getResponseContent(Number(messageId), Number(responseIndex));
+
+  var inmatedEmojiFrames = setInterval(function() {
+    var r_num = Math.floor(Math.random() * 40) + 1;
+    var r_size = Math.floor(Math.random() * 65) + 10;
+    var r_left = Math.floor(Math.random() * 100) + 1;
+    var r_time = Math.floor(Math.random() * 5) + 5;
+
+    $$('.page').append("<div class='inmated-emoji' style='z-index:1; font-size:" + r_size + "px; left:" + r_left + "%; -webkit-animation:inmatedEmojiFrames " + r_time + "s ease; -moz-animation:inmatedEmojiFrames " + r_time + "s ease; -ms-animation:inmatedEmojiFrames " + r_time + "s ease; animation:inmatedEmojiFrames " + r_time + "s ease'>"+responseContent.reaction+"</div>");
+    $$('.page').append("<div class='inmated-emoji' style='z-index:1; font-size:" + (r_size - 10) + "px; left:" + (r_left + r_num) + "%; -webkit-animation:inmatedEmojiFrames " + (r_time + 5) + "s ease; -moz-animation:inmatedEmojiFrames " + (r_time + 5) + "s ease; -ms-animation:inmatedEmojiFrames " + (r_time + 5) + "s ease; animation:inmatedEmojiFrames " + (r_time + 5) + "s ease'>"+responseContent.reaction+"</div>");
+
+    $$('.inmated-emoji').each(function() {
+      var top = $$(this).css("top").replace(/[^-\d\.]/g, '');
+      var width = $$(this).css("width").replace(/[^-\d\.]/g, '');
+      if (top <= -100 || width >= 150) {
+        // $$(this).detach();
+        $$(this).remove();
+      }
+    });
+  }, 150);
+  setTimeout(() => {
+    clearInterval(inmatedEmojiFrames);
+  }, "2500");
+  setTimeout(() => {
+    $$('.inmated-emoji').each(function() {
+      var top = $$(this).css("top").replace(/[^-\d\.]/g, '');
+      var width = $$(this).css("width").replace(/[^-\d\.]/g, '');
+      if (top <= -100 || width >= 150) {
+        // $$(this).detach();
+        $$(this).remove();
+      }
+    });
+  }, "10000");
+
+  // Retrieve or initialize openedResponses from localStorage
+  let openedResponses = JSON.parse(getThis('openedResponses')) || {};
+
+  // Check if the envelope is not already opened
+  if (!openedResponses[uniqueKey]) {
+    // Mark as opened in localStorage
+    openedResponses[uniqueKey] = 1;
+    setThis('openedResponses', JSON.stringify(openedResponses));
+
+    // show the emoji
+    $$(this).css('opacity','0');
+    setTimeout(() => {
+      $$(this).removeClass('envelope').addClass('emoji').html(responseContent.reaction);
+      $$(this).css('opacity','1');
+    }, "800");
+
+    // Update the envelope icon and add 'open' class
+    // $$(this).addClass('open');
+    // $$(this).html('<i></i>').addClass('fa-envelope-open');
+  }
+});
+
+// Add click event listener to the emoji
+$$(document).on('click', '.emoji', function () {
+  // Extract the message ID and index from the data-key
+  var uniqueKey = $$(this).attr('data-key');
+  const [messageId, responseIndex] = uniqueKey.split('-');
+  const responseContent = getResponseContent(Number(messageId), Number(responseIndex));
+  
+  var inmatedEmojiFrames = setInterval(function() {
+    var r_num = Math.floor(Math.random() * 40) + 1;
+    var r_size = Math.floor(Math.random() * 65) + 10;
+    var r_left = Math.floor(Math.random() * 100) + 1;
+    var r_time = Math.floor(Math.random() * 5) + 5;
+
+    $$('.page').append("<div class='inmated-emoji' style='z-index:1; font-size:" + r_size + "px; left:" + r_left + "%; -webkit-animation:inmatedEmojiFrames " + r_time + "s ease; -moz-animation:inmatedEmojiFrames " + r_time + "s ease; -ms-animation:inmatedEmojiFrames " + r_time + "s ease; animation:inmatedEmojiFrames " + r_time + "s ease'>"+responseContent.reaction+"</div>");
+    $$('.page').append("<div class='inmated-emoji' style='z-index:1; font-size:" + (r_size - 10) + "px; left:" + (r_left + r_num) + "%; -webkit-animation:inmatedEmojiFrames " + (r_time + 5) + "s ease; -moz-animation:inmatedEmojiFrames " + (r_time + 5) + "s ease; -ms-animation:inmatedEmojiFrames " + (r_time + 5) + "s ease; animation:inmatedEmojiFrames " + (r_time + 5) + "s ease'>"+responseContent.reaction+"</div>");
+
+    $$('.inmated-emoji').each(function() {
+      var top = $$(this).css("top").replace(/[^-\d\.]/g, '');
+      var width = $$(this).css("width").replace(/[^-\d\.]/g, '');
+      if (top <= -100 || width >= 150) {
+        // $$(this).detach();
+        $$(this).remove();
+      }
+    });
+  }, 150);
+  setTimeout(() => {
+    clearInterval(inmatedEmojiFrames);
+  }, "2500");
+  setTimeout(() => {
+    $$('.inmated-emoji').each(function() {
+      var top = $$(this).css("top").replace(/[^-\d\.]/g, '');
+      var width = $$(this).css("width").replace(/[^-\d\.]/g, '');
+      if (top <= -100 || width >= 150) {
+        // $$(this).detach();
+        $$(this).remove();
+      }
+    });
+  }, "10000");
+});
+
+function getRandomMessage() {
   // First AJAX: Get a random message
   $$.doAJAX('available-messages/random', { GUID: userGUID }, 'GET', true,
     // Success (200) - when random message is successfully retrieved
@@ -504,6 +615,10 @@ function handleRandomPublicMessage() {
       $$('.random-message').text(r.message);
       $$('.dice').removeClass('shake-animation');
 
+      $$('[data-elm="show-share-link"]').show();
+      $$('[data-elm="share-link-container"]').hide();
+      $$('[data-elm="share-message"]').removeClass('disabled');
+    
       // Prepare the public message parameters with the random message data
       msgParms = { message_id: r.id, message: r.message };
       // Second AJAX: Send the public message
@@ -515,8 +630,9 @@ function handleRandomPublicMessage() {
     });
 }
 
-function userSentMessages() {
-  $$('[data-elm="get-responses"]').empty();
+function getSentMessages() {
+  const messagesContainer = $$('[data-elm="messages-container"]');
+  messagesContainer.empty();
 
   // Retrieve or initialize openedResponses from localStorage
   let openedResponses = JSON.parse(getThis('openedResponses')) || {};
@@ -524,84 +640,59 @@ function userSentMessages() {
   $$.doAJAX('messages/user-sent-messages', { GUID: userGUID }, 'GET', true,
     // Success (200) - when user messages are successfully retrieved
     function (r, textStatus, xhr) {
-      let apiResponse = r;
-      const getResponsesElement = $$('[data-elm="get-responses"]');
+      sentMessages = r;
 
       // Flag to check if any message has responses
       let hasResponses = false;
 
-      apiResponse.forEach((messageObj) => {
+      sentMessages.slice().reverse().forEach((messageObj) => {
         const { message, id, responses } = messageObj;
 
         // Check if the message has responses
         if (responses.length > 0) {
           hasResponses = true; // Set the flag to true if there's at least one response
 
+          // Create message container
+          const oneMessageContainer = $$('<div></div>').addClass('message-container');
+          messagesContainer.append(oneMessageContainer);
+
           // Append the message text to the element
           const messageDiv = $$('<div class="sent-message"></div>').text(message);
-          getResponsesElement.append(messageDiv);
+          oneMessageContainer.append(messageDiv);
 
           responses.forEach((response, index) => {
-            // Create the envelope div for each response
-            const envelopeDiv = $$('<div></div>').addClass('envelope');
-
             // Create a unique key by concatenating message id and index
             const uniqueKey = `${id}-${index}`;
-            envelopeDiv.attr('data-key', uniqueKey);
 
             // Check if the envelope has been opened in localStorage
             const isOpened = openedResponses[uniqueKey] === 1;
-            const envelopeIcon = $$('<i></i>').addClass(isOpened ? 'fa fa-envelope-open' : 'fa fa-envelope');
-
-            // If opened, add the "open" class
             if (isOpened) {
-              envelopeDiv.addClass('open');
+              var responsesDiv = $$('<div></div>').addClass('emoji').html(response.reaction);
+
+              // If opened, add the "open" class
+              // responsesDiv.addClass('open');
+              // const envelopeIcon = $$('<i></i>').addClass('fa fa-envelope-open');
+              // responsesDiv.append(envelopeIcon);
+            } 
+            // Create the envelope div for each response
+            else {
+              var responsesDiv = $$('<div></div>').addClass('envelope');
+
+              // If opened, add the "open" class
+              const envelopeIcon = $$('<i></i>').addClass('fa fa-envelope');
+              responsesDiv.append(envelopeIcon);
             }
 
-            envelopeDiv.append(envelopeIcon);
-            getResponsesElement.append(envelopeDiv);
+            responsesDiv.attr('data-key', uniqueKey);
 
-            // Add click event listener to the envelope
-            envelopeDiv.on('click', function () {
-              // Extract the message ID and index from the data-key
-              const [messageId, responseIndex] = uniqueKey.split('-');
-              const responseContent = getResponseContent(Number(messageId), Number(responseIndex));
-
-              $$('.present').show();
-              myApp.modal({
-                text: `
-                  <div class="guest-popup-inner">
-                    <span class="reaction">${responseContent.reaction}</span>
-                  </div>
-                `,
-                buttons: [
-                  {
-                    text: 'حسنًا',
-                    onClick: function () {
-                      $$('.present').hide();
-                    }
-                  },
-                ],
-              });
-
-              // Check if the envelope is not already opened
-              if (!openedResponses[uniqueKey]) {
-                // Mark as opened in localStorage
-                openedResponses[uniqueKey] = 1;
-                setThis('openedResponses', JSON.stringify(openedResponses));
-
-                // Update the envelope icon and add 'open' class
-                envelopeIcon.removeClass('fa-envelope').addClass('fa-envelope-open');
-                envelopeDiv.addClass('open');
-              }
-            });
+            oneMessageContainer.append(responsesDiv);
           });
         }
       });
 
       // If no message has responses, show the notification
       if (!hasResponses) {
-        getResponsesElement.append(`
+        oneMessageContainer.append(`
           <span>تنبيه لا يوجد ردود...</span>
         `);
       } else {
@@ -616,21 +707,23 @@ function userSentMessages() {
     // Failed to retrieve messages
     function (xhr, textStatus) {
       failedNotification4AjaxRequest(xhr, textStatus);
-      $$('.dice').removeClass('shake-animation');
-      reject("Failed to retrieve messages");
     });
 }
 
 function getReceivedMessages() {
-  $$('[data-elm="received-messages-num"]').hide();
-  $$('[data-elm="received-messages-num"]').text('');
+  $$('[data-elm="inbox-num"]').hide();
+  $$('[data-elm="inbox-num"]').text('');
 
   $$.doAJAX('messages/user-received-messages', {}, 'GET', true,
     // Success (200)
     function (r, textStatus, xhr) {
       if(r.length > 0) {
-        $$('[data-elm="received-messages-num"]').show();
-        $$('[data-elm="received-messages-num"]').text(r.length);
+        // Check if the message is not already opened
+        let openedMessages = JSON.parse(getThis('openedMessages')) || {};
+        if(Object.keys(openedMessages).length != r.length) {
+          $$('[data-elm="inbox-num"]').show();
+          $$('[data-elm="inbox-num"]').text(Math.abs(Object.keys(openedMessages).length - r.length));
+        }
 
         setThis('showStep2', 1);
         setThis('showStep3', 1);
@@ -639,7 +732,6 @@ function getReceivedMessages() {
         $$('[data-elm="go2step2"]').hide();
         $$('[data-elm="go2step3"]').hide();
       }
-
     },
     // Failed
     function (xhr, textStatus) {
@@ -651,7 +743,7 @@ function getReceivedMessages() {
 // Function to get response content by message ID and index
 function getResponseContent(messageId, index) {
   // Find the message with the given message ID
-  const messageObj = apiResponse.find((msg) => msg.id === messageId);
+  const messageObj = sentMessages.find((msg) => msg.id === messageId);
 
   // If the message is found and has responses, return the specific response
   if (messageObj && messageObj.responses.length > index) {
@@ -677,34 +769,10 @@ function availableResponses() {
             </div>
           `);
         });
-
-        // Add click event listener to .envelope elements
-        $$('.envelope').on('click', function () {
-          const reaction = $$(this).data('reaction');
-          myApp.modal({
-            text: `
-              <div class="guest-popup-inner">
-                <span class="reaction">${reaction}</span>
-              </div>
-            `,
-            buttons: [
-              {
-                text: 'حسنًا',
-                onClick: function () {
-                  $$('.present').css('display', 'none');
-                }
-              },
-            ],
-          });
-        });
       }
     },
     // Failed
     function (xhr, textStatus) {
-      // Failed notification
-      if (textStatus == 401)
-        myApp.alert('البريد الإلكتروني غير صحيح.');
-      else
         failedNotification4AjaxRequest(xhr, textStatus);
     });
 }

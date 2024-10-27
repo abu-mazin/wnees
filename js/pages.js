@@ -1,10 +1,14 @@
-myApp.onPageInit('received_messages', function (page) {
-  getReceivedMessages()
-    .then(r => {
+myApp.onPageInit('inbox', function (page) {
+  $$.doAJAX('messages/user-received-messages', {}, 'GET', true,
+    // Success (200)
+    function (r, textStatus, xhr) {
+      $$('[data-elm="inbox-num"]').hide();
+      $$('[data-elm="inbox-num"]').text('');
+
       let openedMessages = JSON.parse(getThis('openedMessages')) || {};
 
       if (r.length === 0) {
-        $$('.received-messages').append(
+        $$('.inbox').append(
           `
           <div class="no-messages">
             <img src="img/no-recieved-message.png" alt="" />
@@ -19,7 +23,7 @@ myApp.onPageInit('received_messages', function (page) {
           const messageClass = isOpened ? '' : 'unread';
 
           // Append the message with appropriate class (unread if not opened)
-          $$('.received-messages').append(
+          $$('.inbox').append(
             `
           <a href="#" class="received-message open-picker ${messageClass}" data-picker=".picker-respond-to-message" data-key=${msg.id}>
             <div class="replies-num"><img alt="" src="img/icons/reply.svg" /> <span>${msg.responses.length}</span></div>
@@ -37,21 +41,20 @@ myApp.onPageInit('received_messages', function (page) {
             openedMessages[msg.id] = 1; // Mark as opened by setting value to 1
           }
         });
-
         // Update localStorage with the new openedMessages object
         setThis('openedMessages', JSON.stringify(openedMessages));
+
+
         let key;
-        $$(document).on('click', '.received-message', function () {
+        $$('.received-message').off('click').on('click', function () {
           key = $$(this).attr('data-key');
-          console.log("CLICKED")
-          console.log("KEY", key)
           let messageObj = r.find(message => message.id == key);
           $$('[data-elm="sender-name"]').text(messageObj.sender.name)
           $$('[data-elm="message-content"]').text(messageObj.message)
           $$('[data-elm="sender-image"]').attr('src', messageObj.sender.profile_picture ? imagePath + messageObj.sender.profile_picture : "img/user-pic.svg")
         })
 
-        $$('[data-elm="reply"]').on('click', function () {
+        $$('[data-elm="reply"]').off('click').on('click', function () {
           let id = $$(this).attr('id');
           let reply = { message_id: key, available_response_id: id, is_anonymous: 1 }
 
@@ -62,8 +65,10 @@ myApp.onPageInit('received_messages', function (page) {
             });
         })
       }
-    })
-    .catch(error => {
-      console.error("Failed to get messages:", error);
+    },
+    // Failed
+    function (xhr, textStatus) {
+      // Failed notification
+      failedNotification4AjaxRequest(xhr, textStatus);
     });
 });
