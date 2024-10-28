@@ -111,6 +111,12 @@ label.label-radio.active-state {
   background-color: #30aff1;
 }
 
+.label-checkbox {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
 a {
   color: #fff76f;
 }
@@ -129,6 +135,28 @@ li {
   display: flex;
   justify-content: end;
 }
+
+.panel-overlay,
+.picker-overlay {
+  -webkit-backdrop-filter: blur(4px);
+  -moz-backdrop-filter: blur(4px);
+  -o-backdrop-filter: blur(4px);
+  -ms-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+
+.picker-overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 6000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s;
+}
+
 
 .list-block.inset .item-inner::after {
   height: 2px;
@@ -579,10 +607,10 @@ html:not(.watch-active-state) .modal-button:active {
 }
 
 .message-share-link {
-  overflow: hidden;
-  text-wrap: nowrap;
-  text-overflow: ellipsis;
   text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-wrap: nowrap;
 }
 
 .social-media-icon {
@@ -801,11 +829,33 @@ html:not(.watch-active-state) .modal-button:active {
 
 /* .............. */
 
+.buttons-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.button {
+  width: 100%;
+}
+
 .button.button-fill {
   height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 10px;
+}
+
+.button.button-delete {
+  background-color: #f12b5c;
+}
+
+.button .icon {
+  height: 22px;
+  width: 22px;
 }
 
 /* .............. */
@@ -1064,7 +1114,7 @@ img.sender-image {
   justify-content: center;
   align-items: center;
   padding: 20px 0 35px;
-  
+
 }
 
 .respond-message-form .sender-message-info {
@@ -1077,7 +1127,7 @@ img.sender-image {
   color: #fff;
 }
 
-.respond-message-form .available-responses{
+.respond-message-form .available-responses {
   display: flex;
   font-size: 25px;
   margin-bottom: 10px;
@@ -1109,14 +1159,33 @@ img.sender-image {
 }
 
 @-webkit-keyframes inmatedEmojiFrames {
-  0%{top:110%}
+  0% {
+    top: 110%
+  }
 }
+
 @-moz-keyframes inmatedEmojiFrames {
-  0%{top:110%}
+  0% {
+    top: 110%
+  }
 }
+
 @-ms-keyframes inmatedEmojiFrames {
-  0%{top:110%}
+  0% {
+    top: 110%
+  }
 }
+
 @keyframes inmatedEmojiFrames {
-  0%{top:110%}
+  0% {
+    top: 110%
+  }
+}
+
+.modal-title+.modal-text {
+  color: #d0d0d0d9;
+}
+
+.modal-button .delete {
+  color: #f12b5c;
 }

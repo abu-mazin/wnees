@@ -17,3 +17,18 @@ var mainView = myApp.addView('.view-main', {
   dynamicNavbar: true,
   domCache: true,
 });
+
+// Picker overlay
+$$('.picker-modal').on('picker:open', function () {
+  $$('.picker-overlay').css({
+    opacity: 1,
+    pointerEvents: 'auto',
+  });
+});
+
+$$('.picker-modal').on('picker:close', function () {
+  $$('.picker-overlay').css({
+    opacity: 0,
+    pointerEvents: 'none',
+  });
+});

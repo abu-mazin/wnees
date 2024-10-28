@@ -105,7 +105,7 @@ function onBackKeyDown() {
 		if(currentTab == 'main_tab') {
 			var currentPage = mainView.activePage.name;
 			if (currentPage == 'index') {
-        myApp.confirm('هل تريد الخروج من التطبيق?', function() {
+        myApp.confirm('هل تريد الخروج من التطبيق؟', function() {
           // if(deviceType == “Android” || deviceType == “android”){
           navigator.app.exitApp();
           // }

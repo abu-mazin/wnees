@@ -142,12 +142,12 @@
         <div class="navbar-inner">
           <div class="left sliding">
             <div class="navbar-user-container">
-              <img src="img/user-pic.svg" data-elm="user-image" data-popup=".popup-settings" class="navbar-icon open-popup" />
+              <img src="img/user-pic.svg" data-elm="user-image" class="navbar-icon" />
               <label style="background-color: #007aff; height: 20px; width: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: absolute; bottom: 0px; right: -3px;">
                 <img src="img/icons/edit-pic.svg" alt="" style=" width: 14px; ">
               </label>
               <div class="navbar-user-welcoming-container">
-                <a href="#" data-popup=".popup-settings" class="open-popup">مرحبا <span data-elm="user-name"></span>
+                <a href="#" data-elm="welcoming-message">مرحبا <span data-elm="user-name"></span>
                   !</a>
                 <a href="#" class="open-popup link icon-only navbar-user-name" data-popup=".popup-login"
                   data-i18n-key="">سجل حسابك / دخولك</a>
@@ -172,9 +172,21 @@
                   هذه أول زيارة لك؟ أدخل اسمك لتبدأ أو <a href="#" class="open-popup" onclick="myApp.closeModal();" data-popup=".popup-login">اضغط هنا</a> لتسجيل الدخول لحسابك
                   </div>
                   <input type="text" data-elm="guest-name" placeholder="أدخل اسمك هنا">
+                  <label class="label-checkbox item-content" style="padding:0;">
+                    <input type="checkbox" name="terms" value="1" checked="checked" />
+                    <div class="item-media"><i class="icon icon-form-checkbox"></i></div>
+                    <div class="item-inner">
+                      <div class="item-title" style="color: #d3d3d3;">
+                        أوافق على <a href="#" onclick="cordova.InAppBrowser.open('https://wnees.com/terms', '_system');"
+                          style="color: #e1e050;">شروط الاستخدام</a> و <a href="#" onclick="cordova.InAppBrowser.open('https://wnees.com/privacy', '_system');"
+                          style="color: #e1e050;">الخصوصية</a>
+                      </div>
+                    </div>
+                  </label>
                 </div>
+                
               </div>
-              <span data-elm="create-random-user" style="font-size: 17px; line-height: 44px; display: block; background-color: rgb(0 115 203);">إرسـال</span>
+              <span data-elm="create-random-user" style="font-size: 17px; line-height: 44px; display: block; background-color: rgb(0 115 203);">حفظ</span>
             </div>
             <div class="step-container">
               <div class="app-block">
@@ -218,10 +230,10 @@
                   <div style="font-size: 22px;">شارك عبر الشبكات الاجتماعية</div>
                   <div data-elm="show-share-link" class="share-btn">انشئ رابط المشاركة</div>
                   <div class="share-link-container" data-elm="message-link-container" style="display: none;">
-                    <!-- <div class="icon"><i class="fa fa-share"></i></div> -->
-                    <div class="icon" data-elm="copy-button"><i class="fa fa-copy"></i></div>
-                    <div class="message-share-link" data-elm="message-share-link"></div>
-                    <div data-elm="" class="share-btn">شارك</div>
+                    <div style="display: flex;gap: 10px;font-size: 22px;background: #ffffff;padding: 10px 20px;border-radius: 10px;color: #000;">
+                      <div style="padding: 0 5px;" data-elm="copy-button"><i class="fa fa-copy"></i></div>
+                      <div class="message-share-link" data-elm="message-share-link"></div>
+                    </div>
                     <br />
                     <img src="img/socialMedia/facebook.png" class="social-media-icon">
                     <img src="img/socialMedia/instagram.png" class="social-media-icon">
@@ -257,7 +269,7 @@
                 </div>
               </div>
 
-              <a href="inbox.html" class="float-button" data-elm="inbox-btn">
+              <a href="inbox.html" class="float-button disabled" data-elm="inbox-btn">
                 <img src="img/icons/inbox.png" alt="">
                 <span data-elm="inbox-num" class="messages-num" style="display: none;"></span>
               </a>
@@ -383,7 +395,8 @@
                   <div class="item-inner">
                     <div class="item-title" style="color: #d3d3d3;">
                       أوافق على <a href="#" onclick="cordova.InAppBrowser.open('https://wnees.com/terms', '_system');"
-                        style="color: #e1e050;">شروط الاستخدام</a>
+                        style="color: #e1e050;">شروط الاستخدام</a> و <a href="#" onclick="cordova.InAppBrowser.open('https://wnees.com/privacy', '_system');"
+                        style="color: #e1e050;">الخصوصية</a>
                     </div>
                   </div>
                 </label>
@@ -440,8 +453,12 @@
             </div>
           </div>
         </div>
-        <div class="content-block">
+        <div class="content-block buttons-container">
           <a class="changeSettingsForm item-link button button-fill">تحديث</a>
+          <a class="item-link button button-fill button-delete" data-elm="delete-account"><img src="img/icons/delete.svg" alt="" class="icon"> حذف حساب</a>
+          <div class="item-title" style="color: #d3d3d3;">
+            الاطلاع على <a href="#" onclick="cordova.InAppBrowser.open('https://wnees.com/terms', '_system');" style="color: #e1e050;">شروط الاستخدام</a> و <a href="#" onclick="cordova.InAppBrowser.open('https://wnees.com/privacy', '_system');" style="color: #e1e050;">الخصوصية</a>
+          </div>
         </div>
       </form>
 

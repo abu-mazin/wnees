@@ -255,6 +255,11 @@ function initUserLoggedIn() {
   $$('.app-block').removeClass('disabled');
 
   $$('[data-elm="share-message"]').removeClass('disabled');
+  $$('[data-elm="inbox-btn"]').removeClass('disabled');
+
+  $$('img[data-elm="user-image"]').attr('data-popup', '.popup-settings').addClass('open-popup');
+  $$('[data-elm="welcoming-message"]').attr('data-popup', '.popup-settings').addClass('open-popup');
+
 
   if (getThis("userLogedin")) {
     userLogedin = true;
@@ -327,6 +332,9 @@ $$('[data-elm="create-random-user"]').on('click', function (e) {
 function initUserLogedout() {
   $$('[data-elm="create-random-user-container"]').show();
   $$('.app-block').addClass('disabled');
+  $$('[data-elm="inbox-btn"]').addClass('disabled');
+  $$('[data-elm="inbox-num"]').hide();
+
   
   $$('[data-elm="show-share-link"]').show();
   $$('[data-elm="share-link-container"]').hide();
@@ -336,6 +344,10 @@ function initUserLogedout() {
   $$('[data-elm="go2step2"]').show();
   $$('[data-elm="go2step3"]').hide();
   $$('[data-elm="messages-container"]').html('');
+
+  $$('img[data-elm="user-image"]').removeAttr('data-popup').removeClass('open-popup');
+  $$('[data-elm="welcoming-message"]').removeAttr('data-popup').removeClass('open-popup');
+
 
   //clear all data
   if (useDB) {
@@ -470,6 +482,7 @@ $$('[data-elm="show-share-link"]').on('click', function () {
     // Success (200) - when public message is successfully sent
     function (r, textStatus, xhr) {
       $$('[data-elm="message-share-link"]').text(r.sharing_url);
+      $$('[data-elm="message-link-container"]').show();
     },
     // Failed to send public message
     function (xhr, textStatus) {
@@ -621,6 +634,7 @@ function getRandomMessage() {
 
       $$('[data-elm="show-share-link"]').show();
       $$('[data-elm="share-link-container"]').hide();
+      $$('[data-elm="message-link-container"]').hide();
       $$('[data-elm="share-message"]').removeClass('disabled');
     
       // Prepare the public message parameters with the random message data
@@ -781,3 +795,37 @@ function availableResponses() {
     });
 }
 
+
+$$('[data-elm="delete-account"]').on('click',function() {
+  myApp.modal({
+    title: `
+    <div class="delete-modal">
+      <div class="delete-modal-img">
+      </div>
+      <span>هل أنت متأكد من حذف الحساب؟</span>
+    </div>`,
+    text: 'يؤسفنا ان تغادرنا، اذا كان هناك ما نستطيع ان نقدمه لتغيير رأيك فنأمل التواصل معنا لمساعدتك.<br />أنت على وشك حذف هذا الحساب بشكل دائم..',
+    buttons: [
+      {
+        text: '<span class="cancel" data-i18n-key="cancel">إلغاء</span>',
+      },
+      {
+        text: '<span class="delete" data-i18n-key="delete">حذف</span>',
+        onClick: function () {
+          $$.doAJAX('users/delete-account', {}, 'POST', false,
+            // Success (200)
+            function (r, textStatus, xhr) {
+              myApp.closeModal('.popup-settings')
+              initUserLogedout();
+            },
+            // Failed
+            function (xhr, textStatus) {
+              // Failed notification
+                failedNotification4AjaxRequest(xhr, textStatus);
+            });
+        }
+
+      },
+    ]
+  });
+})
