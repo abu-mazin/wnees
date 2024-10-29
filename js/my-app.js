@@ -736,11 +736,37 @@ function getReceivedMessages() {
     // Success (200)
     function (r, textStatus, xhr) {
       if(r.length > 0) {
+        receivedMessages = r;
+
         // Check if the message is not already opened
         let openedMessages = JSON.parse(getThis('openedMessages')) || {};
+        let newMessagesCount = Math.abs(Object.keys(openedMessages).length - r.length);
+
         if(Object.keys(openedMessages).length != r.length) {
           $$('[data-elm="inbox-num"]').show();
-          $$('[data-elm="inbox-num"]').text(Math.abs(Object.keys(openedMessages).length - r.length));
+          $$('[data-elm="inbox-num"]').text(newMessagesCount);
+        }
+
+        // Check if there is messages not already opened
+        if(newMessagesCount > 0) {
+          for (const msg of r) {
+            // Check if the message ID exists in openedMessages; if not, it's unread
+            const isOpened = openedMessages[msg.id] === 1;
+
+            $$('[data-elm="inbox-btn"]').attr('href', '#');
+            $$('[data-elm="inbox-btn"]').addClass('open-picker');
+            $$('[data-elm="inbox-btn"]').attr('data-picker', '.picker-respond-to-message');
+            $$('.picker-respond-to-message').attr('data-messageID', msg.id);
+
+            if (!isOpened) {
+              break;
+            }
+          }
+        } else {
+          // $$('[data-elm="inbox-btn"]').attr('href', 'inbox.html');
+          // $$('[data-elm="inbox-btn"]').removeClass('open-picker');
+          // $$('[data-elm="inbox-btn"]').attr('data-picker', '');
+          // $$('.picker-respond-to-message').attr('data-messageID', '');
         }
 
         setThis('showStep2', 1);
@@ -757,6 +783,74 @@ function getReceivedMessages() {
       failedNotification4AjaxRequest(xhr, textStatus);
     });
 }
+
+$$('.picker-respond-to-message').on('open', function () {
+  let message_id = $$(this).attr('data-messageID');
+  let messageObj = receivedMessages.find(message => message.id == message_id);
+  $$('[data-elm="message-content"]').text(messageObj.message);
+  if(messageObj.sender) {
+    $$('[data-elm="sender-name"]').text(messageObj.sender.name);
+    $$('[data-elm="sender-image"]').attr('src', messageObj.sender.profile_picture ? imagePath + messageObj.sender.profile_picture : "img/user-pic.svg");
+  } else {
+    $$('[data-elm="sender-name"]').text('');
+    $$('[data-elm="sender-image"]').attr('src', "img/user-pic.svg");
+  }
+})
+
+$$('[data-elm="reply"]').off('click').on('click', function () {
+  let message_id = $$('.picker-respond-to-message').attr('data-messageID');
+  let response_id = $$(this).attr('id');
+  let reply = { message_id: message_id, available_response_id: response_id, is_anonymous: 1 }
+
+  $$.doAJAX('messages/respond-to-message', reply , 'POST', true,
+  // Success (200) - when random message is successfully retrieved
+  function (r, textStatus, xhr) {
+    myApp.toast('تم الرد', '✓', { duration: 2000 }).show();
+    let openedMessages = JSON.parse(getThis('openedMessages')) || {};
+    // After appending, add this message ID to openedMessages if not already present
+    if (!openedMessages[message_id]) {
+      openedMessages[message_id] = 1; // Mark as opened by setting value to 1
+    }
+    // Update localStorage with the new openedMessages object
+    setThis('openedMessages', JSON.stringify(openedMessages));
+
+
+    let newMessagesCount = Math.abs(Object.keys(openedMessages).length - receivedMessages.length);
+
+    $$('[data-elm="inbox-num"]').hide();
+    if(Object.keys(openedMessages).length != r.length) {
+      $$('[data-elm="inbox-num"]').show();
+      $$('[data-elm="inbox-num"]').text(newMessagesCount);
+    }
+
+    // Check if there is messages not already opened
+    if(newMessagesCount > 0) {
+      for (const msg of receivedMessages) {
+        // Check if the message ID exists in openedMessages; if not, it's unread
+        const isOpened = openedMessages[msg.id] === 1;
+
+        $$('[data-elm="inbox-btn"]').attr('href', '#');
+        $$('[data-elm="inbox-btn"]').addClass('open-picker');
+        $$('[data-elm="inbox-btn"]').attr('data-picker', '.picker-respond-to-message');
+        $$('.picker-respond-to-message').attr('data-messageID', msg.id);
+
+        if (!isOpened) {
+          break;
+        }
+      }
+    } else {
+      // $$('[data-elm="inbox-btn"]').attr('href', 'inbox.html');
+      // $$('[data-elm="inbox-btn"]').removeClass('open-picker');
+      // $$('[data-elm="inbox-btn"]').attr('data-picker', '');
+      // $$('.picker-respond-to-message').attr('data-messageID', '');
+    }
+  },
+  // Failed
+  function (xhr, textStatus) {
+    // Failed notification
+    failedNotification4AjaxRequest(xhr, textStatus);
+  });
+})
 
 // Function to get response content by message ID and index
 function getResponseContent(messageId, index) {

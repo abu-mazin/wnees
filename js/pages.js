@@ -26,7 +26,7 @@ myApp.onPageInit('inbox', function (page) {
           $$('.inbox').append(
             `
           <a href="#" class="received-message open-picker ${messageClass}" data-picker=".picker-respond-to-message" data-key=${msg.id}>
-            <div class="replies-num"><img alt="" src="img/icons/reply.svg" /> <span>${msg.responses.length}</span></div>
+            <!-- <div class="replies-num"><img alt="" src="img/icons/reply.svg" /> <span>${msg.responses.length}</span></div> -->
             <span class="message-content">${msg.message}</span>
             <span class="message-sender">من 
               <img src=${msg.sender.profile_picture ? imagePath + msg.sender.profile_picture : "img/user-pic.svg"} alt="" class="sender-image"/> 
