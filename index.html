@@ -194,7 +194,7 @@
                 <div style="text-align: center;">
                   <br />
                   <br />
-                  <div style="font-size: 22px;">اختر رسالة عشوائية</div>
+                  <div style="font-size: 22px;">اختر رسالة</div>
                   <div style="color: #ccc;">اضغط على النرد لاختيار رسالة جديدة</div>
                   <br />
                   <svg class="dice" tabindex="0" id="Layer_1" enable-background="new 0 0 128 128" viewBox="0 0 128 128"
@@ -227,20 +227,24 @@
                 <div style="margin-top: 28px; padding: 20px; background: #cccccc21; border-radius: 8px; text-align: center;">
                   <div style="font-size: 22px;">شارك عبر الشبكات الاجتماعية</div>
                   <div data-elm="show-share-link" class="share-btn">انشئ رابط المشاركة</div>
-                  <div class="share-link-container" data-elm="message-link-container" style="display: none;">
+                  <div data-elm="share-link-container" style="display: none;">
                     <div style="display: flex;gap: 10px;font-size: 22px;background: #ffffff;padding: 10px 20px;border-radius: 10px;color: #000;">
-                      <div style="padding: 0 5px;" data-elm="copy-button"><i class="fa fa-copy"></i></div>
+                      <div class="icon"><a href="#" onclick="" data-elm="share-button"><i class="fa fa-share"></i></a></div>
+                      <div class="icon" data-elm="copy-button"><i class="fa fa-copy"></i></div>
+                      <div class="icon"><a href="#" onclick="" data-elm="open-button"><i class="fa fa-eye"></i></a></div>
                       <div class="message-share-link" data-elm="message-share-link"></div>
                     </div>
+                    <!--
                     <br />
-                    <img src="img/socialMedia/facebook.png" class="social-media-icon">
-                    <img src="img/socialMedia/instagram.png" class="social-media-icon">
-                    <!-- <img src="img/socialMedia/linkedin.png" class="social-media-icon"> -->
-                    <img src="img/socialMedia/snapchat.png" class="social-media-icon">
-                    <img src="img/socialMedia/tiktok.png" class="social-media-icon">
                     <img src="img/socialMedia/whatsapp.png" class="social-media-icon">
+                    <img src="img/socialMedia/linkedin.png" class="social-media-icon">
                     <img src="img/socialMedia/x.png" class="social-media-icon">
+                    <img src="img/socialMedia/facebook.png" class="social-media-icon">
                     <br />
+                     -->
+                    <!-- <img src="img/socialMedia/snapchat.png" class="social-media-icon"> -->
+                    <!-- <img src="img/socialMedia/tiktok.png" class="social-media-icon"> -->
+                    <!-- <img src="img/socialMedia/instagram.png" class="social-media-icon"> -->
                   </div>
                 </div>
                 <a href="#" class="button" data-elm="go2step3"
@@ -491,14 +495,9 @@
           <span data-elm="sender-name"></span>
           <span>شارك معك هذه الرسالة</span>
           <span data-elm="message-content"></span>
+          <span style=" font-size: 17px; ">عبر عن شعورك حول هذه الرساله</span>
         </div>
-        <div class="available-responses">
-          <span class="close-picker" data-elm="reply" id="1">👍</span>
-          <span class="close-picker" data-elm="reply" id="2">❤️</span>
-          <span class="close-picker" data-elm="reply" id="3">😂</span>
-          <span class="close-picker" data-elm="reply" id="4">😮</span>
-          <span class="close-picker" data-elm="reply" id="5">😢</span>
-        </div>
+        <div class="available-responses" data-elm="available-responses"></div>
         <!-- <a class="respond-message item-link button button-fill">إرسال ردك</a> -->
       </form>
     </div>

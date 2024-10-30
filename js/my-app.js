@@ -473,23 +473,24 @@ $$('.custom-message').on('click', function (e) {
 
   $$('[data-elm="show-share-link"]').show();
   $$('[data-elm="share-link-container"]').hide();
-  $$('[data-elm="share-message"]').removeClass('disabled');
+  $$('[data-elm="share-message"]').addClass('disabled');
 });
 
 $$('[data-elm="show-share-link"]').on('click', function () {
-  $$(this).hide();
-  $$.doAJAX('public-messages', msgParms, 'POST', true,
+  var thisElm = $$(this);
+  $$.doAJAX('public-messages', msgParms, 'POST', false,
     // Success (200) - when public message is successfully sent
     function (r, textStatus, xhr) {
       $$('[data-elm="message-share-link"]').text(r.sharing_url);
-      $$('[data-elm="message-link-container"]').show();
+      thisElm.hide();
+      $$('[data-elm="share-link-container"]').show();
+      $$('[data-elm="share-button"]').attr('onClick', "window.plugins.socialsharing.share('', null, null, '"+r.sharing_url+"')");
+      $$('[data-elm="open-button"]').attr('onClick', "cordova.InAppBrowser.open('"+r.sharing_url+"', '_system');");
     },
     // Failed to send public message
     function (xhr, textStatus) {
       failedNotification4AjaxRequest(xhr, textStatus);
-      reject("Failed to send public message");
     });
-  $$('[data-elm="share-link-container"]').show();
 })
 
 $$('[data-elm="share-message"]').on('click', function () {
@@ -498,7 +499,7 @@ $$('[data-elm="share-message"]').on('click', function () {
   if(msgParms.message_id > -1) message.availabe_message_id = msgParms.message_id;
   message.message = msgParms.message;
 
-  $$.doAJAX(`messages`, message, 'POST', true,
+  $$.doAJAX(`messages`, message, 'POST', false,
     // Success (200)
     function (r, textStatus, xhr) {
       myApp.toast('تم الإرسال', '✓', { duration: 2000 }).show();
@@ -625,6 +626,8 @@ $$(document).on('click', '.emoji', function () {
 });
 
 function getRandomMessage() {
+  $$('[data-elm="step2"]').addClass('disabled');
+
   // First AJAX: Get a random message
   $$.doAJAX('available-messages/random', { GUID: userGUID }, 'GET', true,
     // Success (200) - when random message is successfully retrieved
@@ -632,9 +635,10 @@ function getRandomMessage() {
       $$('.random-message').text(r.message);
       $$('.dice').removeClass('shake-animation');
 
+      $$('[data-elm="step2"]').removeClass('disabled');
+
       $$('[data-elm="show-share-link"]').show();
       $$('[data-elm="share-link-container"]').hide();
-      $$('[data-elm="message-link-container"]').hide();
       $$('[data-elm="share-message"]').removeClass('disabled');
     
       // Prepare the public message parameters with the random message data
@@ -733,55 +737,65 @@ function getReceivedMessages() {
   $$('[data-elm="inbox-num"]').text('');
 
   $$.doAJAX('messages/user-received-messages', {}, 'GET', true,
-    // Success (200)
-    function (r, textStatus, xhr) {
-      if(r.length > 0) {
-        receivedMessages = r;
+  // Success (200)
+  function (r, textStatus, xhr) {
+    if(r.length > 0) {
+      receivedMessages = r;
 
-        // Check if the message is not already opened
-        let openedMessages = JSON.parse(getThis('openedMessages')) || {};
-        let newMessagesCount = Math.abs(Object.keys(openedMessages).length - r.length);
+      // Check if the message is not already opened
+      let openedMessages = JSON.parse(getThis('openedMessages')) || {};
+      let newMessagesCount = Math.abs(Object.keys(openedMessages).length - r.length);
 
-        if(Object.keys(openedMessages).length != r.length) {
-          $$('[data-elm="inbox-num"]').show();
-          $$('[data-elm="inbox-num"]').text(newMessagesCount);
-        }
-
-        // Check if there is messages not already opened
-        if(newMessagesCount > 0) {
-          for (const msg of r) {
-            // Check if the message ID exists in openedMessages; if not, it's unread
-            const isOpened = openedMessages[msg.id] === 1;
-
-            $$('[data-elm="inbox-btn"]').attr('href', '#');
-            $$('[data-elm="inbox-btn"]').addClass('open-picker');
-            $$('[data-elm="inbox-btn"]').attr('data-picker', '.picker-respond-to-message');
-            $$('.picker-respond-to-message').attr('data-messageID', msg.id);
-
-            if (!isOpened) {
-              break;
-            }
-          }
-        } else {
-          // $$('[data-elm="inbox-btn"]').attr('href', 'inbox.html');
-          // $$('[data-elm="inbox-btn"]').removeClass('open-picker');
-          // $$('[data-elm="inbox-btn"]').attr('data-picker', '');
-          // $$('.picker-respond-to-message').attr('data-messageID', '');
-        }
-
-        setThis('showStep2', 1);
-        setThis('showStep3', 1);
-        $$('[data-elm="step2"]').addClass('show');
-        $$('[data-elm="step3"]').addClass('show');
-        $$('[data-elm="go2step2"]').hide();
-        $$('[data-elm="go2step3"]').hide();
+      if(Object.keys(openedMessages).length != r.length) {
+        $$('[data-elm="inbox-num"]').show();
+        $$('[data-elm="inbox-num"]').text(newMessagesCount);
       }
-    },
-    // Failed
-    function (xhr, textStatus) {
-      // Failed notification
-      failedNotification4AjaxRequest(xhr, textStatus);
-    });
+
+      // Check if there is messages not already opened
+      if(newMessagesCount > 0) {
+        for (const msg of r) {
+          // Check if the message ID exists in openedMessages; if not, it's unread
+          const isOpened = openedMessages[msg.id] === 1;
+
+          $$('[data-elm="inbox-btn"]').attr('href', '#');
+          $$('[data-elm="inbox-btn"]').addClass('open-picker');
+          $$('[data-elm="inbox-btn"]').attr('data-picker', '.picker-respond-to-message');
+          $$('.picker-respond-to-message').attr('data-messageID', msg.id);
+
+          if (!isOpened) {
+            break;
+          }
+        }
+      } else {
+        // $$('[data-elm="inbox-btn"]').attr('href', 'inbox.html');
+        // $$('[data-elm="inbox-btn"]').removeClass('open-picker');
+        // $$('[data-elm="inbox-btn"]').attr('data-picker', '');
+        // $$('.picker-respond-to-message').attr('data-messageID', '');
+      }
+
+      setThis('showStep2', 1);
+      setThis('showStep3', 1);
+      $$('[data-elm="step2"]').addClass('show');
+      $$('[data-elm="step3"]').addClass('show');
+      $$('[data-elm="go2step2"]').hide();
+      $$('[data-elm="go2step3"]').hide();
+    }
+  },
+  // Failed
+  function (xhr, textStatus) {
+    // Failed notification
+    failedNotification4AjaxRequest(xhr, textStatus);
+  });
+
+  $$.doAJAX('available-responses', {}, 'GET', true,
+  // Success (200)
+  function (r, textStatus, xhr) {
+    availableResponses = r;
+  },
+  // Failed
+  function (xhr, textStatus) {
+    failedNotification4AjaxRequest(xhr, textStatus);
+  });
 }
 
 $$('.picker-respond-to-message').on('open', function () {
@@ -795,17 +809,23 @@ $$('.picker-respond-to-message').on('open', function () {
     $$('[data-elm="sender-name"]').text('');
     $$('[data-elm="sender-image"]').attr('src', "img/user-pic.svg");
   }
+  $$('[data-elm="available-responses"]').html('');
+  availableResponses.forEach(res => {
+    $$('[data-elm="available-responses"]').append(`
+      <span class="close-picker" data-elm="reply" id="${res.id}">${res.reaction}</span>
+    `);
+  });
 })
 
-$$('[data-elm="reply"]').off('click').on('click', function () {
+$$(document).on('click', '[data-elm="reply"]', function () {
   let message_id = $$('.picker-respond-to-message').attr('data-messageID');
   let response_id = $$(this).attr('id');
   let reply = { message_id: message_id, available_response_id: response_id, is_anonymous: 1 }
 
-  $$.doAJAX('messages/respond-to-message', reply , 'POST', true,
+  $$.doAJAX('messages/respond-to-message', reply , 'POST', false,
   // Success (200) - when random message is successfully retrieved
   function (r, textStatus, xhr) {
-    myApp.toast('تم الرد', '✓', { duration: 2000 }).show();
+    myApp.toast('تم إرسال تعبيرك', '✓', { duration: 2000 }).show();
     let openedMessages = JSON.parse(getThis('openedMessages')) || {};
     // After appending, add this message ID to openedMessages if not already present
     if (!openedMessages[message_id]) {
@@ -864,31 +884,6 @@ function getResponseContent(messageId, index) {
 
   return null; // Return null if no response found
 }
-
-function availableResponses() {
-  $$.doAJAX('available-responses', {}, 'GET', false,
-    // Success (200)
-    function (r, textStatus, xhr) {
-      if (r.length == 0) {
-        $$('[data-elm="available-responses"]').append(`
-          <span>تنبيه لا يوحد ردود...</span>
-        `);
-      } else {
-        r.forEach(res => {
-          $$('[data-elm="available-responses"]').append(`
-            <div class="envelope" data-reaction="${res.reaction}">
-              <i class="fa fa-envelope" style="margin: auto;"></i>
-            </div>
-          `);
-        });
-      }
-    },
-    // Failed
-    function (xhr, textStatus) {
-        failedNotification4AjaxRequest(xhr, textStatus);
-    });
-}
-
 
 $$('[data-elm="delete-account"]').on('click',function() {
   myApp.modal({

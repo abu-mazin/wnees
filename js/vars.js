@@ -40,6 +40,7 @@ var user;
 var msgParms = {};
 var sentMessages = [];
 var receivedMessages = [];
+var availableResponses = [];
 
 // ======================================
 // LANGS VARS

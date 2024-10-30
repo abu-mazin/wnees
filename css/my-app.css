@@ -189,6 +189,7 @@ li {
   height: 90px;
   background-color: #d62244;
   background-color: rgb(30 131 209);
+  background-color: rgb(30 132 209);
 }
 
 .navbar::after {
@@ -591,19 +592,13 @@ html:not(.watch-active-state) .modal-button:active {
   width: auto;
 }
 
-.message-link-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 22px;
-  background: #ffffff;
-  padding: 10px 20px;
-  border-radius: 10px;
-  color: #000;
+[data-elm="share-link-container"] .icon {
+  padding: 0 5px;
+  color: #7e7e7e;
 }
 
-.message-link-container .icon {
-  padding: 0 5px;
+[data-elm="share-link-container"] .icon a {
+  color: #7e7e7e;
 }
 
 .message-share-link {
@@ -631,7 +626,7 @@ html:not(.watch-active-state) .modal-button:active {
   flex-wrap: wrap;
   align-items: center;
   justify-content: start;
-  gap: 20px;
+  /* gap: 20px; */
   width: 100%;
   padding: 10px;
   border-radius: 10px;
@@ -659,11 +654,12 @@ html:not(.watch-active-state) .modal-button:active {
   flex: 12%;
   height: 40px;
   font-size: 24px;
-  background: #ff4f4f;
-  border: 1px solid #cd6a6a;
+  /* background: #ff4f4f;
+  border: 1px solid #cd6a6a; */
   border-radius: 5px;
   transition: opacity .7s ease-in-out;
   opacity: 1;
+  color: #fffadd;
 }
 
 .envelope.open {
@@ -687,7 +683,8 @@ html:not(.watch-active-state) .modal-button:active {
   flex: 12%;
   min-height: 40px;
   font-size: 26px;
-  animation: shakeZome 1.5s;
+  margin-top: 10px;
+  animation: shakeZome 0.7s;
   animation-iteration-count: infinite;
   transition: opacity 1s ease-in-out;
   opacity: 1;
@@ -1131,6 +1128,9 @@ img.sender-image {
   display: flex;
   font-size: 25px;
   margin-bottom: 10px;
+  width: 100%;
+  justify-content: center;
+  flex-flow: wrap;
 }
 
 .respond-message-form img {
@@ -1145,6 +1145,14 @@ img.sender-image {
 
 [data-elm="message-content"] {
   font-size: 22px;
+  margin: 15px 0;
+}
+
+/* ----------------------- */
+
+[data-elm="reply"] {
+  padding: 8px;
+  font-size: 30px;
 }
 
 /* INAMTIONS */
@@ -1182,10 +1190,31 @@ img.sender-image {
   }
 }
 
+/* ----------------------- */
+
 .modal-title+.modal-text {
   color: #d0d0d0d9;
 }
 
 .modal-button .delete {
   color: #f12b5c;
+}
+
+/* ----------------------- */
+
+.disabled, [disabled] {
+  opacity: .55 !important;
+}
+
+/* ----------------------- */
+
+.navbar,
+.statusbar-overlay,
+.statusbar-overlay.with-panel-left,
+.statusbar-overlay.with-panel-right {
+  background-color: rgb(30 132 209);
+}
+
+.popup .navbar, .modal-in .navbar {
+  background-color: transparent;
 }
