@@ -8,74 +8,46 @@ document.addEventListener("backbutton", onBackKeyDown, false);
 function onDeviceReady() {
   deviceType = (navigator.userAgent.match(/iPad/i)) == "iPad" ? "iPad" : (navigator.userAgent.match(/iPhone/i))  == "iPhone" ? "iPhone" : (navigator.userAgent.match(/Android/i)) == "Android" ? "Android" : (navigator.userAgent.match(/BlackBerry/i)) == "BlackBerry" ? "BlackBerry" : "Other";
 
-  /*
   if ( deviceType == "Android" ) {
-    DB = window.sqlitePlugin.openDatabase({ name: 'soraate.db', location: 'default', androidDatabaseProvider: 'system' });
   } else {
-    DB = window.sqlitePlugin.openDatabase({ name: 'soraate.db', location: 'default' });
-  }
-  DB.transaction(function (tx) {
-    tx.executeSql('CREATE TABLE IF NOT EXISTS DB_data (json_result)');
-    tx.executeSql('SELECT json_result FROM DB_data', [], function (tx, rs) {
-      if (rs.rows.length > 0) {
-        if (rs.rows.item(0).json_result != "")
-          DB_data = JSON.parse(rs.rows.item(0).json_result);
-      } else {
-        tx.executeSql('INSERT INTO DB_data VALUES (?)', ['{}']);
+    // used for push notifcations
+    setTimeout(function () {
+      if(isNotificationEnabled == true) {
+        // Set your iOS Settings
+        var iosSettings = {};
+        iosSettings["kOSSettingsKeyAutoPrompt"] = false;
+        iosSettings["kOSSettingsKeyInAppLaunchURL"] = false;
+        window.plugins.OneSignal
+          .startInit(notificationID)
+          // .handleNotificationOpened(notificationOpenedCallback)
+          .iOSSettings(iosSettings)
+          .inFocusDisplaying(window.plugins.OneSignal.OSInFocusDisplayOption.Notification)
+          .endInit();
+        // The promptForPushNotificationsWithUserResponse function will show the iOS push notification prompt. We recommend removing the following code and instead using an In-App Message to prompt for notification permission (See step 6)
+        window.plugins.OneSignal.promptForPushNotificationsWithUserResponse(function(accepted) {
+          //console.log("User accepted notifications: " + accepted);
+        });
+        window.plugins.OneSignal.getPermissionSubscriptionState(function(status) {
+          //status.permissionStatus.hasPrompted; // Bool
+          //status.permissionStatus.status; // iOS only: Integer: 0 = Not Determined, 1 = Denied, 2 = Authorized
+          //status.permissionStatus.state; //Android only: Integer: 1 = Authorized, 2 = Denied
+
+          //status.subscriptionStatus.subscribed; // Bool
+          //status.subscriptionStatus.userSubscriptionSetting; // Bool
+          if(typeof OneSignalIDs == 'undefined' || OneSignalIDs == null || OneSignalIDs == ""){
+          OneSignalIDs = status.subscriptionStatus.userId; // String: OneSignal Player ID
+          }
+          //status.subscriptionStatus.pushToken; // String: Device Identifier from FCM/APNs
+        });
+        window.plugins.OneSignal.getIds(function(ids) {
+          if(typeof OneSignalIDs == 'undefined' || OneSignalIDs == null || OneSignalIDs == ""){
+            OneSignalIDs = ids.userId;
+          }
+        });
+        //END ONESIGNAL CODE
       }
-      useDB = true;
-    }, function (tx, error) {
-      //console.log('SELECT error: ' + error.message);
-      useDB = false;
-    });
-  }, function (error) {
-    //console.log('Transaction ERROR: ' + error.message);
-    useDB = false;
-  }, function() {
-    //console.log('Transaction ok');
-  });
-
-  // healthkit for iOS
-  cordova.plugins.health.isAvailable(
-    function(){
-      //
-      cordova.plugins.health.isAuthorized(
-                                            {
-                                              read : ['steps'],            // Read permission
-                                            },
-                                            function(){
-                                              alert('authorized');
-                                            },
-                                            function(){
-                                              alert('not authorized');
-                                            }
-                                          );
-
-      //
-      cordova.plugins.health.queryAggregated(
-                                              {
-                                                startDate: new Date(new Date().getTime() - 1 * 24 * 60 * 60 * 1000), // three days ago
-                                                endDate: new Date(), // now
-                                                dataType: 'steps',
-                                                filterOutUserInput: true,
-                                                ascending: false,
-                                                bucket: 'day'
-                                              },
-                                              function(e){
-                                                alert(JSON.stringify(e));
-                                                alert(JSON.stringify(e[0].endDate));
-                                                $$(`*[data-elm="steps-target"]`).text(e[0].value)
-                                              },
-                                              function(error){
-                                                alert('Error2: '+error);
-                                              }
-                                            );
-    },
-    function(error){
-        alert('Error1: '+error);
-    }
-  );
-  */
+    }, 4000);
+  }
 }
 
 // Handle the online event

@@ -781,8 +781,15 @@ function getReceivedMessages() {
 
       // Check if the message is not already opened
       let openedMessages = JSON.parse(getThis('openedMessages')) || {};
+      for (const oMsg of r) {
+        if(oMsg.is_opened) {
+          openedMessages[oMsg.id] = 1; // Mark as opened by setting value to 1
+        }
+      }
+      // Update localStorage with the new openedMessages object
+      setThis('openedMessages', JSON.stringify(openedMessages));
+  
       let newMessagesCount = Math.abs(Object.keys(openedMessages).length - r.length);
-
       if(Object.keys(openedMessages).length != r.length) {
         $$('[data-elm="inbox-num"]').show();
         $$('[data-elm="inbox-num"]').text(newMessagesCount);
@@ -790,14 +797,14 @@ function getReceivedMessages() {
 
       // Check if there is messages not already opened
       if(newMessagesCount > 0) {
-        for (const msg of r) {
+        for (const nMsg of r) {
           // Check if the message ID exists in openedMessages; if not, it's unread
-          const isOpened = openedMessages[msg.id] === 1;
+          const isOpened = openedMessages[nMsg.id] === 1;
 
           $$('[data-elm="inbox-btn"]').attr('href', '#');
           $$('[data-elm="inbox-btn"]').addClass('open-picker');
           $$('[data-elm="inbox-btn"]').attr('data-picker', '.picker-respond-to-message');
-          $$('.picker-respond-to-message').attr('data-messageID', msg.id);
+          $$('.picker-respond-to-message').attr('data-messageID', nMsg.id);
 
           if (!isOpened) {
             break;

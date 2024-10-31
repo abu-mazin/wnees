@@ -26,6 +26,9 @@ var useDB = false;
 var DB_data;
 // current tab that user is on
 var currentTab = 'main_tab';
+// notifications
+var isNotificationEnabled = true;
+var notificationID = 'af6d943b-3104-4b86-b14d-037d6e88414a';
 
 // ======================================
 // USER VARS
