@@ -261,10 +261,12 @@ li {
 }
 
 .navbar .navbar-user-container .navbar-user-name,
+.navbar .navbar-user-container .navbar-create-account,
 .logout {
   font-weight: 600;
-  font-size: 18px;
+  font-size: 12px;
   color: #00e1ff;
+  height: 25px;
 }
 
 .navbar .navbar-title {
@@ -416,6 +418,7 @@ html:not(.watch-active-state) .modal-button:active {
 
 /*** APP ***/
 .app-block {
+  position: relative;
   margin: 15px;
   padding: 20px;
   border-radius: 10px;
@@ -679,15 +682,16 @@ html:not(.watch-active-state) .modal-button:active {
 }
 
 .emoji {
-  text-align: center;
   flex: 12%;
+  min-width: 20px;
   min-height: 40px;
-  font-size: 26px;
   margin-top: 10px;
+  opacity: 1;
+  font-size: 26px;
+  text-align: center;
   animation: shakeZome 0.7s;
   animation-iteration-count: infinite;
   transition: opacity 1s ease-in-out;
-  opacity: 1;
 }
 
 .fadeIn {
@@ -1217,4 +1221,37 @@ img.sender-image {
 
 .popup .navbar, .modal-in .navbar {
   background-color: transparent;
+}
+
+/* ----------------------- */
+[data-elm="new-message"] {
+  display: none;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  background: #0000007d;
+  text-align: center;
+}
+
+.newMessageBtn {
+  margin: auto;
+  background: rgb(22 44 64 / 86%);
+  border-radius: 4px;
+  width: 145px;
+  padding: 35px 30px;
+  font-size: 20px;
+  color: #fff;
+  box-shadow: 0px 0px 1px 1px #ffffff1a;
+  animation: pulse-animation 2s infinite;
+}
+
+@keyframes pulse-animation {
+  0% {
+    box-shadow: 0 0 0 0px rgb(0 191 255 / 20%);
+  }
+  100% {
+    box-shadow: 0 0 0 150px rgb(0 148 255 / 0%);
+  }
 }

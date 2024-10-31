@@ -147,12 +147,14 @@
                 <img src="img/icons/edit-pic.svg" alt="" style=" width: 14px; ">
               </label>
               <div class="navbar-user-welcoming-container">
-                <a href="#" data-elm="welcoming-message">مرحبا <span data-elm="user-name"></span>
-                  !</a>
-                <a href="#" class="open-popup link icon-only navbar-user-name" data-popup=".popup-login"
-                  data-i18n-key="">سجل حسابك / دخولك</a>
-                <a href="#" class="logout link icon-only" data-popup=".popup-login" data-i18n-key=""
-                  style="display: none;">تسجيل الخروج</a>
+                <a href="#" data-elm="welcoming-message">مرحبا <span data-elm="user-name"></span>!</a>
+                <!-- <a href="#" class="open-popup link icon-only navbar-user-name" data-popup=".popup-login" data-i18n-key="">سجل حسابك / دخولك</a> -->
+                <a href="#" class="open-popup link icon-only navbar-user-name" data-popup=".popup-login" data-i18n-key="">سجل دخولك</a>
+                <div class="navbar-create-account-container link icon-only" style="display: none;">
+                  <a href="#" class="open-popup navbar-create-account" data-popup=".popup-signup" data-i18n-key="">اجعل حسابك دائم</a> / 
+                  <a href="#" class="logout" data-popup=".popup-login" data-i18n-key="">خروج نهائي</a>
+                </div>
+                <a href="#" class="logout link icon-only" data-popup=".popup-login" data-i18n-key="" style="display: none;">تسجيل الخروج</a>
               </div>
             </div>
           </div>
@@ -211,8 +213,12 @@
                   <br />
                   <br />
                 </div>
-                <a href="#" class="button" data-elm="go2step2"
-                  style=" background: #6a9bc8; color: #fff; border-radius: 30px; width: 120px; margin: auto; ">التالي</a>
+                <a href="#" class="button" data-elm="go2step2" style=" background: #6a9bc8; color: #fff; border-radius: 30px; width: 120px; margin: auto; ">التالي</a>
+                <div data-elm="new-message">
+                  <div class="newMessageBtn">
+                    ارسل رسالة جديدة
+                  </div>
+                </div>
               </div>
               <div class="app-block step" data-elm="step2">
                 <span class="app-num">2</span>
@@ -248,7 +254,7 @@
                   </div>
                 </div>
                 <a href="#" class="button" data-elm="go2step3"
-                  style=" background: #6a9bc8; color: #fff; border-radius: 30px; width: 120px; margin: auto; ">التالي</a>
+                  style=" background: #6a9bc8; color: #fff; border-radius: 30px; width: 120px; margin: auto;margin-top: 15px; ">التالي</a>
               </div>
               <div class="app-block step" data-elm="step3">
                 <span class="app-num">3</span>
@@ -290,16 +296,13 @@
         <div class="left">
           <a href="#" class="close-popup link icon-only"><i class="fa fa-times"></i></a>
         </div>
-        <div class="center"></div>
-        <div class="right"></div>
+        <div class="center" data-i18n-key="signin">تسجيل الدخول</div>
+        <div class="right"><a href="#" class="icon-only"></a></div>
       </div>
     </div>
     <div class="login-form-container">
       <form name="signInForm" class="signInForm" id="signInForm" action="#" method="post" accept-charset="UTF-8">
         <div class="content-block">
-          <div class="header">
-            <h1 class="auth-title" data-i18n-key="signin">تسجيل الدخول</h1>
-          </div>
           <form>
             <div class="list-block inset">
               <div class="item-inner">
@@ -308,8 +311,6 @@
                     id="signin_email" placeholder="البريد الإلكتروني" size="150" required>
                 </div>
               </div>
-            </div>
-            <div class="list-block inset">
               <div class="item-inner">
                 <div class="item-input">
                   <input spellcheck="false" autocorrect="off" autocapitalize="off" type="password" name="password"
@@ -322,12 +323,12 @@
           </form>
           <div class="content-block">
             <a class="signInForm-to-json item-link button button-fill">تسجيل الدخول</a>
-            <p class="register-links-container">
+            <!-- <p class="register-links-container">
               <span data-i18n-key="don't_have_account_?">ليس لدي حساب؟</span>
               <a href="#" class="open-popup register-link" data-popup=".popup-signup"
                 data-i18n-key="create_a_new_account">إنشاء
                 حساب جديد</a>
-            </p>
+            </p> -->
           </div>
         </div>
       </form>
@@ -339,17 +340,20 @@
     <div class="navbar">
       <div class="navbar-inner">
         <div class="left">
-          <a href="#" class="close-popup link icon-only"><i class="fa fa-times"></i></a>
+          <!-- <a href="#" class="close-popup link icon-only"><i class="fa fa-times"></i></a> -->
+          <a href="#" class="icon-only"></a>
         </div>
-        <div class="center"></div>
-        <div class="right"></div>
+        <div class="center">حساب دائم</div>
+        <div class="right">
+          <a href="#" class="close-popup link icon-only" style="font-size: 12px;">تخطي</a>
+        </div>
       </div>
     </div>
     <div class="login-form-container content-block">
-      <div class="header">
-        <h1 class="auth-title" data-i18n-key="signin">حساب جديد</h1>
-      </div>
       <form name="signUpForm" id="signUpForm" action="#" method="post" accept-charset="UTF-8">
+        <div class="content-block" style=" text-align: center; padding: 10px 50px; margin: 10px; margin-top: -30px; background: #cccccc42; border-radius: 10px; color: #ffffff; font-weight: 600; font-size: 16px; ">
+          <p>سجل حسابك حتى لا تضيع رسائلك وبياناتك ولتتمكن من الرجوع لرسائلك في أي وقت ومن أي جهاز!</p>
+        </div>
         <div class="content-block">
           <!-- <div class="list-block inset">
             <div class="item-inner">
@@ -366,8 +370,6 @@
                   id="signup_email" placeholder="البريد الإلكتروني" size="150" required>
               </div>
             </div>
-          </div>
-          <div class="list-block inset">
             <div class="item-inner">
               <div class="item-input">
                 <input spellcheck="false" autocorrect="off" autocapitalize="off" type="password" name="password"
@@ -376,10 +378,10 @@
             </div>
             <ul>
               <li>
-                <label class="label-checkbox item-content" style="padding:0;">
+                <label class="label-checkbox item-content" style="padding:0; justify-content: center;">
                   <input type="checkbox" name="terms" value="1" checked="checked" />
                   <div class="item-media"><i class="icon icon-form-checkbox"></i></div>
-                  <div class="item-inner">
+                  <div class="item-inner" style="width: initial;">
                     <div class="item-title" style="color: #d3d3d3;">
                       أوافق على <a href="#" onclick="cordova.InAppBrowser.open('https://wnees.com/terms', '_system');" style="color: #e1e050;">شروط الاستخدام</a>
                     </div>
@@ -391,12 +393,12 @@
         </div>
 
         <div class="content-block">
-          <a class="signUpForm-to-json item-link button button-fill">تسجيل</a>
-          <p class="register-links-container for-later-use">
+          <a class="signUpForm-to-json item-link button button-fill">حفظ</a>
+          <!-- <p class="register-links-container">
             <span data-i18n-key="don't_have_account_?">لديك حساب؟</span>
             <a href="#" class="open-popup register-link" data-popup=".popup-login"
               data-i18n-key="create_a_new_account">تسجيل الدخول</a>
-          </p>
+          </p> -->
         </div>
         <!-- <div class="content-block">
           <a href="#" class="color-white button showSigninForm-link">دخول حسابي</a>

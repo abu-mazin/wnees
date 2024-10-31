@@ -194,6 +194,10 @@ $$('.welcome-screen').on('popup:close', function () {
 $$('.signUpForm-to-json').on('click', function (e) {
   e.preventDefault();
   var SignUPForm_parms = myApp.formToJSON('#signUpForm');
+  if(signUpForm_parms.terms != 1){
+    myApp.alert('مطلوب الموافقة على شروط الاستخدام.'); 
+    return false;
+  }
   SignUPForm_parms.name = user.name;
   delete SignUPForm_parms.terms;
   $$.doAJAX('users/register', SignUPForm_parms, 'POST', false,
@@ -265,6 +269,14 @@ function initUserLoggedIn() {
     userLogedin = true;
     $$('.navbar-user-name').hide();
     $$('.logout').show();
+    $$('.navbar-create-account-container').hide();
+    $$('.navbar-create-account-container .navbar-create-account').hide();
+    $$('.navbar-create-account-container .logout').hide();
+  } else {
+    $$('.navbar-user-name').hide();
+    $$('.navbar-create-account-container').show();
+    $$('.navbar-create-account-container .navbar-create-account').show();
+    $$('.navbar-create-account-container .logout').show();
   }
 
   user = new User(JSON.parse(getThis("userData")));
@@ -286,9 +298,11 @@ function initUserLoggedIn() {
     $$('[data-elm="user-image"]').attr('src', 'img/user-pic.svg');
     if (getThis('showStep2') == 1) {
       $$('[data-elm="step2"]').addClass('show');
+      $$('[data-elm="go2step2"]').hide();
     }
     if (getThis('showStep3') == 1) {
       $$('[data-elm="step3"]').addClass('show');
+      $$('[data-elm="go2step3"]').hide();
     }
   }
 
@@ -307,6 +321,11 @@ function requestName() {
 $$('[data-elm="create-random-user"]').on('click', function (e) {
   e.preventDefault();
 
+  if($$(".name-container [name=terms]").is(':checked') != true){
+    myApp.alert('مطلوب الموافقة على شروط الاستخدام.'); 
+    return false;
+  }
+
   var userName = $$('[data-elm="guest-name"]').val().trim();
   if (userName.length >= 2) {
     // Your callback logic here
@@ -316,7 +335,8 @@ $$('[data-elm="create-random-user"]').on('click', function (e) {
         if (typeof r != 'undefined' && r != null) {
           setThis("randomUserLogedin", 1);
           setThis("userData", JSON.stringify(r));
-          initUserLoggedIn()
+          initUserLoggedIn();
+          myApp.popup(".popup-signup");
         }
       },
       // Failed
@@ -334,6 +354,7 @@ function initUserLogedout() {
   $$('.app-block').addClass('disabled');
   $$('[data-elm="inbox-btn"]').addClass('disabled');
   $$('[data-elm="inbox-num"]').hide();
+  $$('[data-elm="new-message"]').hide();
 
   
   $$('[data-elm="show-share-link"]').show();
@@ -365,6 +386,8 @@ function initUserLogedout() {
   $$('*[data-elm="user-name"]').val('');
 
   $$('.navbar-user-name').show();
+  $$('.navbar-create-account-container').hide();
+  $$('.navbar-create-account-container .navbar-create-account').hide();
   $$('.logout').hide();
 
   setThis("hideWelcomeScreen", 1);
@@ -476,6 +499,16 @@ $$('.custom-message').on('click', function (e) {
   $$('[data-elm="share-message"]').addClass('disabled');
 });
 
+$$('.newMessageBtn').on('click', function (e) {
+  e.preventDefault();
+
+  $$('[data-elm="new-message"]').hide();
+
+  $$('.dice').addClass('shake-animation');
+  getRandomMessage();
+});
+
+
 $$('[data-elm="show-share-link"]').on('click', function () {
   var thisElm = $$(this);
   $$.doAJAX('public-messages', msgParms, 'POST', false,
@@ -486,6 +519,8 @@ $$('[data-elm="show-share-link"]').on('click', function () {
       $$('[data-elm="share-link-container"]').show();
       $$('[data-elm="share-button"]').attr('onClick', "window.plugins.socialsharing.share('', null, null, '"+r.sharing_url+"')");
       $$('[data-elm="open-button"]').attr('onClick', "cordova.InAppBrowser.open('"+r.sharing_url+"', '_system');");
+      $$('[data-elm="new-message"]').show();
+      $$('[data-elm="new-message"]').css('display', 'flex');
     },
     // Failed to send public message
     function (xhr, textStatus) {
@@ -505,6 +540,8 @@ $$('[data-elm="share-message"]').on('click', function () {
       myApp.toast('تم الإرسال', '✓', { duration: 2000 }).show();
       
       $$('[data-elm="share-message"]').addClass('disabled');
+      $$('[data-elm="new-message"]').show();
+      $$('[data-elm="new-message"]').css('display', 'flex');
     },
     // Failed
     function (xhr, textStatus) {
@@ -714,8 +751,8 @@ function getSentMessages() {
 
       // If no message has responses, show the notification
       if (!hasResponses) {
-        oneMessageContainer.append(`
-          <span>تنبيه لا يوجد ردود...</span>
+        messagesContainer.append(`
+          <span>لا يوجد ردود...</span>
         `);
       } else {
         setThis('showStep2', 1);
@@ -773,12 +810,12 @@ function getReceivedMessages() {
         // $$('.picker-respond-to-message').attr('data-messageID', '');
       }
 
-      setThis('showStep2', 1);
-      setThis('showStep3', 1);
-      $$('[data-elm="step2"]').addClass('show');
-      $$('[data-elm="step3"]').addClass('show');
-      $$('[data-elm="go2step2"]').hide();
-      $$('[data-elm="go2step3"]').hide();
+      // setThis('showStep2', 1);
+      // setThis('showStep3', 1);
+      // $$('[data-elm="step2"]').addClass('show');
+      // $$('[data-elm="step3"]').addClass('show');
+      // $$('[data-elm="go2step2"]').hide();
+      // $$('[data-elm="go2step3"]').hide();
     }
   },
   // Failed
@@ -820,7 +857,7 @@ $$('.picker-respond-to-message').on('open', function () {
 $$(document).on('click', '[data-elm="reply"]', function () {
   let message_id = $$('.picker-respond-to-message').attr('data-messageID');
   let response_id = $$(this).attr('id');
-  let reply = { message_id: message_id, available_response_id: response_id, is_anonymous: 1 }
+  let reply = { message_id: message_id, available_response_id: response_id, is_anonymous: 0 }
 
   $$.doAJAX('messages/respond-to-message', reply , 'POST', false,
   // Success (200) - when random message is successfully retrieved
@@ -859,6 +896,11 @@ $$(document).on('click', '[data-elm="reply"]', function () {
         }
       }
     } else {
+      $$('[data-elm="inbox-num"]').hide();
+      $$('[data-elm="inbox-btn"]').attr('href', '#');
+      $$('[data-elm="inbox-btn"]').removeClass('open-picker');
+      $$('[data-elm="inbox-btn"]').attr('data-picker', '');
+      $$('.picker-respond-to-message').attr('data-messageID', '');
       // $$('[data-elm="inbox-btn"]').attr('href', 'inbox.html');
       // $$('[data-elm="inbox-btn"]').removeClass('open-picker');
       // $$('[data-elm="inbox-btn"]').attr('data-picker', '');
