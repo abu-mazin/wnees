@@ -36,7 +36,7 @@
 
 </head>
 
-<body>
+<body oncontextmenu="return false" ondragstart="return false" onselectstart="return false">
   <!-- Overlays -->
   <div class="statusbar-overlay"></div>
   <div class="panel-overlay"></div>
@@ -108,7 +108,7 @@
                     </div>
                     <div class="weclome-screen-desc">
                       <h1 data-i18n-key="">ونيس</h1>
-                      <p data-i18n-key="">ببساطة ابقى على اتصال مع الآخرين وانت ونيس ومستانس</p>
+                      <p data-i18n-key="">انشر السعادة - رسالة في كل مرة.</p>
                     </div>
                     <div class="weclome-screen-footer">
                       <a href="#" class="welcome-next-btn close-popup" data-popup=".welcome-screen"
@@ -149,12 +149,12 @@
               <div class="navbar-user-welcoming-container">
                 <a href="#" data-elm="welcoming-message">مرحبا <span data-elm="user-name"></span>!</a>
                 <!-- <a href="#" class="open-popup link icon-only navbar-user-name" data-popup=".popup-login" data-i18n-key="">سجل حسابك / دخولك</a> -->
-                <a href="#" class="open-popup link icon-only navbar-user-name" data-popup=".popup-login" data-i18n-key="">سجل دخولك</a>
-                <div class="navbar-create-account-container link icon-only" style="display: none;">
+                <a href="#" class="open-popup navbar-user-name" data-popup=".popup-login" data-i18n-key="">سجل دخولك</a>
+                <div class="navbar-create-account-container" style="display: none;">
                   <a href="#" class="open-popup navbar-create-account" data-popup=".popup-signup" data-i18n-key="">اجعل حسابك دائم</a> / 
                   <a href="#" class="logout" data-popup=".popup-login" data-i18n-key="">خروج نهائي</a>
                 </div>
-                <a href="#" class="logout link icon-only" data-popup=".popup-login" data-i18n-key="" style="display: none;">تسجيل الخروج</a>
+                <a href="#" class="logout" data-popup=".popup-login" data-i18n-key="" style="display: none;">تسجيل الخروج</a>
               </div>
             </div>
           </div>
@@ -166,6 +166,7 @@
       <div class="pages navbar-through toolbar-through">
         <div data-page="index" class="page">
           <div class="page-content">
+            <div id="confetti"></div>
             <div data-elm="create-random-user-container" style="display: none; margin: auto; margin-top: 15px; max-width: 270px; text-align: center; border-radius: 13px; overflow: hidden;">
               <div style="background-color: rgb(30 131 209); padding: 15px;">
                 <div style="font-weight: 600; font-size: 16px; color: #fff;">من فضلك أدخل اسمك</div>
@@ -225,14 +226,10 @@
                 <span class="app-title">الخطوة 2</span>
                 <span class="app-subtitle">شارك مع الآخرين</span>
                 <div style="margin-top: 28px; padding: 20px; background: #cccccc21; border-radius: 8px; text-align: center;">
-                  <div style="font-size: 22px;">أطلق في البحر</div>
-                  <div style="color: #ccc;">انشر رسالتك إلى مستخدمين عشوائيين</div>
-                  <img src="img/bottle.png" style="width: 175px;">
-                  <div data-elm="share-message" class="share-btn">شارك</div>
-                </div>
-                <div style="margin-top: 28px; padding: 20px; background: #cccccc21; border-radius: 8px; text-align: center;">
                   <div style="font-size: 22px;">شارك عبر الشبكات الاجتماعية</div>
-                  <div data-elm="show-share-link" class="share-btn">انشئ رابط المشاركة</div>
+                  <div style="color: #ccc;">انشر رسالتك عبر واتساب ، اكس ، وغيره</div>
+                  <img src="img/social.png" style="width: 175px;">
+                  <div data-elm="show-share-link" class="share-btn">انشئ رابطك الخاص</div>
                   <div data-elm="share-link-container" style="display: none;">
                     <div style="display: flex;gap: 10px;font-size: 22px;background: #ffffff;padding: 10px 20px;border-radius: 10px;color: #000;">
                       <div class="icon"><a href="#" onclick="" data-elm="share-button"><i class="fa fa-share"></i></a></div>
@@ -252,6 +249,12 @@
                     <!-- <img src="img/socialMedia/tiktok.png" class="social-media-icon"> -->
                     <!-- <img src="img/socialMedia/instagram.png" class="social-media-icon"> -->
                   </div>
+                </div>
+                <div style="margin-top: 28px; padding: 20px; background: #cccccc21; border-radius: 8px; text-align: center;">
+                  <div style="font-size: 22px;">أطلق في البحر</div>
+                  <div style="color: #ccc;">انشر رسالتك إلى مستخدمين عشوائيين</div>
+                  <img src="img/bottle.png" style="width: 175px;">
+                  <div data-elm="share-message" class="share-btn">شارك</div>
                 </div>
                 <a href="#" class="button" data-elm="go2step3"
                   style=" background: #6a9bc8; color: #fff; border-radius: 30px; width: 120px; margin: auto;margin-top: 15px; ">التالي</a>

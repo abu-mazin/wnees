@@ -225,27 +225,28 @@ $$('.signInForm-to-json').on('click', function (e) {
 
   // get form parameters
   var SignInForm_parms = myApp.formToJSON('#signInForm');
+
   $$.doAJAX('users/login', SignInForm_parms, 'POST', false,
-    // Success (200)
-    function (r, textStatus, xhr) {
-      setThis("userLogedin", 1);
-      setThis('userData', JSON.stringify(r));
+  // Success (200)
+  function (r, textStatus, xhr) {
+    setThis("userLogedin", 1);
+    setThis('userData', JSON.stringify(r));
 
-      initUserLoggedIn();
+    initUserLoggedIn();
 
-      // close popups
-      myApp.closeModal('.popup-login')
-    },
-    // Failed
-    function (xhr, textStatus) {
-      // Failed notification
-      if (textStatus == 401)
-        myApp.alert('البريد الإلكتروني غير صحيح.');
-      else if (textStatus == 422)
-        myApp.addNotification({ hold: 3000, title: 'تنبيه', message: 'من فضلك أدخل بريد إلكتروني صحيح' });
-      else
-        failedNotification4AjaxRequest(xhr, textStatus);
-    });
+    // close popups
+    myApp.closeModal('.popup-login')
+  },
+  // Failed
+  function (xhr, textStatus) {
+    // Failed notification
+    if (textStatus == 401)
+      myApp.alert('البريد الإلكتروني غير صحيح.');
+    else if (textStatus == 422)
+      myApp.addNotification({ hold: 3000, title: 'تنبيه', message: 'من فضلك أدخل بريد إلكتروني صحيح' });
+    else
+      failedNotification4AjaxRequest(xhr, textStatus);
+  });
 
   return false;
 });
@@ -257,13 +258,13 @@ $$('.logout').on('click', function () {
 function initUserLoggedIn() {
   $$('[data-elm="create-random-user-container"]').hide();
   $$('.app-block').removeClass('disabled');
+  $$('.app-block').show();
 
   $$('[data-elm="share-message"]').removeClass('disabled');
   $$('[data-elm="inbox-btn"]').removeClass('disabled');
 
   $$('img[data-elm="user-image"]').attr('data-popup', '.popup-settings').addClass('open-popup');
   $$('[data-elm="welcoming-message"]').attr('data-popup', '.popup-settings').addClass('open-popup');
-
 
   if (getThis("userLogedin")) {
     userLogedin = true;
@@ -272,11 +273,13 @@ function initUserLoggedIn() {
     $$('.navbar-create-account-container').hide();
     $$('.navbar-create-account-container .navbar-create-account').hide();
     $$('.navbar-create-account-container .logout').hide();
+    $$('[data-elm="delete-account"]').show();
   } else {
     $$('.navbar-user-name').hide();
     $$('.navbar-create-account-container').show();
     $$('.navbar-create-account-container .navbar-create-account').show();
     $$('.navbar-create-account-container .logout').show();
+    $$('[data-elm="delete-account"]').hide();
   }
 
   user = new User(JSON.parse(getThis("userData")));
@@ -308,13 +311,27 @@ function initUserLoggedIn() {
 
   getRandomMessage();
   getSentMessages();
-  getReceivedMessages()
-}
+  getReceivedMessages();
 
+  setTimeout(() => {
+    if(isNotificationEnabled == true && typeof OneSignalIDs != 'undefined' && OneSignalIDs != null && OneSignalIDs != "") {
+      // Your callback logic here
+      $$.doAJAX('users-info', { play_id: OneSignalIDs, _method: 'PUT' }, 'POST', true,
+      // Success (200)
+      function (r, textStatus, xhr) {
+      },
+      // Failed
+      function (xhr, textStatus) {
+      });
+    }
+  }, "5000");
+}
+  
 // is Guest (first time)? then request name
 function requestName() {
   $$('[data-elm="create-random-user-container"]').show();
   $$('.app-block').addClass('disabled');
+  $$('.app-block').hide();
 }
 
 // create random user 
@@ -329,7 +346,7 @@ $$('[data-elm="create-random-user"]').on('click', function (e) {
   var userName = $$('[data-elm="guest-name"]').val().trim();
   if (userName.length >= 2) {
     // Your callback logic here
-    $$.doAJAX('users-info', { name: userName }, 'POST', true,
+    $$.doAJAX('users-info', { name: userName }, 'POST', false,
       // Success (200)
       function (r, textStatus, xhr) {
         if (typeof r != 'undefined' && r != null) {
@@ -352,6 +369,7 @@ $$('[data-elm="create-random-user"]').on('click', function (e) {
 function initUserLogedout() {
   $$('[data-elm="create-random-user-container"]').show();
   $$('.app-block').addClass('disabled');
+  $$('.app-block').hide();
   $$('[data-elm="inbox-btn"]').addClass('disabled');
   $$('[data-elm="inbox-num"]').hide();
   $$('[data-elm="new-message"]').hide();
@@ -389,6 +407,7 @@ function initUserLogedout() {
   $$('.navbar-create-account-container').hide();
   $$('.navbar-create-account-container .navbar-create-account').hide();
   $$('.logout').hide();
+  $$('[data-elm="delete-account"]').hide();
 
   setThis("hideWelcomeScreen", 1);
   requestName();
@@ -489,14 +508,20 @@ $$('.dice').on('click', function () {
 $$('.custom-message').on('click', function (e) {
   e.preventDefault();
 
+  //var msg = myApp.formToJSON('#sendMessageForm').message.replace(/(?:\r\n|\r|\n)/g, '<br>');
   var msg = myApp.formToJSON('#sendMessageForm').message;
-  msgParms = { message_id: -1, message: msg };
-  $$(".random-message").text(msg);
-  myApp.closeModal(".picker-send-message");
-
-  $$('[data-elm="show-share-link"]').show();
-  $$('[data-elm="share-link-container"]').hide();
-  $$('[data-elm="share-message"]').addClass('disabled');
+  if(msg.length > 2){
+    msgParms = { message_id: -1, message: msg };
+    //$$(".random-message").html(msg);
+    $$(".random-message").html(msg.replace(/(?:\r\n|\r|\n)/g, '<br>'));
+    myApp.closeModal(".picker-send-message");
+  
+    $$('[data-elm="show-share-link"]').show();
+    $$('[data-elm="share-link-container"]').hide();
+    $$('[data-elm="share-message"]').addClass('disabled');
+  } else {
+    myApp.alert('رسالتك قصيرة جداً! حاول مجدداً..');
+  }
 });
 
 $$('.newMessageBtn').on('click', function (e) {
@@ -508,7 +533,6 @@ $$('.newMessageBtn').on('click', function (e) {
   getRandomMessage();
 });
 
-
 $$('[data-elm="show-share-link"]').on('click', function () {
   var thisElm = $$(this);
   $$.doAJAX('public-messages', msgParms, 'POST', false,
@@ -517,7 +541,10 @@ $$('[data-elm="show-share-link"]').on('click', function () {
       $$('[data-elm="message-share-link"]').text(r.sharing_url);
       thisElm.hide();
       $$('[data-elm="share-link-container"]').show();
-      $$('[data-elm="share-button"]').attr('onClick', "window.plugins.socialsharing.share('', null, null, '"+r.sharing_url+"')");
+      //var msg = msgParms.message.replace(/(?:<br>|<br\/>|<br \/>)/gm, "\n");
+      //var msg = msgParms.message.replace(/(?:\r\n|\r|\n)/g, ' , ');
+      var msg = 'عبر عن رأيك بصورة! ';
+      $$('[data-elm="share-button"]').attr('onClick', "window.plugins.socialsharing.share('"+msg+"', null, null, '"+r.sharing_url+"')");
       $$('[data-elm="open-button"]').attr('onClick', "cordova.InAppBrowser.open('"+r.sharing_url+"', '_system');");
       $$('[data-elm="new-message"]').show();
       $$('[data-elm="new-message"]').css('display', 'flex');
@@ -526,7 +553,7 @@ $$('[data-elm="show-share-link"]').on('click', function () {
     function (xhr, textStatus) {
       failedNotification4AjaxRequest(xhr, textStatus);
     });
-})
+});
 
 $$('[data-elm="share-message"]').on('click', function () {
   let message = {};
@@ -538,7 +565,18 @@ $$('[data-elm="share-message"]').on('click', function () {
     // Success (200)
     function (r, textStatus, xhr) {
       myApp.toast('تم الإرسال', '✓', { duration: 2000 }).show();
-      
+
+      $$('#confetti').show();
+      $$('#confetti').addClass('start');
+      confetti.start();
+      setTimeout(() => {
+        $$('#confetti').removeClass('start');
+        setTimeout(() => {
+          confetti.stop();
+          $$('#confetti').hide();
+        }, "1000");
+      }, "4000");
+
       $$('[data-elm="share-message"]').addClass('disabled');
       $$('[data-elm="new-message"]').show();
       $$('[data-elm="new-message"]').css('display', 'flex');
@@ -616,6 +654,12 @@ $$(document).on('click', '.envelope', function () {
       $$(this).css('opacity','1');
     }, "800");
 
+    // increase counter by 1
+    var emojiCounterElmContainer = $$(this).parent().find("[data-elm=responsesContainer]>[data-elm="+responseContent.reaction+"]");
+    emojiCounterElmContainer.css('opacity', '1');
+    var emojiCounterElm = $$(this).parent().find("[data-elm=responsesContainer]>[data-elm="+responseContent.reaction+"]>div");
+    emojiCounterElm.text(parseInt(emojiCounterElm.text())+1);
+
     // Update the envelope icon and add 'open' class
     // $$(this).addClass('open');
     // $$(this).html('<i></i>').addClass('fa-envelope-open');
@@ -662,16 +706,20 @@ $$(document).on('click', '.emoji', function () {
   }, "10000");
 });
 
+var getRandomMessageCall = false;
 function getRandomMessage() {
+  if(!getRandomMessageCall) getRandomMessageCall = true;
+  else return false;
+
   $$('[data-elm="step2"]').addClass('disabled');
 
   // First AJAX: Get a random message
   $$.doAJAX('available-messages/random', { GUID: userGUID }, 'GET', true,
     // Success (200) - when random message is successfully retrieved
     function (r, textStatus, xhr) {
-      $$('.random-message').text(r.message);
+      $$('.random-message').html(r.message);
       $$('.dice').removeClass('shake-animation');
-
+    
       $$('[data-elm="step2"]').removeClass('disabled');
 
       $$('[data-elm="show-share-link"]').show();
@@ -681,22 +729,25 @@ function getRandomMessage() {
       // Prepare the public message parameters with the random message data
       msgParms = { message_id: r.id, message: r.message };
       // Second AJAX: Send the public message
+
+      getRandomMessageCall = false;
     },
     // Failed to retrieve random message
     function (xhr, textStatus) {
       failedNotification4AjaxRequest(xhr, textStatus);
       $$('.dice').removeClass('shake-animation');
+      getRandomMessageCall = false;
     });
 }
 
-function getSentMessages() {
+function getSentMessages(hideIndicator = true) {
   const messagesContainer = $$('[data-elm="messages-container"]');
   messagesContainer.empty();
 
   // Retrieve or initialize openedResponses from localStorage
   let openedResponses = JSON.parse(getThis('openedResponses')) || {};
 
-  $$.doAJAX('messages/user-sent-messages', { GUID: userGUID }, 'GET', true,
+  $$.doAJAX('messages/user-sent-messages', { GUID: userGUID }, 'GET', hideIndicator,
     // Success (200) - when user messages are successfully retrieved
     function (r, textStatus, xhr) {
       sentMessages = r;
@@ -707,17 +758,19 @@ function getSentMessages() {
       sentMessages.slice().reverse().forEach((messageObj) => {
         const { message, id, responses } = messageObj;
 
+        // Create message container
+        const oneMessageContainer = $$('<div></div>').addClass('message-container');
+        messagesContainer.append(oneMessageContainer);
+
+        // Append the message text to the element
+        const messageDiv = $$('<div class="sent-message"></div>').text(message);
+        oneMessageContainer.append(messageDiv);
+
         // Check if the message has responses
         if (responses.length > 0) {
           hasResponses = true; // Set the flag to true if there's at least one response
 
-          // Create message container
-          const oneMessageContainer = $$('<div></div>').addClass('message-container');
-          messagesContainer.append(oneMessageContainer);
-
-          // Append the message text to the element
-          const messageDiv = $$('<div class="sent-message"></div>').text(message);
-          oneMessageContainer.append(messageDiv);
+          var emojiCounter = []; // count each emoji
 
           responses.forEach((response, index) => {
             // Create a unique key by concatenating message id and index
@@ -727,6 +780,7 @@ function getSentMessages() {
             const isOpened = openedResponses[uniqueKey] === 1;
             if (isOpened) {
               var responsesDiv = $$('<div></div>').addClass('emoji').html(response.reaction);
+              if(response.type == 'emoji') emojiCounter[response.reaction] = 1 + (emojiCounter[response.reaction] || 0);
 
               // If opened, add the "open" class
               // responsesDiv.addClass('open');
@@ -746,6 +800,39 @@ function getSentMessages() {
 
             oneMessageContainer.append(responsesDiv);
           });
+
+          // availableResponses.forEach(res => {
+          //   responsesContainer.append(`
+          //     <span id="${res.id}">${res.reaction}</span>
+          //   `);
+          // });
+          oneMessageContainer.append(`
+            <div data-elm="responsesContainer" style="width: 100%;display: flex ;justify-content: space-between;background: #6696c6;padding: 15px;border-radius: 15px;text-align: center;">
+              <div data-elm="👍" style="`+((emojiCounter["👍"] || 0) > 0 ? '': 'opacity: 0.4;')+`transition: opacity 1s ease-in-out;padding: 8px 0px;font-size: 30px;">
+                👍
+                <div style="font-size:16px;">`+(emojiCounter["👍"] || 0)+`</div>
+              </div>
+              <div data-elm="❤️" style="`+((emojiCounter["❤️"] || 0) > 0 ? '': 'opacity: 0.4;')+`transition: opacity 1s ease-in-out;padding: 8px 0px;font-size: 30px;">
+                ❤️
+                <div style="font-size:16px;">`+(emojiCounter["❤️"] || 0)+`</div>
+              </div>
+              <div data-elm="😂" style="`+((emojiCounter["😂"] || 0) > 0 ? '': 'opacity: 0.4;')+`transition: opacity 1s ease-in-out;padding: 8px 0px;font-size: 30px;">
+                😂
+                <div style="font-size:16px;">`+(emojiCounter["😂"] || 0)+`</div>
+              </div>
+              <div data-elm="😮" style="`+((emojiCounter["😮"] || 0) > 0 ? '': 'opacity: 0.4;')+`transition: opacity 1s ease-in-out;padding: 8px 0px;font-size: 30px;">
+                😮
+                <div style="font-size:16px;">`+(emojiCounter["😮"] || 0)+`</div>
+              </div>
+              <div data-elm="😢" style="`+((emojiCounter["😢"] || 0) > 0 ? '': 'opacity: 0.4;')+`transition: opacity 1s ease-in-out;padding: 8px 0px;font-size: 30px;">
+                😢
+                <div style="font-size:16px;">`+(emojiCounter["😢"] || 0)+`</div>
+              </div>
+            </div>`);
+        } else {
+          oneMessageContainer.append(`
+            <div style="padding: 10px; width: 100%; text-align: center; color: #ccc;">الردود قادمة!</div>
+          `);
         }
       });
 
@@ -769,11 +856,12 @@ function getSentMessages() {
     });
 }
 
-function getReceivedMessages() {
+function getReceivedMessages(hideIndicator = true) {
   $$('[data-elm="inbox-num"]').hide();
   $$('[data-elm="inbox-num"]').text('');
+  removeThis('openedMessages');
 
-  $$.doAJAX('messages/user-received-messages', {}, 'GET', true,
+  $$.doAJAX('messages/user-received-messages', {}, 'GET', hideIndicator,
   // Success (200)
   function (r, textStatus, xhr) {
     if(r.length > 0) {
@@ -859,7 +947,7 @@ $$('.picker-respond-to-message').on('open', function () {
       <span class="close-picker" data-elm="reply" id="${res.id}">${res.reaction}</span>
     `);
   });
-})
+});
 
 $$(document).on('click', '[data-elm="reply"]', function () {
   let message_id = $$('.picker-respond-to-message').attr('data-messageID');
@@ -919,7 +1007,7 @@ $$(document).on('click', '[data-elm="reply"]', function () {
     // Failed notification
     failedNotification4AjaxRequest(xhr, textStatus);
   });
-})
+});
 
 // Function to get response content by message ID and index
 function getResponseContent(messageId, index) {
@@ -966,4 +1054,410 @@ $$('[data-elm="delete-account"]').on('click',function() {
       },
     ]
   });
-})
+});
+
+$$('.picker-send-message').on('open', function () {
+  endInterval = false;
+  write(0);
+});
+
+$$('.picker-send-message').on('closed', function () {
+  endInterval = true;
+});
+
+function write(num) {
+  num = (num >= textArray.length ? 0 : num); // restart
+
+  var timer;
+  var text = textArray[num];
+  var currentLetter = 0;
+
+  //add letter by letter
+  $$('.picker-send-message [name=message]').attr('placeholder', '');
+  timer = setInterval(function() {
+    if(endInterval) clearInterval(timer);
+
+    $$('.picker-send-message [name=message]').attr('placeholder', ($$('.picker-send-message [name=message]').attr('placeholder') || '')+text[currentLetter]);
+
+    // if it's end of text, call erase function.
+    if (currentLetter == text.length-1) {
+      clearInterval(timer);
+      setTimeout(function() {erase(num);}, 1000);
+    }
+
+    currentLetter++;
+  }, 100);
+}
+
+function erase(num) {
+  var timer = '';
+  var text = textArray[num];
+  var currentLetter = text.length - 1;
+
+  // remove one letter from the end of text
+  timer = setInterval(function() {
+    if(endInterval) clearInterval(timer);
+
+    $$('.picker-send-message [name=message]').attr('placeholder', text.substring(0, currentLetter));
+
+    // if no more text - write text back;
+    if (currentLetter == 0) {
+      clearInterval(timer);
+      setTimeout(function() {write(num+1);}, 1000);
+    }
+
+    currentLetter--;
+  }, 2);
+}
+
+
+
+
+
+
+
+
+var frameRate = 30;
+var dt = 1.0 / frameRate;
+var DEG_TO_RAD = Math.PI / 180;
+var RAD_TO_DEG = 180 / Math.PI;
+var colors = [
+    ["#df0049", "#660671"],
+    ["#00e857", "#005291"],
+    ["#2bebbc", "#05798a"],
+    ["#ffd200", "#b06c00"]
+];
+
+function Vector2(_x, _y) {
+    this.x = _x, this.y = _y;
+    this.Length = function() {
+        return Math.sqrt(this.SqrLength());
+    }
+    this.SqrLength = function() {
+        return this.x * this.x + this.y * this.y;
+    }
+    this.Equals = function(_vec0, _vec1) {
+        return _vec0.x == _vec1.x && _vec0.y == _vec1.y;
+    }
+    this.Add = function(_vec) {
+        this.x += _vec.x;
+        this.y += _vec.y;
+    }
+    this.Sub = function(_vec) {
+        this.x -= _vec.x;
+        this.y -= _vec.y;
+    }
+    this.Div = function(_f) {
+        this.x /= _f;
+        this.y /= _f;
+    }
+    this.Mul = function(_f) {
+        this.x *= _f;
+        this.y *= _f;
+    }
+    this.Normalize = function() {
+        var sqrLen = this.SqrLength();
+        if (sqrLen != 0) {
+            var factor = 1.0 / Math.sqrt(sqrLen);
+            this.x *= factor;
+            this.y *= factor;
+        }
+    }
+    this.Normalized = function() {
+        var sqrLen = this.SqrLength();
+        if (sqrLen != 0) {
+            var factor = 1.0 / Math.sqrt(sqrLen);
+            return new Vector2(this.x * factor, this.y * factor);
+        }
+        return new Vector2(0, 0);
+    }
+}
+Vector2.Lerp = function(_vec0, _vec1, _t) {
+    return new Vector2((_vec1.x - _vec0.x) * _t + _vec0.x, (_vec1.y - _vec0.y) * _t + _vec0.y);
+}
+Vector2.Distance = function(_vec0, _vec1) {
+    return Math.sqrt(Vector2.SqrDistance(_vec0, _vec1));
+}
+Vector2.SqrDistance = function(_vec0, _vec1) {
+    var x = _vec0.x - _vec1.x;
+    var y = _vec0.y - _vec1.y;
+    return (x * x + y * y + z * z);
+}
+Vector2.Scale = function(_vec0, _vec1) {
+    return new Vector2(_vec0.x * _vec1.x, _vec0.y * _vec1.y);
+}
+Vector2.Min = function(_vec0, _vec1) {
+    return new Vector2(Math.min(_vec0.x, _vec1.x), Math.min(_vec0.y, _vec1.y));
+}
+Vector2.Max = function(_vec0, _vec1) {
+    return new Vector2(Math.max(_vec0.x, _vec1.x), Math.max(_vec0.y, _vec1.y));
+}
+Vector2.ClampMagnitude = function(_vec0, _len) {
+    var vecNorm = _vec0.Normalized;
+    return new Vector2(vecNorm.x * _len, vecNorm.y * _len);
+}
+Vector2.Sub = function(_vec0, _vec1) {
+    return new Vector2(_vec0.x - _vec1.x, _vec0.y - _vec1.y, _vec0.z - _vec1.z);
+}
+
+function EulerMass(_x, _y, _mass, _drag) {
+    this.position = new Vector2(_x, _y);
+    this.mass = _mass;
+    this.drag = _drag;
+    this.force = new Vector2(0, 0);
+    this.velocity = new Vector2(0, 0);
+    this.AddForce = function(_f) {
+        this.force.Add(_f);
+    }
+    this.Integrate = function(_dt) {
+        var acc = this.CurrentForce(this.position);
+        acc.Div(this.mass);
+        var posDelta = new Vector2(this.velocity.x, this.velocity.y);
+        posDelta.Mul(_dt);
+        this.position.Add(posDelta);
+        acc.Mul(_dt);
+        this.velocity.Add(acc);
+        this.force = new Vector2(0, 0);
+    }
+    this.CurrentForce = function(_pos, _vel) {
+        var totalForce = new Vector2(this.force.x, this.force.y);
+        var speed = this.velocity.Length();
+        var dragVel = new Vector2(this.velocity.x, this.velocity.y);
+        dragVel.Mul(this.drag * this.mass * speed);
+        totalForce.Sub(dragVel);
+        return totalForce;
+    }
+}
+
+function ConfettiPaper(_x, _y) {
+    this.pos = new Vector2(_x, _y);
+    this.rotationSpeed = Math.random() * 600 + 800;
+    this.angle = DEG_TO_RAD * Math.random() * 360;
+    this.rotation = DEG_TO_RAD * Math.random() * 360;
+    this.cosA = 1.0;
+    this.size = 5.0;
+    this.oscillationSpeed = Math.random() * 1.5 + 0.5;
+    this.xSpeed = 40.0;
+    this.ySpeed = Math.random() * 60 + 50.0;
+    this.corners = new Array();
+    this.time = Math.random();
+    var ci = Math.round(Math.random() * (colors.length - 1));
+    this.frontColor = colors[ci][0];
+    this.backColor = colors[ci][1];
+    for (var i = 0; i < 4; i++) {
+        var dx = Math.cos(this.angle + DEG_TO_RAD * (i * 90 + 45));
+        var dy = Math.sin(this.angle + DEG_TO_RAD * (i * 90 + 45));
+        this.corners[i] = new Vector2(dx, dy);
+    }
+    this.Update = function(_dt) {
+        this.time += _dt;
+        this.rotation += this.rotationSpeed * _dt;
+        this.cosA = Math.cos(DEG_TO_RAD * this.rotation);
+        this.pos.x += Math.cos(this.time * this.oscillationSpeed) * this.xSpeed * _dt
+        this.pos.y += this.ySpeed * _dt;
+        if (this.pos.y > ConfettiPaper.bounds.y) {
+            this.pos.x = Math.random() * ConfettiPaper.bounds.x;
+            this.pos.y = 0;
+        }
+    }
+    this.Draw = function(_g) {
+        if (this.cosA > 0) {
+            _g.fillStyle = this.frontColor;
+        } else {
+            _g.fillStyle = this.backColor;
+        }
+        _g.beginPath();
+        _g.moveTo(this.pos.x + this.corners[0].x * this.size, this.pos.y + this.corners[0].y * this.size * this.cosA);
+        for (var i = 1; i < 4; i++) {
+            _g.lineTo(this.pos.x + this.corners[i].x * this.size, this.pos.y + this.corners[i].y * this.size * this.cosA);
+        }
+        _g.closePath();
+        _g.fill();
+    }
+}
+ConfettiPaper.bounds = new Vector2(0, 0);
+
+function ConfettiRibbon(_x, _y, _count, _dist, _thickness, _angle, _mass, _drag) {
+    this.particleDist = _dist;
+    this.particleCount = _count;
+    this.particleMass = _mass;
+    this.particleDrag = _drag;
+    this.particles = new Array();
+    var ci = Math.round(Math.random() * (colors.length - 1));
+    this.frontColor = colors[ci][0];
+    this.backColor = colors[ci][1];
+    this.xOff = Math.cos(DEG_TO_RAD * _angle) * _thickness;
+    this.yOff = Math.sin(DEG_TO_RAD * _angle) * _thickness;
+    this.position = new Vector2(_x, _y);
+    this.prevPosition = new Vector2(_x, _y);
+    this.velocityInherit = Math.random() * 2 + 4;
+    this.time = Math.random() * 100;
+    this.oscillationSpeed = Math.random() * 2 + 2;
+    this.oscillationDistance = Math.random() * 40 + 40;
+    this.ySpeed = Math.random() * 40 + 80;
+    for (var i = 0; i < this.particleCount; i++) {
+        this.particles[i] = new EulerMass(_x, _y - i * this.particleDist, this.particleMass, this.particleDrag);
+    }
+    this.Update = function(_dt) {
+        var i = 0;
+        this.time += _dt * this.oscillationSpeed;
+        this.position.y += this.ySpeed * _dt;
+        this.position.x += Math.cos(this.time) * this.oscillationDistance * _dt;
+        this.particles[0].position = this.position;
+        var dX = this.prevPosition.x - this.position.x;
+        var dY = this.prevPosition.y - this.position.y;
+        var delta = Math.sqrt(dX * dX + dY * dY);
+        this.prevPosition = new Vector2(this.position.x, this.position.y);
+        for (i = 1; i < this.particleCount; i++) {
+            var dirP = Vector2.Sub(this.particles[i - 1].position, this.particles[i].position);
+            dirP.Normalize();
+            dirP.Mul((delta / _dt) * this.velocityInherit);
+            this.particles[i].AddForce(dirP);
+        }
+        for (i = 1; i < this.particleCount; i++) {
+            this.particles[i].Integrate(_dt);
+        }
+        for (i = 1; i < this.particleCount; i++) {
+            var rp2 = new Vector2(this.particles[i].position.x, this.particles[i].position.y);
+            rp2.Sub(this.particles[i - 1].position);
+            rp2.Normalize();
+            rp2.Mul(this.particleDist);
+            rp2.Add(this.particles[i - 1].position);
+            this.particles[i].position = rp2;
+        }
+        if (this.position.y > ConfettiRibbon.bounds.y + this.particleDist * this.particleCount) {
+            this.Reset();
+        }
+    }
+    this.Reset = function() {
+        this.position.y = -Math.random() * ConfettiRibbon.bounds.y;
+        this.position.x = Math.random() * ConfettiRibbon.bounds.x;
+        this.prevPosition = new Vector2(this.position.x, this.position.y);
+        this.velocityInherit = Math.random() * 2 + 4;
+        this.time = Math.random() * 100;
+        this.oscillationSpeed = Math.random() * 2.0 + 1.5;
+        this.oscillationDistance = Math.random() * 40 + 40;
+        this.ySpeed = Math.random() * 40 + 80;
+        var ci = Math.round(Math.random() * (colors.length - 1));
+        this.frontColor = colors[ci][0];
+        this.backColor = colors[ci][1];
+        this.particles = new Array();
+        for (var i = 0; i < this.particleCount; i++) {
+            this.particles[i] = new EulerMass(this.position.x, this.position.y - i * this.particleDist, this.particleMass, this.particleDrag);
+        }
+    }
+    this.Draw = function(_g) {
+        for (var i = 0; i < this.particleCount - 1; i++) {
+            var p0 = new Vector2(this.particles[i].position.x + this.xOff, this.particles[i].position.y + this.yOff);
+            var p1 = new Vector2(this.particles[i + 1].position.x + this.xOff, this.particles[i + 1].position.y + this.yOff);
+            if (this.Side(this.particles[i].position.x, this.particles[i].position.y, this.particles[i + 1].position.x, this.particles[i + 1].position.y, p1.x, p1.y) < 0) {
+                _g.fillStyle = this.frontColor;
+                _g.strokeStyle = this.frontColor;
+            } else {
+                _g.fillStyle = this.backColor;
+                _g.strokeStyle = this.backColor;
+            }
+            if (i == 0) {
+                _g.beginPath();
+                _g.moveTo(this.particles[i].position.x, this.particles[i].position.y);
+                _g.lineTo(this.particles[i + 1].position.x, this.particles[i + 1].position.y);
+                _g.lineTo((this.particles[i + 1].position.x + p1.x) * 0.5, (this.particles[i + 1].position.y + p1.y) * 0.5);
+                _g.closePath();
+                _g.stroke();
+                _g.fill();
+                _g.beginPath();
+                _g.moveTo(p1.x, p1.y);
+                _g.lineTo(p0.x, p0.y);
+                _g.lineTo((this.particles[i + 1].position.x + p1.x) * 0.5, (this.particles[i + 1].position.y + p1.y) * 0.5);
+                _g.closePath();
+                _g.stroke();
+                _g.fill();
+            } else if (i == this.particleCount - 2) {
+                _g.beginPath();
+                _g.moveTo(this.particles[i].position.x, this.particles[i].position.y);
+                _g.lineTo(this.particles[i + 1].position.x, this.particles[i + 1].position.y);
+                _g.lineTo((this.particles[i].position.x + p0.x) * 0.5, (this.particles[i].position.y + p0.y) * 0.5);
+                _g.closePath();
+                _g.stroke();
+                _g.fill();
+                _g.beginPath();
+                _g.moveTo(p1.x, p1.y);
+                _g.lineTo(p0.x, p0.y);
+                _g.lineTo((this.particles[i].position.x + p0.x) * 0.5, (this.particles[i].position.y + p0.y) * 0.5);
+                _g.closePath();
+                _g.stroke();
+                _g.fill();
+            } else {
+                _g.beginPath();
+                _g.moveTo(this.particles[i].position.x, this.particles[i].position.y);
+                _g.lineTo(this.particles[i + 1].position.x, this.particles[i + 1].position.y);
+                _g.lineTo(p1.x, p1.y);
+                _g.lineTo(p0.x, p0.y);
+                _g.closePath();
+                _g.stroke();
+                _g.fill();
+            }
+        }
+    }
+    this.Side = function(x1, y1, x2, y2, x3, y3) {
+        return ((x1 - x2) * (y3 - y2) - (y1 - y2) * (x3 - x2));
+    }
+}
+ConfettiRibbon.bounds = new Vector2(0, 0);
+
+confetti = {};
+confetti.Context = function(parent) {
+    var i = 0;
+    var canvasParent = document.getElementById(parent);
+    var canvas = document.createElement('canvas');
+    canvas.width = canvasParent.offsetWidth;
+    canvas.height = canvasParent.offsetHeight;
+    canvasParent.appendChild(canvas);
+    var context = canvas.getContext('2d');
+    var interval = null;
+    var confettiRibbonCount = 7;
+    var rpCount = 30;
+    var rpDist = 8.0;
+    var rpThick = 8.0;
+    var confettiRibbons = new Array();
+    ConfettiRibbon.bounds = new Vector2(canvas.width, canvas.height);
+    for (i = 0; i < confettiRibbonCount; i++) {
+        confettiRibbons[i] = new ConfettiRibbon(Math.random() * canvas.width, -Math.random() * canvas.height * 2, rpCount, rpDist, rpThick, 45, 1, 0.05);
+    }
+    var confettiPaperCount = 25;
+    var confettiPapers = new Array();
+    ConfettiPaper.bounds = new Vector2(canvas.width, canvas.height);
+    for (i = 0; i < confettiPaperCount; i++) {
+        confettiPapers[i] = new ConfettiPaper(Math.random() * canvas.width, Math.random() * canvas.height);
+    }
+    this.resize = function() {
+        canvas.width = canvasParent.offsetWidth;
+        canvas.height = canvasParent.offsetHeight;
+        ConfettiPaper.bounds = new Vector2(canvas.width, canvas.height);
+        ConfettiRibbon.bounds = new Vector2(canvas.width, canvas.height);
+    }
+    this.start = function() {
+        this.stop()
+        var context = this
+        this.interval = setInterval(function() {
+            confetti.update();
+        }, 1000.0 / frameRate)
+    }
+    this.stop = function() {
+        clearInterval(this.interval);
+    }
+    this.update = function() {
+        var i = 0;
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        for (i = 0; i < confettiPaperCount; i++) {
+            confettiPapers[i].Update(dt);
+            confettiPapers[i].Draw(context);
+        }
+        for (i = 0; i < confettiRibbonCount; i++) {
+            confettiRibbons[i].Update(dt);
+            confettiRibbons[i].Draw(context);
+        }
+    }
+}
+var confetti = new confetti.Context('confetti');
+$$('#confetti').hide();

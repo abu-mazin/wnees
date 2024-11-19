@@ -6,9 +6,73 @@ document.addEventListener("deviceready", onDeviceReady, false);
 document.addEventListener("backbutton", onBackKeyDown, false);
 // Cordova is loaded and it is now safe to make calls Cordova methods, device APIs are available
 function onDeviceReady() {
-  deviceType = (navigator.userAgent.match(/iPad/i)) == "iPad" ? "iPad" : (navigator.userAgent.match(/iPhone/i))  == "iPhone" ? "iPhone" : (navigator.userAgent.match(/Android/i)) == "Android" ? "Android" : (navigator.userAgent.match(/BlackBerry/i)) == "BlackBerry" ? "BlackBerry" : "Other";
+  //deviceType = (navigator.userAgent.match(/iPad/i)) == "iPad" ? "iPad" : (navigator.userAgent.match(/iPhone/i))  == "iPhone" ? "iPhone" : (navigator.userAgent.match(/Android/i)) == "Android" ? "Android" : (navigator.userAgent.match(/BlackBerry/i)) == "BlackBerry" ? "BlackBerry" : "Other";
+  deviceType = (navigator.userAgent.match(/iPad/i)) == "iPad" ? "iPad" : (navigator.userAgent.match(/iPhone/i))  == "iPhone" ? "iPhone" : (navigator.userAgent.match(/Android/i)) == "Android" ? "Android" : "Other";
 
   if ( deviceType == "Android" ) {
+    //         "onesignal-cordova-plugin": "3.3.3",
+    setTimeout(function () {
+      if(isNotificationEnabled == true) {
+        window.plugins.OneSignal.setAppId(notificationID),
+
+        //Prompts the user for notification permissions.
+        //    * Since this shows a generic native prompt, we recommend instead using an In-App Message to prompt for notification permission (See step 6) to better communicate to your users what notifications they will get.
+        window.plugins.OneSignal.promptForPushNotificationsWithUserResponse(function(accepted) { });
+
+        try {
+            window["plugins"].OneSignal.addSubscriptionObserver(function (state) { 
+                if (!state.from.subscribed && state.to.subscribed) { 
+                    if(typeof OneSignalIDs == 'undefined' || OneSignalIDs == null || OneSignalIDs == ""){
+                    OneSignalIDs = state.to.userId;
+                    }
+                } 
+            });
+        } catch (error) {
+            // alert(error.message);
+        }
+
+        try {
+            window.plugins.OneSignal.getDeviceState((state) => {
+                if(typeof OneSignalIDs == 'undefined' || OneSignalIDs == null || OneSignalIDs == ""){
+                OneSignalIDs = state.userId;
+                }
+            });
+        } catch (error) {
+            // alert(error.message);
+        }
+
+        try {
+            window.plugins.OneSignal.getPermissionSubscriptionState(function(status) {
+                if(typeof OneSignalIDs == 'undefined' || OneSignalIDs == null || OneSignalIDs == ""){
+                OneSignalIDs = status.subscriptionStatus.userId;
+                }
+            });
+        } catch (error) {
+            // alert(error.message);
+        }
+        
+        try {
+            window.plugins.OneSignal.getIds(function(ids) {
+                if(typeof OneSignalIDs == 'undefined' || OneSignalIDs == null || OneSignalIDs == ""){
+                    OneSignalIDs = ids.userId;
+                }
+            });
+        } catch (error) {
+            // alert(error.message);
+        }
+
+        try {
+          window.plugins.OneSignal.setNotificationOpenedHandler(function(jsonData) {
+            if (getThis("userLogedin") == 1 || getThis("randomUserLogedin") == 1) {
+              getSentMessages(false);
+              getReceivedMessages(false);
+            }
+          });
+        } catch (error) {
+            // alert(error.message);
+        }
+      }
+    }, 4000);
   } else {
     // used for push notifcations
     setTimeout(function () {
@@ -42,6 +106,12 @@ function onDeviceReady() {
         window.plugins.OneSignal.getIds(function(ids) {
           if(typeof OneSignalIDs == 'undefined' || OneSignalIDs == null || OneSignalIDs == ""){
             OneSignalIDs = ids.userId;
+          }
+        });
+        window.plugins.OneSignal.setNotificationOpenedHandler(function(jsonData) {
+          if (getThis("userLogedin") == 1 || getThis("randomUserLogedin") == 1) {
+            getSentMessages();
+            getReceivedMessages();
           }
         });
         //END ONESIGNAL CODE
